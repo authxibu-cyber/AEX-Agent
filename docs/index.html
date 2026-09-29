@@ -21,15 +21,15 @@
     font-display: swap;
   }
   :root {
-    --bg: #000000;
-    --bg-raise: #0a0a0b;
-    --line: rgba(232,236,255,.12);
-    --line-soft: rgba(232,236,255,.07);
-    --ink: #e8ecff;
-    --ink-dim: rgba(232,236,255,.55);
-    --ink-faint: rgba(232,236,255,.32);
-    --gold: #d9a514;
-    --gold-bright: #edc23a;
+    --bg: #002b36;
+    --bg-raise: #073642;
+    --line: rgba(131,148,150,.22);
+    --line-soft: rgba(131,148,150,.12);
+    --ink: #93a1a1;
+    --ink-dim: rgba(147,161,161,.72);
+    --ink-faint: rgba(147,161,161,.45);
+    --gold: #b58900;
+    --gold-bright: #e6c04a;
     --gothic: "Angel Wish", "UnifrakturMaguntia", "Old English Text", serif;
     --sans: Verdana, "Segoe UI", Geneva, sans-serif;
     --mono: "JetBrains Mono", ui-monospace, monospace;
@@ -44,7 +44,7 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
-  ::selection { background: rgba(217,165,20,.28); }
+  ::selection { background: rgba(181,137,0,.35); }
   .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
   .label {
     font-family: var(--mono); font-size: 11px; font-weight: 500;
@@ -57,7 +57,7 @@
   nav {
     position: fixed; inset: 0 0 auto; z-index: 50;
     border-bottom: 1px solid var(--line);
-    background: rgba(0,0,0,.78);
+    background: rgba(0,43,54,.85);
     backdrop-filter: blur(14px);
   }
   .nav-in { display: flex; align-items: center; justify-content: space-between; height: 60px; }
@@ -69,11 +69,11 @@
   .nav-r a:hover { color: var(--ink); }
   .nav-r .cta {
     font-family: var(--mono); font-size: 12px; letter-spacing: .06em;
-    color: #000; background: var(--gold);
+    color: #002b36; background: var(--gold);
     padding: 8px 16px; border-radius: 2px; font-weight: 500;
     transition: background .15s;
   }
-  .nav-r .cta:hover { background: var(--gold-bright); color: #000; }
+  .nav-r .cta:hover { background: var(--gold-bright); color: #002b36; }
 
   /* ── hero ─────────────────────────────────── */
   .hero { padding: 168px 0 96px; position: relative; }
@@ -83,7 +83,7 @@
     font-size: clamp(40px, 5.4vw, 66px);
     font-weight: 400; line-height: 1.08; letter-spacing: .005em;
     margin: 26px 0 0;
-    text-shadow: 0 2px 24px rgba(217,165,20,.12);
+    text-shadow: 0 2px 24px rgba(181,137,0,.18);
   }
   .hero h1 em { font-style: normal; color: var(--gold); }
   .hero .lede {
@@ -97,8 +97,8 @@
     display: inline-flex; align-items: center; gap: 8px;
     transition: all .15s;
   }
-  .btn-solid { background: var(--gold); color: #000; font-weight: 500; }
-  .btn-solid:hover { background: var(--gold-bright); }
+  .btn-solid { background: var(--gold); color: #002b36; font-weight: 700; }
+  .btn-solid:hover { background: var(--gold-bright); color: #002b36; }
   .btn-line { border: 1px solid var(--line); color: var(--ink); }
   .btn-line:hover { border-color: var(--gold); color: var(--gold-bright); }
 
@@ -119,7 +119,7 @@
     border-radius: 6px;
     overflow: hidden;
     font-family: var(--mono); font-size: 12.5px; line-height: 1.8;
-    box-shadow: 0 30px 90px rgba(0,0,0,.8);
+    box-shadow: 0 30px 90px rgba(0,19,25,.65);
   }
   .term-top {
     display: flex; align-items: center; gap: 7px;
@@ -133,7 +133,7 @@
   .term-b { padding: 18px 18px 14px; }
   .term-b .dim { color: var(--ink-faint); }
   .term-b .gold { color: var(--gold-bright); }
-  .term-b .grn { color: #6ee7a0; }
+  .term-b .grn { color: #859900; }
   .term-b .pr { color: var(--gold); font-weight: 600; }
   .term-status {
     margin-top: 12px; padding-top: 10px;
@@ -168,7 +168,7 @@
   .feat:last-child { border-bottom: 1px solid var(--line-soft); }
   .feat .idx { font-family: var(--mono); font-size: 12px; color: var(--gold); padding-top: 5px; }
   .feat h3 { font-family: var(--gothic); font-size: 24px; font-weight: 400; }
-  .feat h3 code { font-family: var(--mono); font-size: .82em; color: var(--gold-bright); background: rgba(217,165,20,.07); padding: 2px 7px; border-radius: 3px; }
+  .feat h3 code { font-family: var(--mono); font-size: .82em; color: var(--gold-bright); background: rgba(181,137,0,.12); padding: 2px 7px; border-radius: 3px; }
   .feat p { color: var(--ink-dim); font-size: 13.5px; margin-top: 6px; max-width: 460px; }
 
   /* loop diagram — numbered steps in a row with hairlines */
@@ -223,16 +223,16 @@
   <div class="wrap nav-in">
     <a class="brand" href="#top">
       <svg viewBox="0 0 64 64" fill="none">
-        <g stroke="#d9a514" stroke-width="2.3" stroke-linecap="round">
+        <g stroke="#b58900" stroke-width="2.3" stroke-linecap="round">
           <line x1="10" y1="10" x2="52" y2="52"/><line x1="54" y1="8" x2="12" y2="50"/>
         </g>
-        <g stroke="#d9a514" stroke-width="2.3" stroke-linecap="round">
+        <g stroke="#b58900" stroke-width="2.3" stroke-linecap="round">
           <line x1="19" y1="53" x2="13" y2="47"/><line x1="45" y1="55" x2="51" y2="49"/>
-          <circle cx="55.5" cy="6.5" r="2" fill="#d9a514" stroke="none"/>
-          <circle cx="8.5" cy="6.5" r="2" fill="#d9a514" stroke="none"/>
+          <circle cx="55.5" cy="6.5" r="2" fill="#b58900" stroke="none"/>
+          <circle cx="8.5" cy="6.5" r="2" fill="#b58900" stroke="none"/>
         </g>
-        <path d="M32 20 L44 32 L32 44 L20 32 Z" fill="#000" stroke="#d9a514" stroke-width="2.4" stroke-linejoin="round"/>
-        <g stroke="#d9a514" stroke-width="2.4" stroke-linecap="round">
+        <path d="M32 20 L44 32 L32 44 L20 32 Z" fill="#002b36" stroke="#b58900" stroke-width="2.4" stroke-linejoin="round"/>
+        <g stroke="#b58900" stroke-width="2.4" stroke-linecap="round">
           <line x1="27.5" y1="27.5" x2="36.5" y2="36.5"/><line x1="36.5" y1="27.5" x2="27.5" y2="36.5"/>
         </g>
       </svg>
@@ -396,16 +396,16 @@
   <div class="wrap foot">
     <div class="l">
       <svg viewBox="0 0 64 64" fill="none">
-        <g stroke="#d9a514" stroke-width="2.3" stroke-linecap="round">
+        <g stroke="#b58900" stroke-width="2.3" stroke-linecap="round">
           <line x1="10" y1="10" x2="52" y2="52"/><line x1="54" y1="8" x2="12" y2="50"/>
         </g>
-        <g stroke="#d9a514" stroke-width="2.3" stroke-linecap="round">
+        <g stroke="#b58900" stroke-width="2.3" stroke-linecap="round">
           <line x1="19" y1="53" x2="13" y2="47"/><line x1="45" y1="55" x2="51" y2="49"/>
-          <circle cx="55.5" cy="6.5" r="2" fill="#d9a514" stroke="none"/>
-          <circle cx="8.5" cy="6.5" r="2" fill="#d9a514" stroke="none"/>
+          <circle cx="55.5" cy="6.5" r="2" fill="#b58900" stroke="none"/>
+          <circle cx="8.5" cy="6.5" r="2" fill="#b58900" stroke="none"/>
         </g>
-        <path d="M32 20 L44 32 L32 44 L20 32 Z" fill="#000" stroke="#d9a514" stroke-width="2.4" stroke-linejoin="round"/>
-        <g stroke="#d9a514" stroke-width="2.4" stroke-linecap="round">
+        <path d="M32 20 L44 32 L32 44 L20 32 Z" fill="#002b36" stroke="#b58900" stroke-width="2.4" stroke-linejoin="round"/>
+        <g stroke="#b58900" stroke-width="2.4" stroke-linecap="round">
           <line x1="27.5" y1="27.5" x2="36.5" y2="36.5"/><line x1="36.5" y1="27.5" x2="27.5" y2="36.5"/>
         </g>
       </svg>
