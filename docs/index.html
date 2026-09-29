@@ -78,17 +78,6 @@
   /* ── hero ─────────────────────────────────── */
   .hero { padding: 168px 0 96px; position: relative; }
   .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 64px; align-items: start; }
-  .banner {
-    font-family: var(--mono);
-    font-size: clamp(6px, 1.85vw, 13px);
-    line-height: 1.25;
-    color: var(--gold-bright);
-    white-space: pre;
-    overflow-x: auto;
-    margin: 30px 0 0;
-    text-shadow: 0 2px 18px rgba(217,165,20,.15);
-    -webkit-user-select: all; user-select: all;
-  }
   .hero h1 {
     font-family: var(--gothic);
     font-size: clamp(40px, 5.4vw, 66px);
@@ -98,7 +87,7 @@
   }
   .hero h1 em { font-style: normal; color: var(--gold); }
   .hero .lede {
-    margin-top: 22px; max-width: 520px;
+    margin-top: 28px; max-width: 520px;
     font-size: 15.5px; color: var(--ink-dim);
   }
   .hero-ctas { display: flex; gap: 14px; margin-top: 40px; }
@@ -262,17 +251,7 @@
   <div class="wrap hero-grid">
     <div>
       <div class="label">Sovereign · Self-Improving · Open Source</div>
-      <pre class="banner" aria-label="AEX AGENT"> /      \|        \  \  |  \     /      \                             |  \
-|  ▓▓▓▓▓▓\ ▓▓▓▓▓▓▓▓ ▓▓  | ▓▓    |  ▓▓▓▓▓▓\ ______   ______  _______  _| ▓▓_
-| ▓▓__| ▓▓ ▓▓__    \▓▓\/  ▓▓    | ▓▓__| ▓▓/      \ /      \|       \|   ▓▓ \
-| ▓▓    ▓▓ ▓▓  \    &gt;▓▓  ▓▓     | ▓▓    ▓▓  ▓▓▓▓▓▓\  ▓▓▓▓▓▓\ ▓▓▓▓▓▓▓▓\\▓▓▓▓▓▓
-| ▓▓▓▓▓▓▓▓ ▓▓▓▓▓   /  ▓▓▓▓\     | ▓▓▓▓▓▓▓▓ ▓▓  | ▓▓ ▓▓    ▓▓ ▓▓  | ▓▓ | ▓▓ __
-| ▓▓  | ▓▓ ▓▓_____|  ▓▓ \▓▓\    | ▓▓  | ▓▓ ▓▓__| ▓▓ ▓▓▓▓▓▓▓▓ ▓▓  | ▓▓ | ▓▓|  \
-| ▓▓  | ▓▓ ▓▓     \ ▓▓  | ▓▓    | ▓▓  | ▓▓\▓▓    ▓▓\▓▓     \ ▓▓  | ▓▓  \▓▓  ▓▓
- \▓▓   \▓▓\▓▓▓▓▓▓▓▓\▓▓   \▓▓     \▓▓   \▓▓_\▓▓▓▓▓▓▓ \ ▓▓▓▓▓▓▓\▓▓   \▓▓   \▓▓▓▓
-                                         |  \__| ▓▓
-                                          \▓▓    ▓▓
-                                           \▓▓▓▓▓▓</pre>
+      <h1>The agent that<br><em>outlives</em> the session.</h1>
       <p class="lede">
         AEX Agent is a terminal-native AI harness with persistent memory,
         skills it writes for itself, and provider-agnostic inference.
