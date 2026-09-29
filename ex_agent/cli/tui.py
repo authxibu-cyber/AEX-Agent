@@ -26,36 +26,17 @@ console = Console()
 
 
 def render_banner(model_name: str, provider_name: str) -> None:
-    banner_lines = [
-        r"   █████ ██     ███          ██",
-        r"   ██████  ████ █ █████       ████  █              █████",
-        r"  ██   █  █ ████ █   ███      ██████              █  ███",
-        r" █    █  █   ██       ███    █   ██                  ███",
-        r"     █  █              ███  █                       █  ██                                      ████████",
-        r"    ██ ██               ████                        █  ██          ████        ███   ███  ████   ████████",
-        r"    ██ ██                ███                       █    ██        █  ███  █   █ ███   ████ ████ █   ██",
-        r"    ██ ██████            ████                      █    ██       █    ████   █   ███   ██   ████    ██",
-        r"    ██ █████            █  ███                    █      ██     ██     ██   ██    ███  ██    ██     ██",
-        r"    ██ ██              █    ███                   █████████     ██     ██   ████████   ██    ██     ██",
-        r"    █  ██             █      ███                 █        ██    ██     ██   ███████    ██    ██     ██",
-        r"       █             █        ███                █        ██    ██     ██   ██         ██    ██     ██",
-        r"   ████         █   █          ███   █          █████      ██   ██     ██   ████    █  ██    ██     ██",
-        r"  █  ███████████   █            █████          █   ████    ██ █  ████████    ███████   ███   ███     ██",
-        r" █     ██████     █              ███          █     ██      ██     ███ ███    █████     ███   ███",
-        r" █                                            █                         ███",
-        r"  █                                            █                  ████   ███",
-        r"   ██                                           ██              ███████  ██",
-        r"                                                               █     ████",
-        r"          Autonomous Tier-3 AI Agent Harness (v{VERSION})",
-    ]
-    banner_text = "\n".join(banner_lines).replace("{VERSION}", VERSION)
+    """Compact Hermes/agy-style header: gold dot + name, dim meta line, rule."""
+    console.print()
     console.print(
-        Text(banner_text, style="bold cyan", no_wrap=True, overflow="crop"),
-        style="bright_blue",
+        f"  [bold gold3]●[/bold gold3] [bold]{APP_NAME}[/bold] [dim]v{VERSION}[/dim]"
     )
     console.print(
-        f"  Model: [bold green]{model_name}[/bold green] | Provider: [bold yellow]{provider_name}[/bold yellow] | Type [bold white]/help[/bold white] for commands"
+        f"  [dim]model:[/dim] [green]{model_name}[/green]  [dim]·[/dim]  "
+        f"[dim]provider:[/dim] [yellow]{provider_name}[/yellow]  [dim]·[/dim]  "
+        f"[dim]/help for commands  /exit to quit[/dim]"
     )
+    console.print(f"  [dim gold3]{'─' * 66}[/dim gold3]")
 
 
 async def run_interactive_tui(session_id: Optional[str] = None) -> None:
@@ -74,61 +55,104 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
     agent = EXAgent(config=cfg, session_id=session_id)
     ctx = {"agent": agent, "config": cfg}
 
+    last_was_tool = False
+
     while True:
         try:
+            # agy-style minimal prompt: dim ❯ with blinking-free clean line
             user_input = await prompt_session.prompt_async(
-                [("class:prompt", "\n╭─[EX Agent] \n╰─➤ ")],
+                [("class:prompt", "\n[bold gold3]❯[/bold gold3] ")],
+                multiline=False,
             )
             user_input = user_input.strip()
             if not user_input:
                 continue
+            last_was_tool = False
 
             if user_input in ["/exit", "/quit", "exit", "quit"]:
-                console.print("[dim]Exiting EX Agent session. Memory preserved.[/dim]")
+                console.print("[dim]Session closed. Memory preserved.[/dim]")
                 break
 
-            # Handle slash commands
+            # Handle slash commands (Hermes-style: dim output, no panel box)
             if user_input.startswith("/"):
                 handled, output = commands_registry.handle(user_input, ctx)
                 if handled:
-                    console.print(Panel(Markdown(output), title="[bold cyan]Command Output[/bold cyan]", border_style="blue"))
+                    console.print(f"[dim]{output}[/dim]")
                     continue
 
-            # Stream Agent Response
-            console.print("\n[bold green]EX Agent:[/bold green]")
+            # ── Agent turn ────────────────────────────────────────────────
+            console.print()
 
             accumulated_text = ""
             accumulated_thinking = ""
-            current_live: Optional[Live] = None
+            thinking_shown = False
+            live: Optional[Live] = None
+            live_md = None
+
+            def _close_inline():
+                """Flush live-rendered markdown into the transcript."""
+                nonlocal live, live_md
+                if live is not None:
+                    live_md.update(Markdown(accumulated_text))
+                    live.stop()
+                    live = None
+                    live_md = None
+                    console.print()
 
             def on_stream(kind: str, delta: str):
-                nonlocal accumulated_text, accumulated_thinking
+                nonlocal accumulated_text, accumulated_thinking, live, live_md, thinking_shown
                 if kind == "thinking":
                     accumulated_thinking += delta
-                elif kind == "content":
+                    return
+                if kind == "content":
+                    if accumulated_thinking and not thinking_shown:
+                        # collapsible reasoning block, Hermes-style
+                        head = accumulated_thinking.strip().splitlines()
+                        first = head[0][:70] if head else ""
+                        console.print(
+                            f"[dim]◆ thought:[/dim] [dim italic]{first}[/dim italic] [dim](hidden — use /export to inspect full reasoning)[/dim]"
+                        )
+                        thinking_shown = True
                     accumulated_text += delta
-                    sys.stdout.write(delta)
-                    sys.stdout.flush()
+                    if live is None:
+                        live = Live(
+                            console=console, refresh_per_second=12, transient=True
+                        )
+                        live_md = Markdown("")
+                        live.start(live_md)
+                    live_md.update(Markdown(accumulated_text))
 
             def on_tool_status(event: str, tool_name: str, data: dict):
+                nonlocal live, live_md
+                # close any streaming block first so tool lines stay aligned
+                _close_inline()
                 if event == "invoking":
-                    console.print(f"\n[bold magenta]⚙ Invoking Tool:[/bold magenta] [cyan]{tool_name}[/cyan] ...")
+                    console.print(
+                        f"  [bold gold3]●[/bold gold3] [bold]{tool_name}[/bold] [dim]running…[/dim]"
+                    )
                 elif event == "completed":
-                    status = "[green]✔ Done[/green]" if data.get("success") else "[red]✘ Failed[/red]"
-                    console.print(f"  {status} [dim]({tool_name})[/dim]")
+                    ok = data.get("success")
+                    dot = "[green]●[/green]" if ok else "[red]●[/red]"
+                    console.print(f"  {dot} [dim]{tool_name}[/dim]")
 
-            # Run conversational turn
-            res = await agent.run_conversation_async(
-                user_message=user_input,
-                stream_callback=on_stream,
-                tool_status_callback=on_tool_status,
-            )
+            try:
+                res = await agent.run_conversation_async(
+                    user_message=user_input,
+                    stream_callback=on_stream,
+                    tool_status_callback=on_tool_status,
+                )
+            finally:
+                _close_inline()
 
-            # Print thinking if reasoning tokens were produced and not displayed yet
-            if res.get("reasoning") and not accumulated_thinking:
-                console.print(Panel(res["reasoning"], title="[dim]Cognitive Pulse / Thinking[/dim]", border_style="dim"))
-
-            print()  # newline separator
+            # ── Turn footer (Hermes-style stats row) ─────────────────────
+            tokens_note = ""
+            turns = res.get("tool_calls_count", 0)
+            if turns:
+                console.print(
+                    f"  [dim]{turns} tool call{'s' if turns != 1 else ''} this turn"
+                    f" · session {agent.session_id[:8]}[/dim]"
+                )
+            console.print()
 
         except (KeyboardInterrupt, EOFError):
             console.print("\n[dim]Session terminated by user.[/dim]")
