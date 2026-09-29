@@ -57,6 +57,8 @@ class OpenAICompatibleProvider(BaseProvider):
             "max_tokens": self.max_tokens,
             "stream": True,
         }
+        # Request token accounting in the SSE stream (OpenAI-compatible servers)
+        payload["stream_options"] = {"include_usage": True}
 
         if tools:
             payload["tools"] = tools
@@ -94,6 +96,16 @@ class OpenAICompatibleProvider(BaseProvider):
 
                     choices = chunk_json.get("choices", [])
                     if not choices:
+                        # Usage-only chunks (include_usage) carry an empty choices list
+                        if chunk_json.get("usage"):
+                            yield StreamChunk(
+                                content="",
+                                thinking="",
+                                tool_calls=[],
+                                finish_reason=None,
+                                raw=chunk_json,
+                                usage=chunk_json["usage"],
+                            )
                         continue
 
                     choice = choices[0]
@@ -137,4 +149,5 @@ class OpenAICompatibleProvider(BaseProvider):
                         tool_calls=active_tool_calls,
                         finish_reason=finish_reason,
                         raw=chunk_json,
+                        usage=chunk_json.get("usage"),
                     )

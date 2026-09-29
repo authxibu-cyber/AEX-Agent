@@ -15,6 +15,7 @@ class StreamChunk(BaseModel):
     tool_calls: List[Dict[str, Any]] = Field(default_factory=list)
     finish_reason: Optional[str] = None
     raw: Optional[Dict[str, Any]] = None
+    usage: Optional[Dict[str, Any]] = None
 
 
 class BaseProvider(ABC):

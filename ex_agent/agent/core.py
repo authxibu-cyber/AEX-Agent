@@ -8,6 +8,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import time
 from typing import Any, Callable, Dict, List, Optional
 import uuid
 
@@ -125,6 +126,7 @@ class EXAgent:
         conversation_history: Optional[List[Dict[str, Any]]] = None,
         stream_callback: Optional[Callable[[str, str], None]] = None,
         tool_status_callback: Optional[Callable[[str, str, Dict[str, Any]], None]] = None,
+        telemetry_callback: Optional[Callable[[Dict[str, Any]], None]] = None,
         max_iterations: int = 20,
     ) -> Dict[str, Any]:
         """
@@ -134,6 +136,10 @@ class EXAgent:
         3. Executes tool calls concurrently
         4. Applies self-improving memory learning check
         5. Logs trajectory
+
+        telemetry_callback receives a live snapshot dict after each provider
+        round: {prompt_tokens, completion_tokens, total_tokens, context_limit,
+        context_pct, turn_latency_s, model, provider}
         """
         # Record user message in SQLite & active memory
         self.state.append_message("user", user_message)
@@ -158,9 +164,33 @@ class EXAgent:
         final_assistant_content = ""
         total_reasoning = ""
         tool_calls_executed = 0
+        turn_started = time.time()
+
+        def _emit_telemetry(turn_latency: Optional[float] = None) -> None:
+            if telemetry_callback is None:
+                return
+            limit = self.state.context_limit or 0
+            ctx = self.state.prompt_tokens  # last-round prompt size ≈ context in flight
+            snapshot = {
+                "model": self.model,
+                "provider": self.provider_name,
+                "prompt_tokens": self.state.prompt_tokens,
+                "completion_tokens": self.state.completion_tokens,
+                "total_tokens": self.state.total_tokens,
+                "context_used": ctx,
+                "context_limit": limit,
+                "context_pct": (ctx / limit * 100.0) if limit else 0.0,
+                "turn_latency_s": turn_latency if turn_latency is not None else (time.time() - turn_started),
+                "turn_count": self.state.turn_count,
+            }
+            try:
+                telemetry_callback(snapshot)
+            except Exception:
+                pass
 
         while iteration < max_iterations:
             iteration += 1
+            round_started = time.time()
             tool_schemas = self.get_tool_schemas()
 
             accumulated_content = ""
@@ -169,6 +199,8 @@ class EXAgent:
 
             # Stream response from provider
             async for chunk in self.provider.chat_stream(messages, tools=tool_schemas):
+                if chunk.usage:
+                    self.state.record_usage(chunk.usage)
                 if chunk.content:
                     accumulated_content += chunk.content
                     if stream_callback:
@@ -181,6 +213,9 @@ class EXAgent:
 
                 if chunk.tool_calls:
                     raw_tool_calls = chunk.tool_calls
+
+            self.state.turn_count += 1
+            _emit_telemetry(turn_latency=time.time() - round_started)
 
             # Extract thought blocks from content if embedded in text (<thought>...</thought>)
             clean_content, inline_thought = ToolParser.extract_thought(accumulated_content)
@@ -271,6 +306,13 @@ class EXAgent:
             "reasoning": total_reasoning.strip(),
             "tool_calls_count": tool_calls_executed,
             "messages": self.state.messages,
+            "usage": {
+                "prompt_tokens": self.state.prompt_tokens,
+                "completion_tokens": self.state.completion_tokens,
+                "total_tokens": self.state.total_tokens,
+                "context_limit": self.state.context_limit,
+            },
+            "turn_latency_s": time.time() - turn_started,
         }
 
     def _evaluate_memory_persisting(self, assistant_response: str) -> None:

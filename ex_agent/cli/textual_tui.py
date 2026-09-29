@@ -15,7 +15,7 @@ arrive via thread-safe post_message from the agent's callbacks.
 from __future__ import annotations
 
 import asyncio
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from textual.app import App, ComposeResult
 from textual.containers import Vertical
@@ -45,16 +45,29 @@ class ChatApp(App):
     def __init__(self, session_id: Optional[str] = None) -> None:
         super().__init__()
         self.session_id = session_id
-        cfg = load_config()
-        self.cfg = cfg
+        self.cfg = load_config()
         self.agent: Optional[EXAgent] = None
         self._turn_lock = asyncio.Lock()
+        self.telemetry: Dict[str, Any] = {}
+        # Known context windows (approx, top-end) — used for the context gauge
+        self._ctx_limits: Dict[str, int] = {
+            "glm-5.3-flash": 1_000_000,
+            "glm-5.3": 200_000,
+            "glm-5.2": 200_000,
+            "gpt-oss:120b": 131_072,
+            "gpt-oss:20b": 131_072,
+            "gemma4:31b": 128_000,
+            "kimi-k3": 256_000,
+        }
+        self._ctx_limit = self._ctx_limits.get(self.cfg.model, 131_072)
 
     CSS = """
     Screen { layout: vertical; }
     #banner { dock: top; height: 3; border: round $accent; padding: 0 1;
               background: $surface; color: $text; }
     #banner-line1 { color: $text; }
+    #statusbar { dock: top; height: 1; padding: 0 1; background: $surface;
+                 color: $text; }
     #chat { border: round $accent-muted; margin: 0 0; height: 1fr; }
     #chat:focus { border: round $accent; }
     Input { dock: bottom; border: round $accent; }
@@ -63,9 +76,47 @@ class ChatApp(App):
 
     def compose(self) -> ComposeResult:
         yield Banner(self._banner_markup(), id="banner")
+        yield Static(self._status_markup(), id="statusbar")
         yield RichLog(highlight=False, markup=True, wrap=True, id="chat")
         yield Input(placeholder="Ask anything…", id="prompt")
         yield Footer()
+
+    # ── status bar ─────────────────────────────────────────────────
+    @staticmethod
+    def _fmt_tokens(n: float) -> str:
+        if n >= 1_000_000:
+            return f"~{n / 1_000_000:.1f}M"
+        if n >= 1_000:
+            return f"~{int(round(n / 1_000))}K"
+        return f"{int(n)}"
+
+    def _gauge(self, pct: float, width: int = 10) -> str:
+        filled = max(0, min(width, int(round(pct / 100.0 * width))))
+        return "[" + "█" * filled + "░" * (width - filled) + "]"
+
+    def _status_markup(self) -> str:
+        t = self.telemetry
+        model = self.cfg.model
+        used = t.get("context_used", 0)
+        limit = t.get("context_limit") or self._ctx_limit
+        pct = (used / limit * 100.0) if limit else 0.0
+        latency = t.get("turn_latency_s")
+        # stream health: ratio of content tokens delivered vs. usage (a rough QoS)
+        comp = t.get("completion_tokens", 0)
+        health = t.get("stream_health", 100.0)
+        lat = f"{latency:.1f}s" if isinstance(latency, (int, float)) and latency < 10 else "—"
+        return (
+            f"[b {GOLD}]☤ {model}[/b {GOLD}]"
+            f" [dim]│[/dim] {self._fmt_tokens(used)}/{self._fmt_tokens(limit)}"
+            f" [dim]│[/dim] {self._gauge(pct)} [dim]{pct:.0f}%[/dim]"
+            f" [dim]│[/dim] [b green]◎[/b green] {health:.1f}%"
+            f" [dim]│[/dim] [b {ACCENT}]◷[/b {ACCENT}] {lat}"
+            f" [dim]│[/dim] [b]↑ {t.get('prompt_tokens', 0)}[/b] [dim]·[/dim] [b]↓ {comp}[/b]"
+        )
+
+    def _refresh_status(self) -> None:
+        bar = self.query_one("#statusbar", Static)
+        bar.update(self._status_markup())
 
     def _banner_markup(self) -> str:
         return (
@@ -76,8 +127,10 @@ class ChatApp(App):
 
     def on_mount(self) -> None:
         self.agent = EXAgent(config=self.cfg, session_id=self.session_id)
+        self.agent.state.context_limit = self._ctx_limit
         log = self.query_one("#chat", RichLog)
         log.write("[dim]◆ session started — type a message, /help for commands, Ctrl+C to quit[/dim]")
+        self._refresh_status()
         self.query_one("#prompt", Input).focus()
 
     # ── input handling ──────────────────────────────────────────────
@@ -145,11 +198,17 @@ class ChatApp(App):
                     ok = bool(data.get("success"))
                     log.write(f"[green]  ✓ done[/green]" if ok else f"[red]  ✗ failed[/red]")
 
+            def on_telemetry(snap: dict) -> None:
+                # Called from agent after each provider round — update the status bar live
+                self.telemetry = snap
+                self.call_after_refresh(self._refresh_status)
+
             try:
                 res = await self.agent.run_conversation_async(
                     user_message=text,
                     stream_callback=on_stream,
                     tool_status_callback=on_tool,
+                    telemetry_callback=on_telemetry,
                 )
             except Exception as e:
                 log.write(f"[b red]✘ Session Error: {e}[/b red]")
