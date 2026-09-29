@@ -530,8 +530,10 @@
 
     <h3 class="ref-h">Shell — aex &lt;command&gt;</h3>
     <div class="ref" style="margin-bottom:40px">
-      <div class="ref-row"><code class="k">aex</code><p>Launch the full-screen interactive TUI. This is where you'll live.</p></div>
+      <div class="ref-row"><code class="k">aex</code><p>Launch the full-screen interactive TUI. First run guides you through setup automatically. This is where you'll live.</p></div>
+      <div class="ref-row"><code class="k">aex chat [--classic]</code><p>Same chat, choose your interface — full-screen TUI (default) or the classic inline terminal.</p></div>
       <div class="ref-row"><code class="k">aex setup</code><p>Interactive wizard: provider, model, base URL, masked API key, live connection test. Safe to re-run any time.</p></div>
+      <div class="ref-row wide"><code class="k">aex doctor</code><p>One command, full health check: repairs the <code>aex</code> command (Windows non-admin PATH), then live-tests your provider connection and tells you exactly what to fix.</p></div>
       <div class="ref-row wide"><code class="k">aex model [name] [-p provider]</code><p>View or switch the active model/provider without opening a chat.</p></div>
       <div class="ref-row"><code class="k">aex memory</code><p>Inspect the persistent <code>MEMORY.md</code> and <code>USER.md</code> files and their character budgets.</p></div>
       <div class="ref-row"><code class="k">aex skills</code><p>List every loaded skill — bundled ones plus the ones the agent taught itself.</p></div>
