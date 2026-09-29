@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-APP_NAME = "AEX Agent"
+APP_NAME = "Merlin"
 CLI_NAME = "aex"
 PACKAGE_NAME = "aex_agent"
 VERSION = "1.0.0"

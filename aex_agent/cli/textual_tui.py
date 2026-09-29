@@ -67,7 +67,7 @@ class MultilinePasteInput(Input):
 
 
 class ChatApp(App):
-    """slt-inspired full-screen chat for AEX Agent."""
+    """slt-inspired full-screen chat for Merlin (AEX Agent)."""
 
     TITLE = APP_NAME
     BINDINGS = [
@@ -204,7 +204,7 @@ class ChatApp(App):
 
     def _banner_markup(self) -> Text:
         return logo_splash(
-            subtitle=f"v{VERSION}  ·  {self._model_short()}  ·  {self.cfg.provider}"
+            subtitle=f"MERLIN v{VERSION}  ·  {self._model_short()}  ·  {self.cfg.provider}"
                     + (f"  ·  session {self.agent.session_id[:8]}" if self.agent else ""),
             style=GOLD,
             accent=ACCENT,

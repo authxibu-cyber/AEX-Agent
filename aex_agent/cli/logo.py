@@ -67,7 +67,7 @@ def logo_splash(
     """
     art = _load_logo()
     if not art:
-        out = Text(title or "Aex Agent", style=style)
+        out = Text(title or "Merlin", style=style)
         if subtitle:
             out.append("\n" + subtitle, style=f"dim {accent}")
         return out
@@ -75,7 +75,7 @@ def logo_splash(
     logo_w = max(len(l) for l in art)
 
     if width and width < logo_w:
-        out = Text(title or "Aex Agent", style=style)
+        out = Text(title or "Merlin", style=style)
         if subtitle:
             out.append("\n" + subtitle, style=f"dim {accent}")
         return out

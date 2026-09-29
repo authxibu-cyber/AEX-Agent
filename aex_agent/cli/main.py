@@ -25,7 +25,7 @@ console = Console()
 @click.group(invoke_without_command=True)
 @click.pass_context
 def main(ctx: click.Context):
-    """AEX Agent: Autonomous, self-improving AI agent harness."""
+    """Merlin (AEX Agent): autonomous, self-improving AI agent harness."""
     if ctx.invoked_subcommand is None:
         from aex_agent.cli.textual_tui import run_interactive_tui
         run_interactive_tui()
@@ -102,7 +102,7 @@ def cmd_skills():
     """List all available skills (bundled and learned)."""
     mgr = SkillManager()
     skills = mgr.list_skills()
-    table = Table(title="AEX Agent Skills Catalog")
+    table = Table(title="Merlin Skills Catalog")
     table.add_column("Name", style="bold cyan")
     table.add_column("Origin", style="yellow")
     table.add_column("Description", style="white")
