@@ -88,7 +88,7 @@ async def test_textual_tui_full_turn(fake_agent_turn):
 
         # initial state: input enabled, status bar renders model glyph
         assert not prompt.disabled
-        assert "☤" in app._status_markup()
+        assert "▎" in app._status_markup() and "⊙" in app._status_markup() and "⊘" in app._status_markup()
 
         # submit a turn — fake turn holds mid-stream on the gate
         prompt.value = "test streaming please"
@@ -121,7 +121,7 @@ async def test_textual_tui_full_turn(fake_agent_turn):
         text = _transcript(app)
         assert "❯ test streaming please" in text
         assert "thought" in text
-        assert "▐ terminal" in text
+        assert "│ terminal" in text
         assert "✓ terminal done" in text
         assert "world" in text
         assert "1 tool call" in text

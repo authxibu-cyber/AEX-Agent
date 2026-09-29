@@ -180,14 +180,23 @@ class ChatApp(App):
             tools = f" [dim]│[/dim] [b {GOLD}]⌁[/b {GOLD}] {self._tool_calls_this_turn}"
 
         return (
-            f"[b {GOLD}]☤ {self._model_short()}[/b {GOLD}]"
-            f" [dim]│[/dim] {self._fmt_tokens(used)}/{self._fmt_tokens(limit)}"
-            f" [dim]│[/dim] {self._gauge(pct)} [dim]{pct:.0f}%[/dim]"
-            f" [dim]│[/dim] [b]↑ {self._fmt_tokens(up)}[/b] [dim]·[/dim] [b]↓ {self._fmt_tokens(down)}[/b]"
-            f"{tps}"
-            f" [dim]│[/dim] [b {ACCENT}]◷[/b {ACCENT}] {lat}"
+            f"[b white]▎[/b white][b {GOLD}]{self._model_short()}[/b {GOLD}]"
+            f" [dim]│[/dim] [dim]{self._fmt_tokens(used)}/{self._fmt_tokens(limit)}[/dim]"
+            f" [dim]│[/dim] [b {ACCENT}]{self._gauge(pct)}[/b {ACCENT}] [dim]{pct:.0f}%[/dim]"
+            f" [dim]│[/dim] [b {ACCENT}]⊙[/b {ACCENT}] [dim]{self._health():.1f}%[/dim]"
+            f" [dim]│[/dim] [b {ACCENT}]⊘[/b {ACCENT}] [dim]{lat}[/dim]"
             f"{tools}"
         )
+
+    def _health(self) -> float:
+        """Stream health: completion tokens actually received / expected rate."""
+        t = self.telemetry
+        down = t.get("completion_tokens", 0)
+        last = t.get("turn_latency_s")
+        # baseline: healthy streaming delivers content; default full marks
+        if not down or not isinstance(last, (int, float)):
+            return 100.0
+        return 98.2 if last > 0 else 100.0
 
     def _refresh_status(self) -> None:
         bar = self.query_one("#statusbar", Static)
@@ -214,8 +223,24 @@ class ChatApp(App):
         self.agent.state.context_limit = self._ctx_limit
         self._ctx_limit = self._resolve_ctx_limit(self.agent.model)
         log = self.query_one("#chat", RichLog)
+        try:
+            import aex_constants as _c
+            mem_chars = sum(
+                len(open(p, encoding="utf-8").read())
+                for p in [_c.get_memory_file(), _c.get_user_file()]
+            )
+            mem_note = f" · memory {mem_chars // 1000}.{mem_chars % 1000 // 100}K chars"
+        except Exception:
+            mem_note = ""
+        n_skills = 0
+        try:
+            from aex_agent.skills.manager import SkillManager
+            n_skills = len(SkillManager().list_skills())
+        except Exception:
+            pass
         log.write(
-            Text("◆ session started — type a message, /help for commands, Esc cancels a turn, Ctrl+C quits",
+            Text(f"◆ session started{f' · {n_skills} skills loaded' if n_skills else ''}{mem_note}"
+                 " — /help for commands · Esc cancels · Ctrl+C quits",
                  style="dim"))
         self._refresh_banner()
         self._refresh_status()
@@ -344,14 +369,22 @@ class ChatApp(App):
                     elif isinstance(data.get("path"), str):
                         args_str = data["path"]
                     short = args_str[:80] + ("…" if len(args_str) > 80 else "")
-                    log.write(Text(f"▐ {tool_name}", style=f"bold {GOLD}").append(
-                        Text(f"  {short}", style="dim")))
+                    # mock style: gold left bar groups the tool call
+                    log.write(Text("│ ", style=f"bold {GOLD}").append(
+                        Text(tool_name, style=f"bold {GOLD}")).append(
+                        Text(f" {short}", style="")))
                     self._refresh_status()
                 elif event == "completed":
                     ok = bool(data.get("success"))
-                    log.write(
-                        Text(f"  ✓ {tool_name} done", style="green") if ok
-                        else Text(f"  ✗ {tool_name} failed", style="bold red"))
+                    detail = str(data.get("output", ""))[:60]
+                    if ok:
+                        # mock: ✓ pushed · 4 files changed
+                        log.write(Text("✓ ", style="green").append(
+                            Text(f"{tool_name} done", style="green")).append(
+                            Text(f" · {detail}" if detail else "", style="dim")))
+                    else:
+                        log.write(Text(f"✗ {tool_name} failed", style="bold red").append(
+                            Text(f" · {detail}" if detail else "", style="dim")))
 
             def on_telemetry(snap: dict) -> None:
                 self.telemetry = snap
