@@ -27,21 +27,28 @@ console = Console()
 def main(ctx: click.Context):
     """EX Agent: Autonomous, self-improving AI agent harness."""
     if ctx.invoked_subcommand is None:
-        asyncio.run(run_interactive_tui())
+        from ex_agent.cli.textual_tui import run_interactive_tui
+        run_interactive_tui()
 
 
 @main.command("chat")
 @click.option("--model", "-m", help="Override active model for this session")
 @click.option("--provider", "-p", help="Override active provider for this session")
 @click.option("--session", "-s", help="Resume or specify a session ID")
-def cmd_chat(model: str, provider: str, session: str):
+@click.option("--classic", "-c", is_flag=True, help="Use the classic prompt_toolkit TUI instead of the full-screen app")
+def cmd_chat(model: str, provider: str, session: str, classic: bool):
     """Start an interactive chat session in the terminal TUI."""
     cfg = load_config()
     if model:
         cfg.model = model
     if provider:
         cfg.provider = provider
-    asyncio.run(run_interactive_tui(session_id=session))
+    if classic:
+        from ex_agent.cli.tui import run_interactive_tui
+        asyncio.run(run_interactive_tui(session_id=session))
+    else:
+        from ex_agent.cli.textual_tui import run_interactive_tui
+        run_interactive_tui(session_id=session)
 
 
 @main.command("gateway")
