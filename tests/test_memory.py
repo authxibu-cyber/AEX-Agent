@@ -1,12 +1,12 @@
 """
-Unit Tests for EX Agent Persistent Memory Subsystem.
+Unit Tests for AEX Agent Persistent Memory Subsystem.
 Verifies bounded memory constraints and FTS5 search indexing.
 """
 import tempfile
 from pathlib import Path
-from ex_agent.memory.persistent import MemoryManager
-from ex_agent.memory.store import SessionStore
-from ex_constants import MEMORY_MD_MAX_CHARS, USER_MD_MAX_CHARS
+from aex_agent.memory.persistent import MemoryManager
+from aex_agent.memory.store import SessionStore
+from aex_constants import MEMORY_MD_MAX_CHARS, USER_MD_MAX_CHARS
 
 
 def test_bounded_memory_consolidation():

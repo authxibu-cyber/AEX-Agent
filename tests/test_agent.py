@@ -1,10 +1,10 @@
 """
-Unit Tests for EX Agent Brain & Parser.
+Unit Tests for AEX Agent Brain & Parser.
 Verifies Hermes XML and thought block parsing, and agent initialization.
 """
-from ex_agent.agent.core import EXAgent
-from ex_agent.agent.parser import ToolParser
-from ex_agent.agent.selective_pulse import CognitivePulseGate
+from aex_agent.agent.core import EXAgent
+from aex_agent.agent.parser import ToolParser
+from aex_agent.agent.selective_pulse import CognitivePulseGate
 
 
 def test_tool_parser_thought_and_xml():
@@ -40,5 +40,5 @@ def test_agent_initialization():
     assert agent.model is not None
     assert agent.session_id is not None
     system_prompt = agent.assemble_system_message()
-    assert "EX Agent" in system_prompt
+    assert "AEX Agent" in system_prompt
     assert "Persistent Memory Cabinet" in system_prompt

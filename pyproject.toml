@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ex-agent"
+name = "aaex-agent"
 version = "1.0.0"
-description = "EX Agent: Autonomous, self-improving AI agent harness with Tier-3 deep architecture, 3-layer persistent memory, dynamic skill synthesis, and multi-channel gateway."
+description = "AEX Agent: Autonomous, self-improving AI agent harness with Tier-3 deep architecture, 3-layer persistent memory, dynamic skill synthesis, and multi-channel gateway."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-    { name = "EX Team & GodEye Mandate", email = "exagent@internal.ai" }
+    { name = "AEX Team & GodEye Mandate", email = "aexagent@internal.ai" }
 ]
 keywords = ["ai-agent", "autonomous-agent", "nous-hermes", "self-improving", "memory", "tui", "gateway"]
 dependencies = [
@@ -40,10 +40,10 @@ dev = [
 ]
 
 [project.scripts]
-ex = "ex_agent.cli.main:main"
-ex-agent = "ex_agent.agent.core:main"
-ex-gateway = "ex_agent.gateway.server:main"
+aex = "aaex_agent.cli.main:main"
+aaex-agent = "aaex_agent.agent.core:main"
+aex-gateway = "aaex_agent.gateway.server:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ex_agent*", "scripts*"]
+include = ["aaex_agent*", "scripts*"]

@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
-    EX Agent Native Windows PowerShell Installer.
-    Sets up python environment, dependencies, EX_HOME directory, and creates the 'ex' command.
+    AEX Agent Native Windows PowerShell Installer.
+    Sets up python environment, dependencies, AEX_HOME directory, and creates the 'aex' command.
 #>
 
 $ErrorActionPreference = "Stop"
@@ -11,7 +11,7 @@ Write-Host "            EX AGENT NATIVE WINDOWS INSTALLER             " -Foregro
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 $exHome = if ($env:LOCALAPPDATA) { "$env:LOCALAPPDATA\ex" } else { "$HOME\.ex" }
-Write-Host "[*] Target EX_HOME: $exHome" -ForegroundColor Yellow
+Write-Host "[*] Target AEX_HOME: $exHome" -ForegroundColor Yellow
 
 if (-not (Test-Path $exHome)) {
     New-Item -ItemType Directory -Path $exHome -Force | Out-Null
@@ -21,12 +21,12 @@ if (-not (Test-Path $exHome)) {
 }
 
 $repoDir = Split-Path -Parent $PSScriptRoot
-Write-Host "[*] Installing EX Agent in editable mode from $repoDir..." -ForegroundColor Yellow
+Write-Host "[*] Installing AEX Agent in editable mode from $repoDir..." -ForegroundColor Yellow
 python -m pip install -e $repoDir
 
 Write-Host "`n[✔] Installation complete!" -ForegroundColor Green
-Write-Host "You can now run EX Agent using:" -ForegroundColor Cyan
-Write-Host "  ex chat        - Launch interactive terminal TUI" -ForegroundColor White
-Write-Host "  ex gateway     - Launch API server on :8642" -ForegroundColor White
-Write-Host "  ex model       - Configure active model" -ForegroundColor White
+Write-Host "You can now run AEX Agent using:" -ForegroundColor Cyan
+Write-Host "  aex chat        - Launch interactive terminal TUI" -ForegroundColor White
+Write-Host "  aex gateway     - Launch API server on :8642" -ForegroundColor White
+Write-Host "  aex model       - Configure active model" -ForegroundColor White
 Write-Host "  ex --help      - Show all commands`n" -ForegroundColor White

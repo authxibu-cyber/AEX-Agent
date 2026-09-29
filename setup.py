@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="ex-agent",
+    name="aaex-agent",
     version="1.0.0",
     packages=find_packages(),
-    py_modules=["ex_constants"],
+    py_modules=["aaex_constants"],
     install_requires=[
         "pydantic>=2.0.0",
         "rich>=13.0.0",
@@ -20,9 +20,9 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "ex = ex_agent.cli.main:main",
-            "ex-agent = ex_agent.agent.core:main",
-            "ex-gateway = ex_agent.gateway.server:main",
+            "aex = aaex_agent.cli.main:main",
+            "aaex-agent = aaex_agent.agent.core:main",
+            "aex-gateway = aaex_agent.gateway.server:main",
         ],
     },
 )

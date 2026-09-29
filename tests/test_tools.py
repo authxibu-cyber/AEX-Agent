@@ -1,11 +1,11 @@
 """
-Unit Tests for EX Agent Tools & Toolsets.
+Unit Tests for AEX Agent Tools & Toolsets.
 Verifies tool execution, parallel dispatch, and schema generation.
 """
 import asyncio
-from ex_agent.tools.base import BaseTool, ToolRegistry, ToolResult, registry
-from ex_agent.tools.executor import ToolExecutor
-from ex_agent.tools.filesystem import file_write, file_read
+from aex_agent.tools.base import BaseTool, ToolRegistry, ToolResult, registry
+from aex_agent.tools.executor import ToolExecutor
+from aex_agent.tools.filesystem import file_write, file_read
 import tempfile
 from pathlib import Path
 

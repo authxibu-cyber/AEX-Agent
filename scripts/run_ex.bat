@@ -1,4 +1,4 @@
 @echo off
-title EX Agent - Autonomous Terminal Harness
-python -m ex_agent %*
+title AEX Agent - Autonomous Terminal Harness
+python -m aaex_agent %*
 pause

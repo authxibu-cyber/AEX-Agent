@@ -26,7 +26,7 @@ Elevated by the **GodEye Mandate**, AEX Agent embeds **Tier-3 deep architectural
 | **3-Layer Bounded Memory** | `MEMORY.md` (~2,200 char world/project facts) and `USER.md` (~1,375 char user traits) with automatic FIFO consolidation to maintain zero context bloat. |
 | **FTS5 Cross-Session Recall** | SQLite with Write-Ahead Logging (WAL) and FTS5 BM25-ranked full-text search across all historical conversation turns. |
 | **Autonomous Skill Creation** | Self-authoring skill loop (`/learn` and `learn_skill` tool) that writes YAML-frontmattered `SKILL.md` packages into `~/.ex/skills/`. |
-| **Universal Model Support** | Native adapters for **Nous Portal** (Hermes 3 / Hermes 2 Pro), **OpenRouter**, **OpenAI**, **Anthropic**, **Gemini**, and **Local LLMs** (vLLM / Ollama). Switch on the fly with `ex model`. |
+| **Universal Model Support** | Native adapters for **Nous Portal** (Hermes 3 / Hermes 2 Pro), **OpenRouter**, **OpenAI**, **Anthropic**, **Gemini**, and **Local LLMs** (vLLM / Ollama). Switch on the fly with `aex model`. |
 | **Multi-Channel Gateway** | High-performance FastAPI server running on port `8642` with OpenAI-compatible `/v1/chat/completions` (SSE streaming) plus Telegram, Discord, and Slack connectors. |
 | **Embedded Cron Scheduler** | Unattended natural-language periodic automations (`schedule_cron`) with conversational memory injection so the agent recalls past background task outputs. |
 | **Subagent Delegation** | Spawns parallel subagent instances (`delegate_task`) to collapse complex multi-stage tasks into zero-context-cost turns. |
@@ -37,15 +37,15 @@ Elevated by the **GodEye Mandate**, AEX Agent embeds **Tier-3 deep architectural
 ## Directory & Package Architecture
 
 ```
-yourEXagent/
+AEX-Agent/
 ├── pyproject.toml                 # Package definition & CLI entry points
 ├── setup.py                       # Setup installer
 ├── requirements.txt               # Core dependencies
-├── ex_constants.py                # Environment & directory path resolver
+├── aaex_constants.py                # Environment & directory path resolver
 ├── AGENTS.md                      # Workspace & project guidelines
 ├── SOUL.md                        # Sovereign persona & cognitive stance
 ├── .env.example                   # Environment configuration template
-├── ex_agent/
+├── aaex_agent/
 │   ├── agent/
 │   │   ├── core.py                # EXAgent main loop & turn coordinator
 │   │   ├── parser.py              # Resilient parser for OpenAI & Hermes XML tool calls
@@ -82,14 +82,14 @@ yourEXagent/
 │   │   ├── scheduler.py           # Embedded non-blocking Cron scheduler
 │   │   └── channels/              # Telegram, Discord, and Slack bridges
 │   └── cli/
-│       ├── main.py                # Command-line router (`ex`)
+│       ├── main.py                # Command-line router (`aex`)
 │       ├── tui.py                 # Rich interactive TUI with slash-autocomplete
 │       ├── commands.py            # Authoritative slash-command registry
 │       └── setup_wizard.py        # Interactive onboarding wizard
 ├── scripts/
 │   ├── install.ps1                # Native Windows PowerShell installer
 │   ├── install.sh                 # Linux/macOS/WSL2 installer
-│   └── run_ex.bat                 # Windows quick launcher
+│   └── run_aex.bat                 # Windows quick launcher
 └── tests/                         # Pytest test suite
 ```
 
@@ -129,7 +129,7 @@ Configure your primary API key (e.g. `OPENROUTER_API_KEY`, `NOUS_PORTAL_API_KEY`
 
 ### Start Interactive Chat Session
 ```bash
-ex chat
+aex chat
 ```
 or simply:
 ```bash
@@ -139,26 +139,26 @@ ex
 ### Switch Model & Provider
 ```bash
 # View active model
-ex model
+aex model
 
 # Switch model
-ex model nousresearch/hermes-3-llama-3.1-8b --provider openrouter
+aex model nousresearch/hermes-3-llama-3.1-8b --provider openrouter
 ```
 
 ### Start Gateway API Server & Cron Daemon
 ```bash
-ex gateway --port 8642
+aex gateway --port 8642
 ```
 Once launched, connect any OpenAI-compatible client or Open WebUI to `http://localhost:8642/v1`.
 
 ### Inspect & Manage Memory
 ```bash
-ex memory
+aex memory
 ```
 
 ### List Skills Catalog
 ```bash
-ex skills
+aex skills
 ```
 
 ---
