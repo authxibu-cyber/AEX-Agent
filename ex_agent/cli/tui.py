@@ -61,7 +61,7 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
         try:
             # agy-style minimal prompt: dim ❯ with blinking-free clean line
             user_input = await prompt_session.prompt_async(
-                [("class:prompt", "\n[bold gold3]❯[/bold gold3] ")],
+                [("class:prompt", "\n❯ ")],
                 multiline=False,
             )
             user_input = user_input.strip()
@@ -87,20 +87,19 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
             accumulated_thinking = ""
             thinking_shown = False
             live: Optional[Live] = None
-            live_md = None
 
             def _close_inline():
                 """Flush live-rendered markdown into the transcript."""
-                nonlocal live, live_md
+                nonlocal live
                 if live is not None:
-                    live_md.update(Markdown(accumulated_text))
+                    live.update(Markdown(accumulated_text))  # final paint
+                    live.refresh()
                     live.stop()
                     live = None
-                    live_md = None
                     console.print()
 
             def on_stream(kind: str, delta: str):
-                nonlocal accumulated_text, accumulated_thinking, live, live_md, thinking_shown
+                nonlocal accumulated_text, accumulated_thinking, live, thinking_shown
                 if kind == "thinking":
                     accumulated_thinking += delta
                     return
@@ -118,12 +117,11 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
                         live = Live(
                             console=console, refresh_per_second=12, transient=True
                         )
-                        live_md = Markdown("")
-                        live.start(live_md)
-                    live_md.update(Markdown(accumulated_text))
+                        live.start()
+                    live.update(Markdown(accumulated_text))
 
             def on_tool_status(event: str, tool_name: str, data: dict):
-                nonlocal live, live_md
+                nonlocal live
                 # close any streaming block first so tool lines stay aligned
                 _close_inline()
                 if event == "invoking":
