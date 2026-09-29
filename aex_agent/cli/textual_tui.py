@@ -192,7 +192,6 @@ class ChatApp(App):
 
     def _banner_markup(self) -> Text:
         return logo_splash(
-            title=APP_NAME,
             subtitle=f"v{VERSION}  ·  {self._model_short()}  ·  {self.cfg.provider}"
                     + (f"  ·  session {self.agent.session_id[:8]}" if self.agent else ""),
             style=GOLD,

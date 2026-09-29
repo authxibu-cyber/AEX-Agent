@@ -132,7 +132,6 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
 
     # Emblem splash, then the compact header
     console.print(logo_splash(
-        title=APP_NAME,
         subtitle=f"v{VERSION}  ·  {cfg.model}  ·  {cfg.provider}",
         style="gold3",
         accent="bright_cyan",
