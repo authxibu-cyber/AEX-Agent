@@ -36,7 +36,7 @@ def first_run_guard(console_: Console) -> bool:
         return True
     console_.print()
     console_.print(f"[bold gold3]Welcome to {APP_NAME} v{VERSION}[/bold gold3]")
-    console_.print("[dim]No configuration found yet — let's connect you to a model.[/dim]")
+    console_.print("[dim]No configuration found yet - let's connect you to a model.[/dim]")
     console_.print("[dim]This takes under a minute: pick a provider, paste an API key,[/dim]")
     console_.print("[dim]and the wizard tests the connection live before saving.[/dim]")
     console_.print()
@@ -93,10 +93,10 @@ def cmd_doctor():
             console.print(f"[green]OK[/green] Connection test passed: {msg}")
         else:
             console.print(f"[red]FAILED[/red] Connection test: {msg}")
-            console.print("[yellow]→ Run  aex setup  to reconfigure provider/model/key.[/yellow]")
+            console.print("[yellow]-> Run  aex setup  to reconfigure provider/model/key.[/yellow]")
     except Exception as e:
         console.print(f"[yellow]Config check skipped:[/yellow] {e}")
-        console.print("[yellow]→ Run  aex setup  to configure a provider.[/yellow]")
+        console.print("[yellow]-> Run  aex setup  to configure a provider.[/yellow]")
 
 
 @main.command("chat")
@@ -144,7 +144,7 @@ def cmd_model(new_model: str, provider: str):
     if provider:
         cfg.provider = provider
     save_config(cfg)
-    console.print(f"[bold green]✔ Model updated to:[/bold green] {cfg.model} ({cfg.provider})")
+    console.print(f"[bold green]OK Model updated to:[/bold green] {cfg.model} ({cfg.provider})")
 
 
 @main.command("memory")

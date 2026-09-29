@@ -1,6 +1,6 @@
 """
 Interactive Setup Wizard for AEX Agent.
-Configures provider, model, custom base URL, and API key — manually.
+Configures provider, model, custom base URL, and API key - manually.
 Credentials are stored in AEX_HOME/config.yaml (non-secret) and AEX_HOME/.env (secrets).
 Includes a live connection test before saving.
 """
@@ -63,7 +63,7 @@ def _is_local_url(base_url: str | None) -> bool:
         return False
     try:
         host = base_url.split("://", 1)[-1].split("/", 1)[0].lower()
-        # Bracketed IPv6 like [::1]:11434 — split on ':' breaks it, handle first
+        # Bracketed IPv6 like [::1]:11434 - split on ':' breaks it, handle first
         m = re.match(r"^\[(.+)\]", host)
         if m:
             host = m.group(1)
@@ -112,7 +112,7 @@ def _test_connection(cfg: Config) -> tuple[bool, str]:
     try:
         import httpx
     except ImportError:
-        return True, "httpx not installed — skipped connection test"
+        return True, "httpx not installed - skipped connection test"
 
     base_url = (cfg.resolve_base_url() or "").rstrip("/")
     api_key = cfg.resolve_api_key()
@@ -166,7 +166,7 @@ def _select_provider(current: str) -> str:
         for name, _nk, _u in PROVIDERS:
             if raw.lower() == name:
                 return name
-        console.print("[red]Unknown provider — try again.[/red]")
+        console.print("[red]Unknown provider - try again.[/red]")
 
 
 def run_setup_wizard() -> None:
@@ -186,7 +186,7 @@ def run_setup_wizard() -> None:
             default=cfg.base_url or "",
         )
         while not base_url.strip():
-            base_url = Prompt.ask("[red]Base URL is required[/red] — enter base URL", default=cfg.base_url or "")
+            base_url = Prompt.ask("[red]Base URL is required[/red] - enter base URL", default=cfg.base_url or "")
     else:
         base_url = Prompt.ask("Base URL", default=default_url)
         if base_url == default_url:
@@ -204,7 +204,7 @@ def run_setup_wizard() -> None:
     needs_key = bool(entry and entry[1]) or (provider in ("ollama", "vllm") and not is_local)
     existing = os.environ.get(env_var, "") or cfg.api_key or ""
     if is_local:
-        console.print(f"[dim]Local endpoint — no API key needed ({resolved_url})[/dim]")
+        console.print(f"[dim]Local endpoint - no API key needed ({resolved_url})[/dim]")
     elif needs_key:
         console.print(f"Existing key for '{provider}': [bold]{_mask(existing)}[/bold]")
         new_key = Prompt.ask(
@@ -215,7 +215,7 @@ def run_setup_wizard() -> None:
         if new_key:
             _persist_to_env(env_var, new_key)
             cfg.api_key = None  # prefer env-managed key
-            console.print(f"[green]✔ Key saved to {get_env_path()} ({env_var})[/green]")
+            console.print(f"[green]OK Key saved to {get_env_path()} ({env_var})[/green]")
     else:
         console.print(f"[dim]No API key configured for '{provider}' ({resolved_url})[/dim]")
 
@@ -230,16 +230,16 @@ def run_setup_wizard() -> None:
     console.print("\n[bold]Testing connection...[/bold]")
     ok, msg = _test_connection(cfg)
     if ok:
-        console.print(f"[bold green]✔ Connection OK:[/bold green] {msg}")
+        console.print(f"[bold green]OK Connection OK:[/bold green] {msg}")
     else:
-        console.print(f"[bold red]✘ Connection failed:[/bold red] {msg}")
+        console.print(f"[bold red]X Connection failed:[/bold red] {msg}")
         retry = Prompt.ask("Save anyway?", choices=["y", "n"], default="n")
         if retry.lower() != "y":
             console.print("[yellow]Configuration NOT saved. Fix and rerun `aex setup`.[/yellow]")
             return
 
     save_config(cfg)
-    console.print("\n[bold green]✔ Configuration saved successfully![/bold green]")
+    console.print("\n[bold green]OK Configuration saved successfully![/bold green]")
     console.print(f"  Model    : {cfg.model}")
     console.print(f"  Provider : {cfg.provider}")
     console.print(f"  Base URL : {cfg.resolve_base_url()}")

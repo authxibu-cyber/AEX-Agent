@@ -3,7 +3,7 @@ Path self-healing for the `aex` command.
 
 Problem: `pip install` on Windows without admin rights places console scripts in
 the Python *user* site Scripts dir (%APPDATA%\\Python\\PythonXY\\Scripts), which is
-NOT on PATH by default — the user installs successfully, then `aex` is "not
+NOT on PATH by default - the user installs successfully, then `aex` is "not
 recognized" (and on Linux, ~/.local/bin is often missing from PATH the same way).
 
 Fix: `python -m aex_agent doctor` (and the same check at CLI startup) detects
@@ -16,7 +16,7 @@ the gap and repairs it without admin rights:
   - POSIX: falls back to ~/.local/bin (bin dir convention) with an executable
     shim, and reports the PATH export line if needed.
 
-Everything is idempotent — running twice changes nothing.
+Everything is idempotent - running twice changes nothing.
 """
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ import sys
 import sysconfig
 from pathlib import Path
 
-# ── locate where pip actually put our scripts ────────────────────────────
+# -- locate where pip actually put our scripts ----------------------------
 
 def _scripts_dir() -> Path:
     """Directory pip installs console scripts into for this interpreter."""
@@ -35,7 +35,7 @@ def _scripts_dir() -> Path:
         base = sysconfig.get_path("scripts", scheme="nt_user" if os.name == "nt" else "posix_user")
         if base:
             return Path(base)
-    # normal install — scripts sit next to the interpreter
+    # normal install - scripts sit next to the interpreter
     return Path(sysconfig.get_path("scripts") or Path(sys.executable).parent)
 
 
@@ -79,7 +79,7 @@ def _cmd_on_path() -> bool:
     return shutil.which("aex") is not None
 
 
-# ── repairs ──────────────────────────────────────────────────────────────
+# -- repairs --------------------------------------------------------------
 
 def _fix_windows_user_path(scripts_dir: Path) -> str | None:
     """Append scripts_dir to the user PATH registry value. Returns action note."""
@@ -126,7 +126,7 @@ def _make_posix_shim(target: Path, shim_dir: Path) -> str | None:
     return f"shim written: {shim}"
 
 
-# ── public API ───────────────────────────────────────────────────────────
+# -- public API -----------------------------------------------------------
 
 def ensure_aex_on_path(verbose: bool = True) -> dict:
     """Make `aex` resolvable. Returns {'ok': bool, 'already': bool, 'actions': [...]}.
@@ -141,7 +141,7 @@ def ensure_aex_on_path(verbose: bool = True) -> dict:
     exe = _real_exe()
     if exe is None:
         result["ok"] = False
-        result["actions"].append("aex launcher not found — reinstall with pip")
+        result["actions"].append("aex launcher not found - reinstall with pip")
         return result
 
     notes: list[str] = []
@@ -190,7 +190,7 @@ def ensure_aex_on_path(verbose: bool = True) -> dict:
 if __name__ == "__main__":
     res = ensure_aex_on_path()
     if res["already"]:
-        print("[aex] `aex` already on PATH — nothing to do.")
+        print("[aex] `aex` already on PATH - nothing to do.")
     elif res["ok"]:
         print(f"[aex] repaired. actions: {res['actions']}")
     else:

@@ -1,12 +1,12 @@
 """
 Rich Interactive Terminal User Interface (TUI) for AEX Agent.
-slt-inspired layout: header panel with ◆ name + model badge, transcript
-blocks (user prompt with gold ❯, streaming assistant markdown, gold
-tool-call badges with ✓/✗ results), an input frame, and a colored key
-hint bar — all rendered with rich.
+slt-inspired layout: header panel with * name + model badge, transcript
+blocks (user prompt with gold >, streaming assistant markdown, gold
+tool-call badges with OK/X results), an input frame, and a colored key
+hint bar - all rendered with rich.
 
 Rendering strategy (fixes blank-screen-on-provider-error):
-- The transcript is printed PERMANENTLY with console.print() — everything
+- The transcript is printed PERMANENTLY with console.print() - everything
   stays in scrollback, nothing vanishes between turns.
 - rich Live (transient) is used ONLY during the streaming agent turn for
   live markdown repaint; the final text is printed permanently after.
@@ -42,19 +42,19 @@ PARCHMENT = "#fdf6e3"
 DIM = "dim"
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Builders (permanent console.print — scrollback-safe)
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
+# Builders (permanent console.print - scrollback-safe)
+# -----------------------------------------------------------------------------
 
 def print_header(model: str, provider: str) -> None:
-    """slt: ui.bordered(Rounded).row( ◆ Agent | badge(model) | spacer | stat )"""
+    """slt: ui.bordered(Rounded).row( * Agent | badge(model) | spacer | stat )"""
     grid = Table.grid(padding=(0, 2))
     grid.add_column(justify="left")
     grid.add_column(justify="left")
     grid.add_column(justify="right", ratio=1)
     grid.add_column(justify="right")
     grid.add_row(
-        Text("◆ ", style=f"bold {ACCENT}") + Text(APP_NAME, style="bold white"),
+        Text("* ", style=f"bold {ACCENT}") + Text(APP_NAME, style="bold white"),
         Text(f" {model}", style=f"bold {GOLD}"),
         Text(""),
         Text(provider, style=DIM),
@@ -68,7 +68,7 @@ def print_tool_card(tool_name: str, args_str: str = "") -> None:
     inner.add_column()
     inner.add_column(ratio=1)
     badge = Text(f" {tool_name} ", style=f"bold black on {GOLD}")
-    args_txt = Text(args_str[:100] + ("…" if len(args_str) > 100 else ""), style=DIM)
+    args_txt = Text(args_str[:100] + ("..." if len(args_str) > 100 else ""), style=DIM)
     inner.add_row(badge, args_txt)
     console.print(Panel(inner, border_style=GOLD, padding=(0, 1)))
 
@@ -78,7 +78,7 @@ def print_input_frame() -> None:
     body = Table.grid(padding=(0, 1))
     body.add_column()
     body.add_column(ratio=1)
-    body.add_row(Text("❯", style=f"bold {GOLD}"), Text("Ask anything…", style=DIM))
+    body.add_row(Text(">", style=f"bold {GOLD}"), Text("Ask anything...", style=DIM))
     console.print(Panel(body, border_style=ACCENT, padding=(0, 1)))
 
 
@@ -98,13 +98,13 @@ def print_user_prompt(text: str) -> None:
     grid = Table.grid(padding=(0, 1))
     grid.add_column()
     grid.add_column(ratio=1)
-    grid.add_row(Text("❯", style=f"bold {GOLD_BRIGHT}"), Text(text, style=f"bold {PARCHMENT}"))
+    grid.add_row(Text(">", style=f"bold {GOLD_BRIGHT}"), Text(text, style=f"bold {PARCHMENT}"))
     console.print()
     console.print(grid)
 
 
 def print_thought_hint(first_line: str) -> None:
-    console.print(Text(f"◆ thought: {first_line}…", style=DIM))
+    console.print(Text(f"* thought: {first_line}...", style=DIM))
 
 
 def print_footer_stats(tool_calls: int, session_id: str) -> None:
@@ -113,9 +113,9 @@ def print_footer_stats(tool_calls: int, session_id: str) -> None:
     console.print(Text(f"  {tool_calls} tool call{plural} · session {session_id[:8]}", style=DIM))
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 # Interactive loop
-# ─────────────────────────────────────────────────────────────────────────────
+# -----------------------------------------------------------------------------
 
 async def run_interactive_tui(session_id: Optional[str] = None) -> None:
     cfg = load_config()
@@ -143,7 +143,7 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
 
     while True:
         try:
-            user_input = await prompt_session.prompt_async("❯ ", multiline=False)
+            user_input = await prompt_session.prompt_async("> ", multiline=False)
             user_input = user_input.strip()
             if not user_input:
                 continue
@@ -152,7 +152,7 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
                 console.print(Text("Session closed. Memory preserved.", style=DIM))
                 break
 
-            # Slash commands → run, print output directly
+            # Slash commands -> run, print output directly
             if user_input.startswith("/"):
                 handled, output = commands_registry.handle(user_input, ctx)
                 if handled:
@@ -162,7 +162,7 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
 
             print_user_prompt(user_input)
 
-            # ── Agent turn ────────────────────────────────────────────
+            # -- Agent turn --------------------------------------------
             accumulated_text = ""
             accumulated_thinking = ""
             thinking_shown = False
@@ -211,8 +211,8 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
                 elif event == "completed":
                     ok = bool(data.get("success"))
                     console.print(
-                        Text("  ✓ done", style="green") if ok
-                        else Text("  ✗ failed", style="bold red")
+                        Text("  OK done", style="green") if ok
+                        else Text("  X failed", style="bold red")
                     )
 
             print()  # gap before response
@@ -227,7 +227,7 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
                 if not accumulated_text.strip():
                     console.print(
                         Text(
-                            "✘ no assistant output — provider error; run `aex setup` to test connection",
+                            "X no assistant output - provider error; run `aex setup` to test connection",
                             style="bold red",
                         )
                     )
@@ -238,7 +238,7 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
                     console.print()
 
             if accumulated_text.strip() and not accumulated_text.startswith("[Provider Error"):
-                # Persist the final markdown (Live is transient — reprint full text)
+                # Persist the final markdown (Live is transient - reprint full text)
                 console.print(Markdown(accumulated_text))
 
             turns = res.get("tool_calls_count", 0)
@@ -249,7 +249,7 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
             console.print(Text("Session terminated by user.", style=DIM))
             break
         except Exception as e:
-            console.print(f"[bold red]✘ Session Error:[/bold red] {e}")
+            console.print(f"[bold red]X Session Error:[/bold red] {e}")
 
 
 def main():
