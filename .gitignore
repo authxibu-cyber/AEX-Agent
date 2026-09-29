@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+cli_history.txt
+*.db
+*.db-wal
+*.db-shm
+trajectories/

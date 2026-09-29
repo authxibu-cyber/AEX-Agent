@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ex-agent"
+version = "1.0.0"
+description = "EX Agent: Autonomous, self-improving AI agent harness with Tier-3 deep architecture, 3-layer persistent memory, dynamic skill synthesis, and multi-channel gateway."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "EX Team & GodEye Mandate", email = "exagent@internal.ai" }
+]
+keywords = ["ai-agent", "autonomous-agent", "nous-hermes", "self-improving", "memory", "tui", "gateway"]
+dependencies = [
+    "pydantic>=2.0.0",
+    "rich>=13.0.0",
+    "prompt_toolkit>=3.0.0",
+    "httpx>=0.24.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.22.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "aiofiles>=23.0.0",
+    "croniter>=2.0.0",
+    "click>=8.0.0"
+]
+
+[project.optional-dependencies]
+all = [
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "python-telegram-bot>=20.0",
+    "mcp>=1.0.0"
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.20.0"
+]
+
+[project.scripts]
+ex = "ex_agent.cli.main:main"
+ex-agent = "ex_agent.agent.core:main"
+ex-gateway = "ex_agent.gateway.server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ex_agent*", "scripts*"]
