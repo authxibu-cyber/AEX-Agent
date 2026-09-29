@@ -31,8 +31,9 @@ from aex_agent.cli.logo import LOGO, logo_splash
 from aex_agent.config import load_config
 from aex_constants import APP_NAME, VERSION
 
-GOLD = "#e5b567"
-ACCENT = "#56b6c2"
+GOLD = "#e6c04a"      # Angel Wish gold-bright
+ACCENT = "#93a1a1"    # Solarized ink
+PARCHMENT = "#fdf6e3" # hero headline color
 STREAM_FLUSH_S = 0.12
 
 
@@ -110,16 +111,18 @@ class ChatApp(App):
 
     CSS = f"""
     Screen {{ layout: vertical; }}
-    #banner {{ dock: top; height: auto; max-height: 27; border: none;
-               background: $surface; padding: 0 1; color: $text; }}
-    #chat {{ height: 1fr; border: round {ACCENT} 40%; padding: 0 1; }}
-    #chat:focus {{ border: round {ACCENT} 90%; }}
-    #stream {{ height: auto; max-height: 14; border: round {GOLD} 35%;
-               margin: 0 1 1 1; padding: 0 1; display: none; }}
+    #banner {{ dock: top; height: auto; max-height: 17; border: none;
+               background: #002b36; padding: 0 1; color: $text; }}
+    #chat {{ height: 1fr; border: round #b58900 45%; padding: 0 1;
+             background: #073642; }}
+    #chat:focus {{ border: round {GOLD} 90%; }}
+    #stream {{ height: auto; max-height: 14; border: round #b58900 35%;
+               margin: 0 1 1 1; padding: 0 1; background: #002b36;
+               display: none; }}
     #stream.active {{ display: block; }}
     #statusbar {{ dock: bottom; height: 1; padding: 0 1;
-                  background: $surface; color: $text; }}
-    Input {{ dock: bottom; border: round {GOLD} 50%; }}
+                  background: #073642; color: {ACCENT}; }}
+    Input {{ dock: bottom; border: round #b58900 50%; background: #002b36; }}
     Input:focus {{ border: round {GOLD}; }}
     Footer {{ dock: bottom; }}
     """

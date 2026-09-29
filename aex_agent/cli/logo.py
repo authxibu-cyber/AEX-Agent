@@ -1,10 +1,39 @@
 """
-AEX Agent ASCII emblem — compact winged shield beside gradient word art.
-Shared splash for the Textual TUI and the classic rich TUI.
+AEX Agent — Angel Wish theme.
+Blackletter gothic display (figlet 'gothic', echoing the landing page's
+Angel Wish font), Solarized-dark + gold palette lifted from docs/index.html:
+
+    --bg #002b36  --bg-raise #073642  --ink #93a1a1
+    --gold #b58900  --gold-bright #e6c04a
+
+Shared by the Textual TUI and the classic rich TUI.
 """
 from __future__ import annotations
 
 from rich.text import Text
+
+# ── Angel Wish palette (from docs/index.html :root) ──────────────────────
+BG = "#002b36"
+BG_RAISE = "#073642"
+INK = "#93a1a1"
+INK_DIM = "#708282"
+GOLD = "#b58900"
+GOLD_BRIGHT = "#e6c04a"
+PARCHMENT = "#fdf6e3"
+
+# 'AEX Agent' — figlet gothic (blackletter). Leading whitespace is
+# load-bearing; do not re-indent.
+GOTHIC = "\n".join([
+    "  ___              _                ___                           ",
+    " -   -_,   ,- _~, - -    /`        -   -_,                     ,  ",
+    "(  ~/||   (' /| /   \\  /         (  ~/||    _                ||  ",
+    "(  / ||  ((  ||/=    \\/          (  / ||   / \\  _-_  \\/\\ =||= ",
+    " \\/==||  ((  ||     ==/\\==         \\/==||  || || || \\ || ||  ||  ",
+    " /_ _||   ( / |      / \\          /_ _||  || || ||/   || ||  ||  ",
+    "(  - \\,   -____- \\/   \\,       (  - \\, \\_-| \\,/  \\ \\  \\, ",
+    "                                            /  \\                  ",
+    "                                           '----`                 ",
+])
 
 # Compact winged-shield (density-downsampled 2x from the original art —
 # shape preserved). Leading whitespace is load-bearing, do not re-indent.
@@ -23,51 +52,37 @@ LOGO = "\n".join([
     "      %",
 ])
 
-# "AEX AGENT" gradient word art (as provided by the King).
-WORDART = "\n".join([
-    "░░░░░  ░░░░░░░ ░░   ░░       ░░░░░   ░░░░░░  ░░░░░░░ ░░░    ░░ ░░░░░░░░ ",
-    "▒▒   ▒▒ ▒▒     ▒▒ ▒▒      ▒▒   ▒▒ ▒▒     ▒▒      ▒▒▒▒   ▒▒    ▒▒     ",
-    "▒▒▒▒▒▒▒ ▒▒▒▒▒    ▒▒▒       ▒▒▒▒▒▒▒ ▒▒   ▒▒▒ ▒▒▒▒▒   ▒▒ ▒▒  ▒▒    ▒▒     ",
-    "▓▓   ▓▓ ▓▓     ▓▓ ▓▓      ▓▓   ▓▓ ▓▓    ▓▓ ▓▓      ▓▓  ▓▓ ▓▓    ▓▓     ",
-    "██   ██ ███████ ██   ██     ██   ██  ██████  ██████ ██   ████    ██     ",
-])
-
-LOGO_WIDTH = max(len(line) for line in LOGO.splitlines())
-WORDART_WIDTH = max(len(line) for line in WORDART.splitlines())
-SPLASH_WIDTH = LOGO_WIDTH + 2 + WORDART_WIDTH
+GOTHIC_WIDTH = max(len(l) for l in GOTHIC.splitlines())
+LOGO_WIDTH = max(len(l) for l in LOGO.splitlines())
 
 
 def logo_splash(
     title: str = "",
     subtitle: str = "",
-    style: str = "#e5b567",
-    accent: str = "#56b6c2",
+    style: str = GOLD_BRIGHT,
+    accent: str = INK,
 ) -> Text:
-    """Shield + word art side-by-side, with an optional caption line beneath."""
+    """Angel Wish splash: shield on the left, gothic blackletter beside it."""
     out = Text(style=style)
-    shield_lines = LOGO.splitlines()
-    art_lines = WORDART.splitlines()
-    art_rows = len(art_lines)
-    # vertically center the word art against the shield
-    art_top = max(0, (len(shield_lines) - art_rows) // 2)
-    n_rows = max(len(shield_lines), art_rows + art_top)
+    shield = LOGO.splitlines()
+    goth = GOTHIC.splitlines()
+    art_top = max(0, (len(shield) - len(goth)) // 2)
+    n_rows = max(len(shield), art_top + len(goth))
     for r in range(n_rows):
         row = Text()
-        if 0 <= r < len(shield_lines):
-            row.append(shield_lines[r])
-            pad = LOGO_WIDTH - len(shield_lines[r])
-            row.append(" " * pad)
+        if r < len(shield):
+            row.append(shield[r])
+            row.append(" " * (LOGO_WIDTH - len(shield[r])))
         else:
             row.append(" " * LOGO_WIDTH)
         row.append("  ")
-        if art_top <= r < art_top + art_rows:
-            row.append(Text(art_lines[r - art_top], style=style))
+        if art_top <= r < art_top + len(goth):
+            row.append(Text(goth[r - art_top], style=style))
         if r < n_rows - 1:
             row.append("\n")
         out.append(row)
-    if title or subtitle:
-        tail = f"{title}  {subtitle}".strip()
-        pad = max(0, (SPLASH_WIDTH - len(tail)) // 2)
+    if subtitle:
+        pad = max(0, (LOGO_WIDTH + 2 + GOTHIC_WIDTH - len(subtitle)) // 2)
         out.append("\n\n" + " " * pad)
-        out.append(tail, style=f"bold {accent}")
+        out.append(subtitle, style=f"dim {accent}")
     return out

@@ -35,8 +35,10 @@ from aex_constants import APP_NAME, VERSION, get_aex_home
 
 console = Console()
 
-ACCENT = "bright_cyan"
-GOLD = "gold3"
+ACCENT = "#93a1a1"     # Solarized ink
+GOLD = "#b58900"       # Angel Wish gold
+GOLD_BRIGHT = "#e6c04a"
+PARCHMENT = "#fdf6e3"
 DIM = "dim"
 
 
@@ -96,7 +98,7 @@ def print_user_prompt(text: str) -> None:
     grid = Table.grid(padding=(0, 1))
     grid.add_column()
     grid.add_column(ratio=1)
-    grid.add_row(Text("❯", style=f"bold {GOLD}"), Text(text, style="bold"))
+    grid.add_row(Text("❯", style=f"bold {GOLD_BRIGHT}"), Text(text, style=f"bold {PARCHMENT}"))
     console.print()
     console.print(grid)
 
@@ -130,11 +132,11 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
     agent = EXAgent(config=cfg, session_id=session_id)
     ctx = {"agent": agent, "config": cfg}
 
-    # Emblem splash, then the compact header
+    # Emblem splash (Angel Wish: gothic blackletter + shield), then the header
     console.print(logo_splash(
         subtitle=f"v{VERSION}  ·  {cfg.model}  ·  {cfg.provider}",
-        style="gold3",
-        accent="bright_cyan",
+        style=GOLD_BRIGHT,
+        accent=ACCENT,
     ))
     print_header(cfg.model, cfg.provider)
 
