@@ -204,7 +204,41 @@
   .foot a { color: var(--ink-dim); text-decoration: none; font-size: 13px; font-family: var(--mono); }
   .foot a:hover { color: var(--gold-bright); }
 
+    /* ── reference tables (CLI + slash commands) ── */
+  .ref { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .ref-row { display: grid; grid-template-columns: 200px 1fr; gap: 20px; padding: 16px 22px; border-top: 1px solid var(--line-soft); }
+  .ref-row:first-child { border-top: 0; }
+  .ref-row code.k { font-family: var(--mono); font-size: 13px; color: var(--gold-bright); white-space: nowrap; }
+  .ref-row p { color: var(--ink-dim); font-size: 13.5px; }
+  .ref-row p code { font-family: var(--mono); font-size: .85em; color: var(--gold-bright); background: rgba(181,137,0,.1); padding: 1px 5px; border-radius: 3px; }
+
+  /* getting-started steps */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); }
+  .steps .step { padding: 28px 24px; border-right: 1px solid var(--line); }
+  .steps .step:last-child { border-right: 0; }
+  .steps .num { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: .2em; }
+  .steps h4 { font-family: var(--gothic); font-size: 22px; color: #fdf6e3; margin: 12px 0 8px; }
+  .steps p { font-size: 13px; color: var(--ink-dim); }
+  .steps p code { font-family: var(--mono); font-size: .85em; color: var(--gold-bright); background: rgba(181,137,0,.1); padding: 1px 5px; border-radius: 3px; }
+
+  /* faq */
+  .faq-item { padding: 20px 0; border-top: 1px solid var(--line-soft); }
+  .faq-item:first-child { border-top: 0; }
+  .faq-item h4 { font-size: 15.5px; color: #fdf6e3; margin-bottom: 6px; }
+  .faq-item p { color: var(--ink-dim); font-size: 14px; max-width: 720px; }
+  .faq-item code { font-family: var(--mono); font-size: .85em; color: var(--gold-bright); background: rgba(181,137,0,.1); padding: 1px 5px; border-radius: 3px; }
+
   @media (max-width: 920px) {
+    .steps { grid-template-columns: 1fr 1fr; }
+    .steps .step { border-bottom: 1px solid var(--line); }
+    .ref-row { grid-template-columns: 1fr; gap: 6px; }
+    .nav-r a:not(.cta) { display: none; }
+  }
+  @media (max-width: 640px) {
+    .hero { padding-top: 130px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat { border-bottom: 1px solid var(--line-soft); padding-bottom: 18px; }
+    .steps { grid-template-columns: 1fr; }
     .hero-grid { grid-template-columns: 1fr; gap: 44px; }
     .feat { grid-template-columns: 40px 1fr; }
     .feat p { grid-column: 2; }
@@ -241,8 +275,9 @@
     </a>
     <div class="nav-r">
       <a href="#capabilities">Capabilities</a>
-      <a href="#loop">How it works</a>
-      <a href="#install">Install</a>
+      <a href="#started">Get started</a>
+      <a href="#reference">Reference</a>
+      <a href="#faq">FAQ</a>
       <a class="cta" href="https://github.com/authxibu-cyber/AEX-Agent" target="_blank">GitHub ↗</a>
     </div>
   </div>
@@ -267,14 +302,14 @@
     <div class="term">
       <div class="term-top"><i></i><i></i><i></i><span>AEX — 110×30</span></div>
       <div class="term-b">
-        <span class="dim">◆ session restored · 3 skills loaded · memory 2.1K chars</span><br>
+        <span class="dim">◆ session started · 3 skills loaded · memory 2.1K chars</span><br>
         <span class="pr">❯</span> ship the new landing page tonight<br>
         <span class="dim">◆ thought: reviewing repo layout first…</span><br>
-        <span class="gold">▐ git-workflow</span> <span class="dim">docs: index.html</span><br>
-        <span class="gold">▐ terminal</span> <span class="dim">git commit -m "site" &amp;&amp; git push</span><br>
-        <span class="grn">  ✓ pushed · 4 files changed</span><br>
+        <span class="gold">│ git-workflow</span> <span class="dim">docs: index.html</span><br>
+        <span class="gold">│ terminal</span> <span class="dim">git commit -m "site" &amp;&amp; git push</span><br>
+        <span class="grn">✓ terminal done · 4 files changed</span><br>
         Live. Telemetry bar says we're at 21% context — room for more.<br>
-        <div class="term-status">☤ <span class="g">glm-5.3-flash</span> │ ~212K/1M │ [██░░░░░░░░] 21% │ ◎ 98.2% │ ◷ 6.4s │ ↑ 8.2K · ↓ 1.1K</div>
+        <div class="term-status">▎ <span class="g">glm-5.3-flash</span> │ ~212K/1M │ <span class="g">[██░░░░░░░░]</span> 21% │ ⊙ 98.2% │ ⊘ 6.4s</div>
         <span class="pr">❯</span> <span class="cursor"></span>
       </div>
     </div>
@@ -282,9 +317,9 @@
 
   <div class="wrap">
     <div class="stats">
-      <div class="stat"><div class="v">3-layer</div><div class="k">bounded memory</div></div>
-      <div class="stat"><div class="v">13+</div><div class="k">model providers</div></div>
-      <div class="stat"><div class="v">∞</div><div class="k">self-authored skills</div></div>
+      <div class="stat"><div class="v">13+</div><div class="k">model providers incl. any custom endpoint</div></div>
+      <div class="stat"><div class="v">10</div><div class="k">slash commands + full-screen TUI</div></div>
+      <div class="stat"><div class="v">MIT</div><div class="k">open source · plain-file memory you own</div></div>
     </div>
   </div>
 </header>
@@ -389,6 +424,118 @@
           memory, skills, sessions, and trajectories in plain files you own.
         </p>
       </div>
+    </div>
+  </div>
+</section>
+
+
+<section id="started">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="label">04 — Getting started</div>
+        <h2>Four steps. Then<br>it runs itself.</h2>
+      </div>
+      <p>A straight path from zero to a working agent — no accounts, no dashboards, no lock-in.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="num">STEP 1</div>
+        <h4>Install</h4>
+        <p><code>pip install git+https://github.com/authxibu-cyber/AEX-Agent</code> — or run the platform installer: <code>.\scripts\install.ps1</code> (Windows) / <code>./scripts/install.sh</code> (Linux, macOS, WSL).</p>
+      </div>
+      <div class="step">
+        <div class="num">STEP 2</div>
+        <h4>Connect</h4>
+        <p>Run <code>aex setup</code>. Pick a provider from the numbered table (or <code>custom</code> for any OpenAI-compatible endpoint), paste your API key — the wizard <span style="color:var(--gold-bright)">tests the connection live</span> before saving.</p>
+      </div>
+      <div class="step">
+        <div class="num">STEP 3</div>
+        <h4>Chat</h4>
+        <p>Type <code>aex</code>. You're in the full-screen TUI: scrollable transcript, tool-call cards, and the telemetry bar at the bottom showing context, latency and stream health.</p>
+      </div>
+      <div class="step">
+        <div class="num">STEP 4</div>
+        <h4>Let it learn</h4>
+        <p>Finish real tasks. Ask <code>/learn &lt;name&gt; &lt;description&gt;</code> and the agent writes a reusable <code>SKILL.md</code> it loads in every future session. Close the terminal — everything persists.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="reference" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="label">05 — Reference</div>
+        <h2>Everything you can type.</h2>
+      </div>
+      <p>Shell commands for daily driving, slash commands inside the chat, and keys that control the TUI.</p>
+    </div>
+
+    <h3 class="label" style="margin-bottom:14px">Shell — <code style="color:var(--gold-bright)">aex &lt;command&gt;</code></h3>
+    <div class="ref" style="margin-bottom:40px">
+      <div class="ref-row"><code class="k">aex</code><p>Launch the full-screen interactive TUI. This is where you'll live.</p></div>
+      <div class="ref-row"><code class="k">aex setup</code><p>Interactive wizard: provider, model, base URL, masked API key, live connection test. Safe to re-run any time.</p></div>
+      <div class="ref-row"><code class="k">aex model [name] [-p provider]</code><p>View or switch the active model/provider without opening a chat.</p></div>
+      <div class="ref-row"><code class="k">aex memory</code><p>Inspect the persistent <code>MEMORY.md</code> and <code>USER.md</code> files and their character budgets.</p></div>
+      <div class="ref-row"><code class="k">aex skills</code><p>List every loaded skill — bundled ones plus the ones the agent taught itself.</p></div>
+      <div class="ref-row"><code class="k">aex gateway [--port 8642]</code><p>Start the OpenAI-compatible API server + cron scheduler. Point any client at <code>http://localhost:8642/v1</code>.</p></div>
+      <div class="ref-row"><code class="k">aex cron</code><p>List scheduled background automations.</p></div>
+      <div class="ref-row"><code class="k">aex tools</code><p>Show the registered toolsets (terminal, file, web, memory, skills, code execution…).</p></div>
+    </div>
+
+    <h3 class="label" style="margin-bottom:14px">Inside the chat — slash commands</h3>
+    <div class="ref" style="margin-bottom:40px">
+      <div class="ref-row"><code class="k">/help</code><p>List every command below — you never have to memorize this page.</p></div>
+      <div class="ref-row"><code class="k">/model [name] · /provider [name]</code><p>Switch model or provider mid-conversation, on the fly.</p></div>
+      <div class="ref-row"><code class="k">/memory</code><p>See what the agent remembers about the world and about you.</p></div>
+      <div class="ref-row"><code class="k">/skills · /learn name description</code><p>Browse loaded skills, or have the agent author a new one from the current session.</p></div>
+      <div class="ref-row"><code class="k">/sessions · /search query</code><p>List past sessions and full-text search every message you've ever exchanged (SQLite FTS5).</p></div>
+      <div class="ref-row"><code class="k">/tools</code><p>Inspect the active toolsets available to the agent.</p></div>
+      <div class="ref-row"><code class="k">/copy [n] · /export</code><p>Copy the last reply to clipboard, or export the session trajectory (ShareGPT format) for training.</p></div>
+    </div>
+
+    <h3 class="label" style="margin-bottom:14px">Keys</h3>
+    <div class="ref">
+      <div class="ref-row"><code class="k">Enter</code><p>Send the message.</p></div>
+      <div class="ref-row"><code class="k">Esc</code><p>Cancel the running turn.</p></div>
+      <div class="ref-row"><code class="k">Ctrl+C</code><p>Quit the session (memory is preserved automatically).</p></div>
+      <div class="ref-row"><code class="k">Ctrl+L</code><p>Clear the transcript view.</p></div>
+      <div class="ref-row"><code class="k">Ctrl+Y / Ctrl+P</code><p>Copy the last reply / copy the input line to the clipboard.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <div class="label">06 — FAQ</div>
+        <h2>Before you ask.</h2>
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <h4>Which API keys work?</h4>
+      <p>Any of the 13 built-in providers — OpenRouter, Nous Portal, OpenAI, Anthropic, Gemini, Groq, DeepSeek, Together, Mistral, xAI, ollama.com, local Ollama, vLLM — or pick <code>custom</code> in the wizard and point it at any OpenAI-compatible endpoint (LM Studio, a proxy, a private gateway). The setup wizard live-tests the connection before saving, so you know immediately if a key works.</p>
+    </div>
+    <div class="faq-item">
+      <h4>Where does my data live?</h4>
+      <p>In plain files you own: <code>%LOCALAPPDATA%\aex</code> on Windows, <code>~/.aex</code> on Linux/macOS. Memory in <code>MEMORY.md</code>/<code>USER.md</code>, skills in <code>skills/</code>, session history in a local SQLite database, trajectories as JSON. Delete the folder and it's gone — no cloud account, no sync, no telemetry.</p>
+    </div>
+    <div class="faq-item">
+      <h4>How is this different from a chat wrapper?</h4>
+      <p>Chat wrappers are stateless. AEX Agent bounds its memory so context stays small, writes its own skills after real tasks, searches every past session with FTS5, schedules cron jobs that inject conversational memory, and exposes an OpenAI-compatible API so other tools can use it too. It compounds; wrappers forget.</p>
+    </div>
+    <div class="faq-item">
+      <h4>Can I use it from other apps?</h4>
+      <p>Yes — run <code>aex gateway</code> and point Open WebUI, LangChain, or any OpenAI-style client at <code>http://localhost:8642/v1</code>. Telegram, Discord, and Slack bridges are built in.</p>
+    </div>
+    <div class="faq-item">
+      <h4>What does the telemetry bar show?</h4>
+      <p>Model name, context window usage (~used/limit with a fill gauge), stream health, and per-round latency — updated live while the agent works, so you always know what's happening under the hood.</p>
     </div>
   </div>
 </section>
