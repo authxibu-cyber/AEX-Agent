@@ -27,7 +27,7 @@ from rich.markdown import Markdown
 from rich.text import Text
 
 from aex_agent.agent.core import EXAgent
-from aex_agent.cli.logo import LOGO, logo_splash
+from aex_agent.cli.logo import logo_splash
 from aex_agent.config import load_config
 from aex_constants import APP_NAME, VERSION
 
@@ -111,7 +111,7 @@ class ChatApp(App):
 
     CSS = f"""
     Screen {{ layout: vertical; }}
-    #banner {{ dock: top; height: auto; max-height: 17; border: none;
+    #banner {{ dock: top; height: auto; max-height: 21; border: none;
                background: #002b36; padding: 0 1; color: $text; }}
     #chat {{ height: 1fr; border: round #b58900 45%; padding: 0 1;
              background: #073642; }}
