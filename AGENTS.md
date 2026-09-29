@@ -1,4 +1,4 @@
-# EX AGENT REPOSITORY CONTEXT & PROTOCOLS
+# AEX AGENT REPOSITORY CONTEXT & PROTOCOLS
 
 Welcome to the **AEX Agent** workspace.
 AEX Agent is a self-improving, autonomous AI agent platform architected for persistent execution, multi-channel orchestration, and Tier-3 deep algorithmic optimizations.
