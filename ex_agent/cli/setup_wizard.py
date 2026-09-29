@@ -47,9 +47,35 @@ KEY_ENV_MAP = {
     "together": "TOGETHER_API_KEY",
     "mistral": "MISTRAL_API_KEY",
     "xai": "XAI_API_KEY",
+    # Cloud gateways (e.g. ollama.com) need keys too
+    "ollama": "OLLAMA_API_KEY",
+    "vllm": "VLLM_API_KEY",
     # Custom endpoints store the key under a provider-agnostic var
     "custom": "EX_API_KEY",
 }
+
+_LOCAL_URL_HOSTS = {"localhost", "127.0.0.1", "::1", "[::1]", "0.0.0.0"}
+
+
+def _is_local_url(base_url: str | None) -> bool:
+    """True if the endpoint points at the machine itself (no API key expected)."""
+    if not base_url:
+        return False
+    try:
+        host = base_url.split("://", 1)[-1].split("/", 1)[0].lower()
+        # Bracketed IPv6 like [::1]:11434 — split on ':' breaks it, handle first
+        m = re.match(r"^\[(.+)\]", host)
+        if m:
+            host = m.group(1)
+        else:
+            host = host.split(":", 1)[0]
+    except Exception:
+        return False
+    if host in _LOCAL_URL_HOSTS:
+        return True
+    # Private networks (192.168.x.x / 10.x.x.x / 172.16-31.x.x) count as local
+    m = re.match(r"^(192\.168|10\.|172\.(1[6-9]|2\d|3[01])\.)", host)
+    return bool(m)
 
 
 def _mask(key: str) -> str:
@@ -172,10 +198,14 @@ def run_setup_wizard() -> None:
     cfg.model = Prompt.ask("Enter default model", default=cfg.model)
 
     # --- API Key (masked, persisted to .env) ---
+    resolved_url = cfg.resolve_base_url() or ""
     env_var = KEY_ENV_MAP.get(provider, "EX_API_KEY")
-    needs_key = bool(entry and entry[1])
+    is_local = _is_local_url(resolved_url)
+    needs_key = bool(entry and entry[1]) or (provider in ("ollama", "vllm") and not is_local)
     existing = os.environ.get(env_var, "") or cfg.api_key or ""
-    if needs_key:
+    if is_local:
+        console.print(f"[dim]Local endpoint — no API key needed ({resolved_url})[/dim]")
+    elif needs_key:
         console.print(f"Existing key for '{provider}': [bold]{_mask(existing)}[/bold]")
         new_key = Prompt.ask(
             "Paste new API key (Enter to keep existing)",
@@ -186,8 +216,8 @@ def run_setup_wizard() -> None:
             _persist_to_env(env_var, new_key)
             cfg.api_key = None  # prefer env-managed key
             console.print(f"[green]✔ Key saved to {get_env_path()} ({env_var})[/green]")
-    elif provider in ("ollama", "vllm"):
-        console.print(f"[dim]Local provider — no API key needed (endpoint: {cfg.resolve_base_url()})[/dim]")
+    else:
+        console.print(f"[dim]No API key configured for '{provider}' ({resolved_url})[/dim]")
 
     # --- Extras ---
     cfg.temperature = float(Prompt.ask("Temperature", default=str(cfg.temperature)))

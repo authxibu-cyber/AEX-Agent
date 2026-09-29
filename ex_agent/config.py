@@ -86,6 +86,9 @@ class Config(BaseModel):
             "together": "TOGETHER_API_KEY",
             "mistral": "MISTRAL_API_KEY",
             "xai": "XAI_API_KEY",
+            # Remote/local gateways may still require auth (e.g. ollama.com cloud)
+            "ollama": "OLLAMA_API_KEY",
+            "vllm": "VLLM_API_KEY",
         }
 
         env_var = key_map.get(provider)
