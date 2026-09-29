@@ -17,7 +17,7 @@ class OpenAICompatibleProvider(BaseProvider):
         self,
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
-        model: str = "nousresearch/hermes-3-llama-3.1-8b",
+        model: str = "glm-5.3-flash",
         temperature: float = 0.7,
         max_tokens: int = 4096,
         thinking_budget: int = 0,

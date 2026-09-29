@@ -164,8 +164,10 @@ aex chat --classic
 aex model
 
 # Switch model
-aex model nousresearch/hermes-3-llama-3.1-8b --provider openrouter
+aex model glm-5.3-flash --provider ollama
 ```
+
+Provider names: `openrouter`, `nous_portal`, `openai`, `anthropic`, `gemini`, `groq`, `deepseek`, `together`, `mistral`, `xai`, `ollama`, `vllm`, or set any OpenAI-compatible endpoint via `aex setup` → `custom`.
 
 ### Start Gateway API Server & Cron Daemon
 ```bash

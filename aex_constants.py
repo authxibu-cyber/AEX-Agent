@@ -23,8 +23,8 @@ DEFAULT_GATEWAY_HOST: str = "0.0.0.0"
 DEFAULT_GATEWAY_PORT: int = 8642
 
 # Default Models
-DEFAULT_MODEL: str = "nousresearch/hermes-3-llama-3.1-8b"
-DEFAULT_PROVIDER: str = "openrouter"
+DEFAULT_MODEL: str = "glm-5.3-flash"
+DEFAULT_PROVIDER: str = "ollama"
 
 OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
 NOUS_PORTAL_BASE_URL: str = "https://portal.nousresearch.com/v1"
