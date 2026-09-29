@@ -9,9 +9,9 @@
 
 ## Overview
 
-**EX Agent** is an autonomous, infrastructure-agnostic AI agent harness designed for persistent, long-horizon workflows. Unlike transient chatbot wrappers, EX Agent treats the local filesystem as a filing cabinet: it remembers interactions across sessions in bounded persistent memory files, dynamically acquires new capabilities by writing its own executable skills, and operates seamlessly across native terminals, background cron schedules, and messaging gateways.
+**AEX Agent** is an autonomous, infrastructure-agnostic AI agent harness designed for persistent, long-horizon workflows. Unlike transient chatbot wrappers, AEX Agent treats the local filesystem as a filing cabinet: it remembers interactions across sessions in bounded persistent memory files, dynamically acquires new capabilities by writing its own executable skills, and operates seamlessly across native terminals, background cron schedules, and messaging gateways.
 
-Elevated by the **GodEye Mandate**, EX Agent embeds **Tier-3 deep architectural principles**:
+Elevated by the **GodEye Mandate**, AEX Agent embeds **Tier-3 deep architectural principles**:
 - **Sovereign Cognitive Pulse:** Input-dependent selectivity gates ($\Delta_t, B_t, C_t$) and Kogge-Stone parallel associative scans ($O(L) \to O(\log L)$) for dynamic context compression.
 - **Hardware-Aware Execution:** Native Tensor Core (BF16/TF32) audit and fused operators.
 - **Closed Learning Loop:** Autonomous post-task knowledge distillation and automated skill synthesis conforming to the `agentskills.io` standard.
