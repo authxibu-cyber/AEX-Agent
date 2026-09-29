@@ -137,6 +137,7 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
         subtitle=f"v{VERSION}  ·  {cfg.model}  ·  {cfg.provider}",
         style=GOLD_BRIGHT,
         accent=ACCENT,
+        width=console.width,
     ))
     print_header(cfg.model, cfg.provider)
 

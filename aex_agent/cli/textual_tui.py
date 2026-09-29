@@ -199,6 +199,7 @@ class ChatApp(App):
                     + (f"  ·  session {self.agent.session_id[:8]}" if self.agent else ""),
             style=GOLD,
             accent=ACCENT,
+            width=self.size.width,
         )
 
     def _refresh_banner(self) -> None:
