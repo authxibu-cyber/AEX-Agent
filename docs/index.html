@@ -204,7 +204,27 @@
   .foot a { color: var(--ink-dim); text-decoration: none; font-size: 13px; font-family: var(--mono); }
   .foot a:hover { color: var(--gold-bright); }
 
-    /* ── reference tables (CLI + slash commands) ── */
+    /* ── desktop model (≥1400px) — spread out on big canvases ── */
+  @media (min-width: 1400px) {
+    .wrap { max-width: 1320px; }
+    body { font-size: 15px; }
+    .hero { padding: 190px 0 110px; }
+    .hero h1 { font-size: 74px; }
+    .term { font-size: 13.5px; }
+    .term-b { line-height: 1.85; }
+    section { padding: 120px 0; }
+    .feat h3 { font-size: 26px; }
+    .feat p { font-size: 14.5px; max-width: 620px; }
+    .sec-head h2 { font-size: 54px; }
+    .loop .cell { padding: 36px 30px; }
+    .loop p { font-size: 14.5px; }
+    .steps .step { padding: 34px 28px; }
+    .steps p { font-size: 14px; }
+    .ref-row { padding: 18px 26px; }
+    .ref-row p { font-size: 14.5px; }
+    .cmd { font-size: 14px; }
+  }
+  /* ── reference tables (CLI + slash commands) ── */
   .ref-h {
     font-family: var(--mono); font-size: 12px; font-weight: 500;
     letter-spacing: .14em; text-transform: uppercase;
@@ -247,22 +267,42 @@
   .ref-row.wide p { margin-top: 0; }
     .nav-r a:not(.cta) { display: none; }
   }
+    /* ── cellphone model (≤640px, refined ≤400px) ── */
   @media (max-width: 640px) {
-    .hero { padding-top: 130px; }
-    .stats { grid-template-columns: 1fr 1fr; }
-    .stat { border-bottom: 1px solid var(--line-soft); padding-bottom: 18px; }
-    .steps { grid-template-columns: 1fr; }
-    .hero-grid { grid-template-columns: 1fr; gap: 44px; }
-    .feat { grid-template-columns: 40px 1fr; }
-    .feat p { grid-column: 2; }
-    .loop { grid-template-columns: 1fr 1fr; }
-    .loop .cell { border-bottom: 1px solid var(--line); }
-    .loop .arrow { display: none; }
-    .install-grid { grid-template-columns: 1fr; gap: 36px; }
-    .nav-r a:not(.cta) { display: none; }
-    .stats { grid-template-columns: 1fr 1fr; }
-    .stat { border-bottom: 1px solid var(--line-soft); padding-bottom: 18px; }
+    .wrap { padding: 0 18px; }
+    nav { backdrop-filter: blur(10px); }
+    .brand svg { width: 22px; height: 22px; }
+    .brand b { font-size: 21px; }
+    .hero { padding-top: 118px; }
+    .hero h1 { font-size: clamp(34px, 11vw, 44px); line-height: 1.12; }
+    .hero .lede { font-size: 14.5px; }
+    .hero-ctas { flex-direction: column; gap: 10px; }
+    .hero-ctas .btn { width: 100%; justify-content: center; padding: 14px 22px; min-height: 48px; }
+    .term { font-size: 8.5px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .term .term-b { overflow-x: auto; }
+    .term-b { line-height: 1.65; padding: 12px; }
+    .term-status { font-size: 8.5px; }
+    .stats { grid-template-columns: 1fr 1fr; margin-top: 36px; }
+    .stat { border-right: 0; padding-right: 0; }
+    .loop { grid-template-columns: 1fr; }
+    .sec-head { flex-direction: column; gap: 14px; margin-bottom: 40px; }
+    .sec-head p { max-width: 100%; }
+    section { padding: 72px 0; }
+    .cmd { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 14px; }
+    .cmd .note { font-size: 10.5px; }
+    .faq-item { padding: 16px 0; }
+    .feat { grid-template-columns: 34px 1fr; gap: 14px; padding: 22px 0; }
+    .feat h3 { font-size: 21px; }
+    .foot { flex-direction: column; gap: 18px; align-items: flex-start; }
   }
+  @media (max-width: 400px) {
+    .hero h1 { font-size: 33px; }
+    .brand b { font-size: 19px; }
+    .term { font-size: 8.5px; }
+    .steps .step { padding: 22px 18px; }
+    .steps h4 { font-size: 19px; }
+  }
+
 </style>
 </head>
 <body>
