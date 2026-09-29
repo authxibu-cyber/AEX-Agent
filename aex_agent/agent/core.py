@@ -105,11 +105,23 @@ class EXAgent:
                 thinking_budget=self.config.thinking_budget,
             )
 
-    def assemble_system_message(self) -> str:
+    def assemble_system_message(self, user_message: Optional[str] = None) -> str:
         skills_summary = self.skill_manager.format_skills_summary()
+        active_skill_protocols = ""
+        self.active_skill_names: List[str] = []
+        if user_message:
+            matched = self.skill_manager.match_skills(user_message)
+            if matched:
+                self.active_skill_names = [s.name for s in matched]
+                blocks = [
+                    f"### Skill: {s.name} ({'user' if s.is_user_skill else 'bundled'})\n{s.instructions.strip()}"
+                    for s in matched
+                ]
+                active_skill_protocols = "\n\n".join(blocks)
         return self.context_engine.assemble_system_prompt(
             skills_summary=skills_summary,
             extra_instructions=self.system_instructions,
+            active_skill_protocols=active_skill_protocols,
         )
 
     def get_tool_schemas(self) -> List[Dict[str, Any]]:
@@ -145,8 +157,8 @@ class EXAgent:
         self.state.append_message("user", user_message)
         self.session_store.add_message(self.session_id, "user", user_message)
 
-        # Assemble full message chain
-        system_content = self.assemble_system_message()
+        # Assemble full message chain (skill protocols activate on user-message triggers)
+        system_content = self.assemble_system_message(user_message=user_message)
         messages: List[Dict[str, Any]] = [{"role": "system", "content": system_content}]
 
         # Append previous history if supplied

@@ -62,13 +62,19 @@ class ContextEngine:
             "adhering to the GodEye Mandate with deep Tier-3 architectures."
         )
 
-    def assemble_system_prompt(self, skills_summary: str = "", extra_instructions: str = "") -> str:
+    def assemble_system_prompt(
+        self,
+        skills_summary: str = "",
+        extra_instructions: str = "",
+        active_skill_protocols: str = "",
+    ) -> str:
         """
         Assembles complete system prompt with:
         - SOUL.md (Persona & cognitive stance)
         - Project context (AGENTS.md / EX.md)
         - Persistent Memory Cabinet (MEMORY.md & USER.md)
         - Installed skills catalog
+        - Active skill protocols (full instructions for trigger-matched skills this turn)
         - Dynamic runtime instructions
         """
         soul = self.load_soul().strip()
@@ -92,6 +98,12 @@ class ContextEngine:
 
         if skills_summary:
             sections.append(f"\n## Available Skills\n{skills_summary.strip()}")
+
+        if active_skill_protocols:
+            sections.append(
+                "\n## Active Skill Protocols (triggered by this user message — follow strictly)\n"
+                f"{active_skill_protocols.strip()}"
+            )
 
         if extra_instructions:
             sections.append(f"\n## Session Directives\n{extra_instructions.strip()}")

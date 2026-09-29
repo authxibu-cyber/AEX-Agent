@@ -42,3 +42,22 @@ def test_agent_initialization():
     system_prompt = agent.assemble_system_message()
     assert "AEX Agent" in system_prompt
     assert "Persistent Memory Cabinet" in system_prompt
+
+
+def test_skill_activation_on_trigger():
+    """Trigger-matched skills inject full instructions into the system prompt."""
+    agent = EXAgent()
+    prompt = agent.assemble_system_message(
+        user_message="gua mau bikin node sensor pakai ESP32, bantu pinout"
+    )
+    assert "embedded-hardware" in agent.active_skill_names
+    assert "Active Skill Protocols" in prompt
+    assert "Strapping pins" in prompt
+
+
+def test_no_skill_leak_on_unrelated_message():
+    """Unrelated messages must not activate any skill protocol."""
+    agent = EXAgent()
+    prompt = agent.assemble_system_message(user_message="halo gimana kabarnya")
+    assert agent.active_skill_names == []
+    assert "Active Skill Protocols" not in prompt
