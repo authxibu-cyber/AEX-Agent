@@ -30,6 +30,13 @@ OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
 NOUS_PORTAL_BASE_URL: str = "https://portal.nousresearch.com/v1"
 OPENAI_BASE_URL: str = "https://api.openai.com/v1"
 OLLAMA_BASE_URL: str = "http://localhost:11434/v1"
+ANTHROPIC_BASE_URL: str = "https://api.anthropic.com/v1"
+GEMINI_BASE_URL: str = "https://generativelanguage.googleapis.com/v1beta/openai"
+GROQ_BASE_URL: str = "https://api.groq.com/openai/v1"
+DEEPSEEK_BASE_URL: str = "https://api.deepseek.com/v1"
+TOGETHER_BASE_URL: str = "https://api.together.xyz/v1"
+MISTRAL_BASE_URL: str = "https://api.mistral.ai/v1"
+XAI_BASE_URL: str = "https://api.x.ai/v1"
 
 _ex_home_override: Optional[Path] = None
 

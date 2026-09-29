@@ -1,35 +1,216 @@
 """
 Interactive Setup Wizard for EX Agent.
-Configures provider credentials, default models, and stores configuration in EX_HOME.
+Configures provider, model, custom base URL, and API key — manually.
+Credentials are stored in EX_HOME/config.yaml (non-secret) and EX_HOME/.env (secrets).
+Includes a live connection test before saving.
 """
 from __future__ import annotations
 
+import os
+import re
+from pathlib import Path
+
 from rich.console import Console
 from rich.prompt import Prompt
-from ex_agent.config import load_config, save_config
+from rich.table import Table
+
+from ex_agent.config import Config, load_config, save_config
+from ex_constants import get_env_path
 
 console = Console()
+
+# (provider, needs_key, default_base_url)
+PROVIDERS: list[tuple[str, bool, str]] = [
+    ("openrouter", True, "https://openrouter.ai/api/v1"),
+    ("nous_portal", True, "https://portal.nousresearch.com/v1"),
+    ("openai", True, "https://api.openai.com/v1"),
+    ("anthropic", True, "https://api.anthropic.com/v1"),
+    ("gemini", True, "https://generativelanguage.googleapis.com/v1beta/openai"),
+    ("groq", True, "https://api.groq.com/openai/v1"),
+    ("deepseek", True, "https://api.deepseek.com/v1"),
+    ("together", True, "https://api.together.xyz/v1"),
+    ("mistral", True, "https://api.mistral.ai/v1"),
+    ("xai", True, "https://api.x.ai/v1"),
+    ("ollama", False, "http://localhost:11434/v1"),
+    ("vllm", False, "http://localhost:8000/v1"),
+    ("custom", True, ""),  # any OpenAI-compatible endpoint, base URL required
+]
+
+KEY_ENV_MAP = {
+    "openrouter": "OPENROUTER_API_KEY",
+    "nous_portal": "NOUS_PORTAL_API_KEY",
+    "openai": "OPENAI_API_KEY",
+    "anthropic": "ANTHROPIC_API_KEY",
+    "gemini": "GEMINI_API_KEY",
+    "groq": "GROQ_API_KEY",
+    "deepseek": "DEEPSEEK_API_KEY",
+    "together": "TOGETHER_API_KEY",
+    "mistral": "MISTRAL_API_KEY",
+    "xai": "XAI_API_KEY",
+    # Custom endpoints store the key under a provider-agnostic var
+    "custom": "EX_API_KEY",
+}
+
+
+def _mask(key: str) -> str:
+    if not key:
+        return "(not set)"
+    if len(key) <= 8:
+        return "*" * len(key)
+    return f"{key[:4]}...{key[-4:]}"
+
+
+def _persist_to_env(env_var: str, value: str) -> None:
+    """Write KEY=value into EX_HOME/.env (create or update in place)."""
+    env_path: Path = get_env_path()
+    env_path.parent.mkdir(parents=True, exist_ok=True)
+    lines: list[str] = []
+    if env_path.exists():
+        lines = env_path.read_text(encoding="utf-8").splitlines()
+    pattern = re.compile(rf"^\s*#?\s*{env_var}\s*=.*$")
+    replaced = False
+    for i, line in enumerate(lines):
+        if pattern.match(line):
+            lines[i] = f"{env_var}={value}"
+            replaced = True
+            break
+    if not replaced:
+        lines.append(f"{env_var}={value}")
+    env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    # Make it effective immediately in this process
+    os.environ[env_var] = value
+
+
+def _test_connection(cfg: Config) -> tuple[bool, str]:
+    """Fire a minimal synchronous chat request to verify credentials/endpoint."""
+    try:
+        import httpx
+    except ImportError:
+        return True, "httpx not installed — skipped connection test"
+
+    base_url = (cfg.resolve_base_url() or "").rstrip("/")
+    api_key = cfg.resolve_api_key()
+    provider = cfg.provider.lower()
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+
+    payload: dict = {
+        "model": cfg.model,
+        "messages": [{"role": "user", "content": "ping"}],
+        "max_tokens": 8,
+        "stream": False,
+    }
+    # Anthropic native endpoint uses a distinct wire format and headers
+    if provider in ("anthropic", "claude") and "anthropic.com" in base_url:
+        url = f"{base_url}/messages"
+        headers = {
+            "x-api-key": api_key or "",
+            "anthropic-version": "2023-06-01",
+            "Content-Type": "application/json",
+        }
+    else:
+        url = f"{base_url}/chat/completions"
+
+    try:
+        resp = httpx.post(url, headers=headers, json=payload, timeout=30.0)
+        if resp.status_code == 200:
+            return True, "endpoint responded OK"
+        detail = resp.text[:300]
+        return False, f"HTTP {resp.status_code}: {detail}"
+    except Exception as exc:
+        return False, f"{type(exc).__name__}: {exc}"
+
+
+def _select_provider(current: str) -> str:
+    table = Table(title="Available Providers", title_style="bold cyan")
+    table.add_column("#", style="dim", width=3)
+    table.add_column("Provider", style="bold")
+    table.add_column("Default Base URL", style="dim")
+    for i, (name, _nk, url) in enumerate(PROVIDERS, start=1):
+        marker = " <- current" if name == current else ""
+        table.add_row(str(i), name + marker, url or "(enter manually)")
+    console.print(table)
+    while True:
+        raw = Prompt.ask("Select provider (number or name)", default=current)
+        if raw.isdigit():
+            idx = int(raw)
+            if 1 <= idx <= len(PROVIDERS):
+                return PROVIDERS[idx - 1][0]
+        for name, _nk, _u in PROVIDERS:
+            if raw.lower() == name:
+                return name
+        console.print("[red]Unknown provider — try again.[/red]")
 
 
 def run_setup_wizard() -> None:
     console.print("[bold cyan]=== EX Agent Configuration Wizard ===[/bold cyan]\n")
     cfg = load_config()
 
+    # --- Provider ---
+    provider = _select_provider(cfg.provider)
+    cfg.provider = provider
+    entry = next((p for p in PROVIDERS if p[0] == provider), None)
+
+    # --- Base URL ---
+    default_url = (entry[2] if entry else "") or (cfg.base_url or "")
+    if provider == "custom" or not default_url:
+        base_url = Prompt.ask(
+            "Enter base URL (OpenAI-compatible, incl. /v1)",
+            default=cfg.base_url or "",
+        )
+        while not base_url.strip():
+            base_url = Prompt.ask("[red]Base URL is required[/red] — enter base URL", default=cfg.base_url or "")
+    else:
+        base_url = Prompt.ask("Base URL", default=default_url)
+        if base_url == default_url:
+            base_url = ""  # empty = use built-in default
+    cfg.base_url = base_url.strip() or None
+
+    # --- Model ---
     console.print(f"Current Model: [bold green]{cfg.model}[/bold green]")
-    new_model = Prompt.ask("Enter default model", default=cfg.model)
-    cfg.model = new_model
+    cfg.model = Prompt.ask("Enter default model", default=cfg.model)
 
-    console.print(f"Current Provider: [bold yellow]{cfg.provider}[/bold yellow]")
-    new_provider = Prompt.ask(
-        "Enter provider (openrouter / nous_portal / openai / anthropic / ollama / vllm)",
-        default=cfg.provider,
+    # --- API Key (masked, persisted to .env) ---
+    env_var = KEY_ENV_MAP.get(provider, "EX_API_KEY")
+    needs_key = bool(entry and entry[1])
+    existing = os.environ.get(env_var, "") or cfg.api_key or ""
+    if needs_key:
+        console.print(f"Existing key for '{provider}': [bold]{_mask(existing)}[/bold]")
+        new_key = Prompt.ask(
+            "Paste new API key (Enter to keep existing)",
+            password=True,
+            default="",
+        ).strip()
+        if new_key:
+            _persist_to_env(env_var, new_key)
+            cfg.api_key = None  # prefer env-managed key
+            console.print(f"[green]✔ Key saved to {get_env_path()} ({env_var})[/green]")
+    elif provider in ("ollama", "vllm"):
+        console.print(f"[dim]Local provider — no API key needed (endpoint: {cfg.resolve_base_url()})[/dim]")
+
+    # --- Extras ---
+    cfg.temperature = float(Prompt.ask("Temperature", default=str(cfg.temperature)))
+    cfg.max_tokens = int(Prompt.ask("Max tokens", default=str(cfg.max_tokens)))
+    cfg.thinking_budget = int(
+        Prompt.ask("Thinking budget tokens (0=off)", default=str(cfg.thinking_budget))
     )
-    cfg.provider = new_provider.lower()
 
-    if cfg.provider not in ["ollama", "vllm"]:
-        api_key = Prompt.ask("Enter API Key (press Enter to keep existing or use .env)", default=cfg.api_key or "")
-        if api_key:
-            cfg.api_key = api_key
+    # --- Verify before saving ---
+    console.print("\n[bold]Testing connection...[/bold]")
+    ok, msg = _test_connection(cfg)
+    if ok:
+        console.print(f"[bold green]✔ Connection OK:[/bold green] {msg}")
+    else:
+        console.print(f"[bold red]✘ Connection failed:[/bold red] {msg}")
+        retry = Prompt.ask("Save anyway?", choices=["y", "n"], default="n")
+        if retry.lower() != "y":
+            console.print("[yellow]Configuration NOT saved. Fix and rerun `ex setup`.[/yellow]")
+            return
 
     save_config(cfg)
     console.print("\n[bold green]✔ Configuration saved successfully![/bold green]")
+    console.print(f"  Model    : {cfg.model}")
+    console.print(f"  Provider : {cfg.provider}")
+    console.print(f"  Base URL : {cfg.resolve_base_url()}")
+    console.print(f"  API Key  : {_mask(cfg.resolve_api_key() or '')}")

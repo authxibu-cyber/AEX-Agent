@@ -83,6 +83,9 @@ class Config(BaseModel):
             "gemini": "GEMINI_API_KEY",
             "groq": "GROQ_API_KEY",
             "deepseek": "DEEPSEEK_API_KEY",
+            "together": "TOGETHER_API_KEY",
+            "mistral": "MISTRAL_API_KEY",
+            "xai": "XAI_API_KEY",
         }
 
         env_var = key_map.get(provider)
@@ -100,24 +103,55 @@ class Config(BaseModel):
             return self.base_url
 
         from ex_constants import (
+            ANTHROPIC_BASE_URL,
+            DEEPSEEK_BASE_URL,
+            GEMINI_BASE_URL,
+            GROQ_BASE_URL,
+            MISTRAL_BASE_URL,
             NOUS_PORTAL_BASE_URL,
             OLLAMA_BASE_URL,
             OPENAI_BASE_URL,
             OPENROUTER_BASE_URL,
+            TOGETHER_BASE_URL,
+            XAI_BASE_URL,
         )
 
         provider = self.provider.lower()
-        if provider == "openrouter":
-            return OPENROUTER_BASE_URL
-        elif provider == "nous_portal":
-            return NOUS_PORTAL_BASE_URL
-        elif provider == "openai":
-            return OPENAI_BASE_URL
-        elif provider == "ollama":
-            return os.environ.get("OLLAMA_HOST", OLLAMA_BASE_URL)
-        elif provider == "vllm":
-            return os.environ.get("VLLM_HOST", "http://localhost:8000/v1")
-        return None
+        known_urls = {
+            "openrouter": OPENROUTER_BASE_URL,
+            "nous_portal": NOUS_PORTAL_BASE_URL,
+            "openai": OPENAI_BASE_URL,
+            "anthropic": ANTHROPIC_BASE_URL,
+            "groq": GROQ_BASE_URL,
+            "deepseek": DEEPSEEK_BASE_URL,
+            "gemini": GEMINI_BASE_URL,
+            "together": TOGETHER_BASE_URL,
+            "mistral": MISTRAL_BASE_URL,
+            "xai": XAI_BASE_URL,
+            # Ollama: no /v1 suffix for its native API, but LocalProvider
+            # speaks OpenAI-compatible, so keep /v1
+            "ollama": os.environ.get("OLLAMA_HOST", OLLAMA_BASE_URL),
+            "vllm": os.environ.get("VLLM_HOST", "http://localhost:8000/v1"),
+        }
+        if provider in known_urls:
+            url = known_urls[provider]
+            # Normalize local endpoints for OpenAI-compatible clients:
+            # - OLLAMA_HOST is often set to the bind address (0.0.0.0) or the
+            #   native API root without /v1 — both unusable as a client base URL.
+            if provider == "ollama":
+                url = url.replace("://0.0.0.0", "://127.0.0.1").rstrip("/")
+                if not url.endswith("/v1"):
+                    url += "/v1"
+            return url
+        # Unknown provider: assume generic OpenAI-compatible endpoint via EX_BASE_URL,
+        # else raise so misconfiguration is loud instead of silently routing to OpenRouter.
+        env_base = os.environ.get("EX_BASE_URL", "").strip()
+        if env_base:
+            return env_base
+        raise ValueError(
+            f"No known base URL for provider '{self.provider}'. "
+            f"Set `base_url` in {get_config_path()} or EX_BASE_URL in your .env."
+        )
 
 
 def load_config() -> Config:
