@@ -2,10 +2,10 @@
 set -e
 
 echo "=========================================================="
-echo "               EX AGENT INSTALLER (POSIX/WSL)             "
+echo "               AEX AGENT INSTALLER (POSIX/WSL)             "
 echo "=========================================================="
 
-AEX_HOME="${AEX_HOME:-$HOME/.ex}"
+AEX_HOME="${AEX_HOME:-$HOME/.aex}"
 echo "[*] Initializing AEX_HOME at $AEX_HOME..."
 mkdir -p "$AEX_HOME/memories" "$AEX_HOME/skills" "$AEX_HOME/sessions"
 

@@ -7,7 +7,7 @@
 $ErrorActionPreference = "Stop"
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "            EX AGENT NATIVE WINDOWS INSTALLER             " -ForegroundColor Green
+Write-Host "            AEX AGENT NATIVE WINDOWS INSTALLER             " -ForegroundColor Green
 Write-Host "==========================================================" -ForegroundColor Cyan
 
 $exHome = if ($env:LOCALAPPDATA) { "$env:LOCALAPPDATA\ex" } else { "$HOME\.ex" }
@@ -26,7 +26,7 @@ python -m pip install -e $repoDir
 
 Write-Host "`n[✔] Installation complete!" -ForegroundColor Green
 Write-Host "You can now run AEX Agent using:" -ForegroundColor Cyan
-Write-Host "  aex chat        - Launch interactive terminal TUI" -ForegroundColor White
+Write-Host "  aex             - Launch full-screen interactive TUI (default)" -ForegroundColor White
 Write-Host "  aex gateway     - Launch API server on :8642" -ForegroundColor White
 Write-Host "  aex model       - Configure active model" -ForegroundColor White
-Write-Host "  ex --help      - Show all commands`n" -ForegroundColor White
+Write-Host "  aex --help     - Show all commands`n" -ForegroundColor White

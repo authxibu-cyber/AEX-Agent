@@ -104,7 +104,7 @@ Run PowerShell in the project directory:
 .\scripts\install.ps1
 ```
 Or directly install via pip:
-```bash
+```powershell
 pip install -e .
 ```
 
@@ -115,13 +115,29 @@ chmod +x scripts/install.sh
 ./scripts/install.sh
 ```
 
-### 3. Environment Configuration
+### 3. First-Run Setup Wizard
+
+After installation, configure your provider, model, and API key interactively:
+
+```bash
+aex setup
+```
+
+The wizard:
+- **Pick a provider** from a numbered table (openrouter, nous_portal, openai, anthropic, gemini, groq, deepseek, together, mistral, xai, ollama, vllm, or `custom` for any OpenAI-compatible endpoint)
+- **Set the base URL** (editable — defaults per provider; `custom` requires manual entry)
+- **Paste your API key** (input is masked; stored in `AEX_HOME/.env`, never in config.yaml)
+- **Runs a live connection test** against the real endpoint before saving — you see `✔ Connection OK` or the exact HTTP error
+
+Home directory (`AEX_HOME`) defaults to `%LOCALAPPDATA%\aex` on Windows, `~/.aex` on Linux/macOS.
+
+### 4. Environment Configuration (manual alternative)
 
 Copy `.env.example` to `.env` or set environment variables:
 ```bash
 cp .env.example .env
 ```
-Configure your primary API key (e.g. `OPENROUTER_API_KEY`, `NOUS_PORTAL_API_KEY`, or `OPENAI_API_KEY`).
+Configure your primary API key (e.g. `AEX_API_KEY`, `OPENROUTER_API_KEY`, `NOUS_PORTAL_API_KEY`, or `OPENAI_API_KEY`). Model/provider can be set with `AEX_MODEL`, `AEX_PROVIDER`, `AEX_BASE_URL`.
 
 ---
 
@@ -129,11 +145,17 @@ Configure your primary API key (e.g. `OPENROUTER_API_KEY`, `NOUS_PORTAL_API_KEY`
 
 ### Start Interactive Chat Session
 ```bash
+aex
+```
+or explicitly:
+```bash
 aex chat
 ```
-or simply:
+The full-screen Textual TUI launches with the header panel, scrollable transcript, tool-call cards, and the bottom telemetry bar (`☤ model │ ~212K/1M │ [██░░░░░░░░] 20% │ ◎ health │ ◷ latency │ ↑ ↓ tokens`).
+
+For the classic prompt_toolkit interface:
 ```bash
-ex
+aex chat --classic
 ```
 
 ### Switch Model & Provider
