@@ -401,7 +401,24 @@ class ChatApp(App):
                 log.write(Text("✘ turn cancelled", style="bold red"))
                 return
             except Exception as e:
-                log.write(Text(f"✘ Session Error: {e}", style="bold red"))
+                msg = str(e)
+                hint = ""
+                # connection failures to the configured endpoint: give the user a real next step
+                low = msg.lower()
+                if ("connection" in low and ("failed" in low or "refused" in low or "attempt" in low)) or \
+                        "connecterror" in low or "name or service not known" in low:
+                    cfg = getattr(self.agent, "config", None) if self.agent else None
+                    try:
+                        base = cfg.resolve_base_url() if cfg else None
+                    except Exception:
+                        base = None
+                    if base:
+                        hint = (f"\n\nCannot reach the provider endpoint: {base}\n"
+                                "→ Run  aex setup  to pick a provider and test the connection live "
+                                "(or install Ollama locally if you meant to use localhost).")
+                    else:
+                        hint = ("\n\n→ Run  aex setup  to pick a provider and test the connection live.")
+                log.write(Text(f"✘ Session Error: {e}{hint}", style="bold red"))
                 return
             finally:
                 self._turn_active = False

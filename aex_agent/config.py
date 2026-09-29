@@ -164,7 +164,8 @@ def load_config() -> Config:
 
     if config_file.exists():
         try:
-            with open(config_file, "r", encoding="utf-8") as f:
+            # utf-8-sig: tolerate BOM (Windows Notepad / PowerShell 5.1 write BOMs)
+            with open(config_file, "r", encoding="utf-8-sig") as f:
                 loaded = yaml.safe_load(f)
                 if isinstance(loaded, dict):
                     data = loaded
