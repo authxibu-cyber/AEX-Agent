@@ -26,21 +26,32 @@ console = Console()
 
 
 def render_banner(model_name: str, provider_name: str) -> None:
-    banner_text = f"""
-███████╗██╗  ██╗     █████╗  ██████╗ ███████╗███╗   ██╗████████╗
-██╔════╝╚██╗██╔╝    ██╔══██╗██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝
-█████╗   ╚███╔╝     ███████║██║  ███╗█████╗  ██╔██╗ ██║   ██║   
-██╔══╝   ██╔██╗     ██╔══██║██║   ██║██╔══╝  ██║╚██╗██║   ██║   
-███████╗██╔╝ ██╗    ██║  ██║╚██████╔╝███████╗██║ ╚████║   ██║   
-╚══════╝╚═╝  ╚═╝    ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   
-             Autonomous Tier-3 AI Agent Harness (v{VERSION})
-    """
-    panel = Panel(
+    banner_lines = [
+        r"            \        |        /            ",
+        r"             \       |       /             ",
+        r"              \      |      /              ",
+        r"               \     |     /               ",
+        r"                \    |    /                ",
+        r"███████╗██╗  ██╗  \  |  /  ██████╗ ███████╗███╗   ██╗████████╗",
+        r"██╔════╝╚██╗██╔╝   \ | /   ██╔════╝ ██╔════╝████╗  ██║╚══██╔══╝",
+        r"█████╗   ╚███╔╝ ─────X───── ██║  ███╗█████╗  ██╔██╗ ██║   ██║   ",
+        r"██╔══╝   ██╔██╗    / | \    ██║   ██║██╔══╝  ██║╚██╗██║   ██║   ",
+        r"███████╗██╔╝ ██╗  /  |  \   ╚██████╔╝███████╗██║ ╚████║   ██║   ",
+        r"╚══════╝╚═╝  ╚═╝ /   |   \  ╚═════╝ ╚══════╝╚═╝  ╚═══╝   ╚═╝   ",
+        r"                ⚔───┼───⚔  crossed swords & shield",
+        r"               /    |    \              ",
+        r"              /     |     \             ",
+        r"             /      ⛨      \            ",
+        r"                Autonomous Tier-3 AI Agent Harness (v{VERSION})",
+    ]
+    banner_text = "\n".join(banner_lines).replace("{VERSION}", VERSION)
+    console.print(
         Text(banner_text, style="bold cyan"),
-        subtitle=f"Model: [bold green]{model_name}[/bold green] | Provider: [bold yellow]{provider_name}[/bold yellow] | Type [bold white]/help[/bold white] for commands",
-        border_style="bright_blue",
+        style="bright_blue",
     )
-    console.print(panel)
+    console.print(
+        f"  Model: [bold green]{model_name}[/bold green] | Provider: [bold yellow]{provider_name}[/bold yellow] | Type [bold white]/help[/bold white] for commands"
+    )
 
 
 async def run_interactive_tui(session_id: Optional[str] = None) -> None:
