@@ -97,6 +97,12 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
                     live.stop()
                     live = None
                     console.print()
+                    # If the turn produced no visible assistant text, surface it —
+                    # otherwise provider errors vanish with transient Live.
+                    if not accumulated_text.strip():
+                        console.print(
+                            "[dim red]✘ (no assistant output — provider returned an error; check `ex setup` connection)[/dim red]"
+                        )
 
             def on_stream(kind: str, delta: str):
                 nonlocal accumulated_text, accumulated_thinking, live, thinking_shown
