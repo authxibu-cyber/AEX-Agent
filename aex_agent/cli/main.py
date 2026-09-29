@@ -27,8 +27,26 @@ console = Console()
 def main(ctx: click.Context):
     """Merlin (AEX Agent): autonomous, self-improving AI agent harness."""
     if ctx.invoked_subcommand is None:
+        # self-heal: if pip put our scripts dir outside PATH, fix it now
+        from aex_agent.cli.pathfix import ensure_aex_on_path
+        ensure_aex_on_path(verbose=False)
         from aex_agent.cli.textual_tui import run_interactive_tui
         run_interactive_tui()
+
+
+@main.command("doctor")
+def cmd_doctor():
+    """Diagnose and repair the `aex` command / PATH automatically."""
+    from aex_agent.cli.pathfix import ensure_aex_on_path
+    res = ensure_aex_on_path(verbose=True)
+    if res["already"]:
+        console.print("[green]OK[/green] `aex` is on PATH - install is healthy.")
+    elif res["ok"]:
+        console.print("[green]OK[/green] Repaired. Open a NEW terminal and `aex` will work.")
+    else:
+        console.print("[red]FAILED[/red] could not repair:")
+        for n in res["actions"]:
+            console.print(f"  - {n}")
 
 
 @main.command("chat")

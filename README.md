@@ -56,7 +56,13 @@ chmod +x scripts/install.sh
 
 ### 3. First-Run Setup Wizard
 
-After installation, configure your provider, model, and API key interactively:
+After installation, if `aex` is not recognized (common on Windows non-admin installs — pip places the command outside PATH), run the self-repair:
+
+```powershell
+python -m aex_agent doctor
+```
+
+This adds the command to PATH automatically. Then configure your provider, model, and API key interactively:
 
 ```bash
 aex setup

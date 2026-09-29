@@ -14,5 +14,10 @@ echo "[*] Installing AEX Agent from $SCRIPT_DIR..."
 python3 -m pip install -e "$SCRIPT_DIR"
 
 echo ""
-echo "[✔] AEX Agent installed successfully!"
-echo "Run 'aex' or 'aex chat' to begin."
+echo "[*] Ensuring the 'aex' command is on PATH..."
+python3 -m aex_agent doctor || true
+
+echo ""
+echo "[OK] AEX Agent installed successfully!"
+echo "Open a NEW shell, then run 'aex' or 'aex chat' to begin."
+echo "If 'aex' is not found: run  python3 -m aex_agent doctor  to repair PATH."
