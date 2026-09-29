@@ -175,6 +175,39 @@ class SlashCommandRegistry:
             )
             return f"Trajectory exported to: `{path}`"
 
+        @self.register("copy", "Copy a recent assistant reply's raw text to the clipboard. Usage: `/copy [n]` (default: last reply)")
+        def cmd_copy(args, ctx):
+            agent = ctx.get("agent")
+            if not agent:
+                return "No active agent session."
+            n = 1
+            if args:
+                try:
+                    n = int(args[0])
+                except ValueError:
+                    return "Usage: `/copy [n]` — n is the nth-latest assistant reply (default 1)."
+
+            # Collect assistant replies from the session store (chronological)
+            replies = [
+                m["content"]
+                for m in agent.session_store.get_messages(agent.session_id, limit=200)
+                if m["role"] == "assistant" and m.get("content")
+            ]
+            if not replies:
+                return "No assistant replies in this session yet."
+            if n < 1 or n > len(replies):
+                return f"Only {len(replies)} assistant reply/replies available — pick 1..{len(replies)}."
+            text = replies[-n]  # n=1 → latest, n=2 → one before, …
+
+            # OSC 52 clipboard escape works in most modern terminals (Windows Terminal included)
+            import base64, sys
+            payload = base64.b64encode(text.encode("utf-8")).decode("ascii")
+            sys.stdout.write(f"\x1b]52;c;{payload}\x07")
+            sys.stdout.flush()
+
+            preview = text[:60].replace("\n", " ")
+            return f"Copied reply #{n} ({len(text)} chars) to clipboard. Preview: {preview}…"
+
 
 # Global slash command registry
 commands_registry = SlashCommandRegistry()

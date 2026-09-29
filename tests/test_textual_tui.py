@@ -71,6 +71,14 @@ async def _await_turn_done(pilot, app, timeout_s: float = 5.0) -> None:
     raise AssertionError("turn did not finish in time")
 
 
+async def _await_turn_active(pilot, app, timeout_s: float = 5.0) -> None:
+    for _ in range(int(timeout_s / 0.05)):
+        await pilot.pause(0.05)
+        if app._turn_active:
+            return
+    raise AssertionError("turn never started")
+
+
 @pytest.mark.asyncio
 async def test_textual_tui_full_turn(fake_agent_turn):
     app = ChatApp()
@@ -141,3 +149,59 @@ async def test_textual_tui_slash_commands(fake_agent_turn):
         await pilot.press("enter")
         await pilot.pause(0.1)
         assert _transcript(app) == "" or "cleared" in _transcript(app)
+
+
+@pytest.mark.asyncio
+async def test_textual_tui_clipboard_copy(fake_agent_turn):
+    app = ChatApp()
+    async with app.run_test(size=(110, 32)) as pilot:
+        await pilot.pause()
+        prompt = app.query_one("#prompt", Input)
+
+        # before any turn: Ctrl+Y reports nothing to copy, no crash
+        await pilot.press("ctrl+y")
+        await pilot.pause(0.1)
+        assert "nothing to copy" in _transcript(app)
+
+        # run a gated turn, release, finish → _last_response set
+        prompt.value = "give me something to copy"
+        await pilot.press("enter")
+        await _await_turn_active(pilot, app)
+        fake_agent_turn.set()
+        await _await_turn_done(pilot, app)
+        await pilot.pause(0.1)
+        assert app._last_response, "last response must be tracked"
+
+        # Ctrl+Y copies it: copy_to_clipboard sets the app clipboard
+        # (OSC 52 escape for real terminals; _clipboard is the in-app truth)
+        await pilot.press("ctrl+y")
+        await pilot.pause(0.1)
+        assert "Hello **world** from AEX" == app._clipboard, "OSC copy must set app clipboard"
+        assert "copied last reply" in _transcript(app), "copy must be noted in transcript"
+
+
+@pytest.mark.asyncio
+async def test_textual_tui_multiline_paste(fake_agent_turn):
+    app = ChatApp()
+    async with app.run_test(size=(110, 32)) as pilot:
+        await pilot.pause()
+        prompt = app.query_one("#prompt", Input)
+
+        # simulate a bracketed paste event with multi-line text
+        multiline = "line one\nline two\nline three"
+        from textual.events import Paste as PasteEvent
+        prompt.post_message(PasteEvent(multiline))
+        await pilot.pause(0.1)
+        assert "line one" in prompt.value, f"paste lost: {prompt.value!r}"
+        assert "\\n" in prompt.value, f"newlines must become visible markers: {prompt.value!r}"
+        assert "line two" in prompt.value, f"second line lost: {prompt.value!r}"
+
+        # submitting converts the markers back to real newlines
+        await pilot.press("enter")
+        await _await_turn_active(pilot, app)
+        fake_agent_turn.set()
+        await _await_turn_done(pilot, app)
+        log = app.query_one("#chat", RichLog)
+        txt = "\n".join(s.text for s in log.lines)
+        assert "line one\\nline two\\nline three" in txt or "line one\nline two" in txt, \
+            f"submitted text must carry all lines: {txt[:200]!r}"

@@ -21,6 +21,7 @@ from typing import Any, Dict, Optional
 
 from textual.app import App, ComposeResult
 from textual.containers import Vertical
+from textual.events import Paste
 from textual.widgets import Footer, Header, Input, RichLog, Static
 from rich.markdown import Markdown
 from rich.text import Text
@@ -42,6 +43,26 @@ class StreamPane(Static):
     pass
 
 
+class MultilinePasteInput(Input):
+    """Input that accepts multi-line pastes instead of dropping all
+    lines but the first. Newlines become visible \\n markers so the
+    user can review before submitting; strip them on submit."""
+
+    def _on_paste(self, event: Paste) -> None:
+        if event.text:
+            cr, lf = chr(13), chr(10)
+            flat = event.text.replace(cr + lf, lf).replace(cr, lf)
+            if lf in flat:
+                # collapse newlines into visible markers for editing
+                flat = flat.replace(lf, "\\" + "n")
+            selection = self.selection
+            if selection.is_empty:
+                self.insert_text_at_cursor(flat)
+            else:
+                self.replace(flat, *selection)
+        event.stop()
+
+
 class ChatApp(App):
     """slt-inspired full-screen chat for AEX Agent."""
 
@@ -50,6 +71,8 @@ class ChatApp(App):
         ("ctrl+c", "quit", "quit"),
         ("ctrl+l", "clear", "clear"),
         ("escape", "cancel_turn", "cancel turn"),
+        ("ctrl+y", "copy_last_response", "copy last reply"),
+        ("ctrl+p", "copy_prompt", "copy input"),
     ]
 
     def __init__(self, session_id: Optional[str] = None) -> None:
@@ -63,6 +86,7 @@ class ChatApp(App):
         self._turn_started: float = 0.0
         self._turn_task: Optional[asyncio.Task] = None
         self._tool_calls_this_turn = 0
+        self._last_response: str = ""
         # Known context windows (approx, top-end) — checked most-specific first
         self._ctx_limits: Dict[str, int] = {
             "glm-5.3-flash": 1_000_000,
@@ -102,7 +126,10 @@ class ChatApp(App):
         yield Banner(self._banner_markup(), id="banner")
         yield RichLog(highlight=False, markup=True, wrap=True, id="chat")
         yield StreamPane(Text(""), id="stream")
-        yield Input(placeholder="Ask anything…  (Esc cancels a running turn)", id="prompt")
+        yield MultilinePasteInput(
+            placeholder="Ask anything…  (Esc cancel · Ctrl+Y copy last reply · Ctrl+P copy input)",
+            id="prompt",
+        )
         yield Static(self._status_markup(), id="statusbar")
         yield Footer()
 
@@ -218,6 +245,8 @@ class ChatApp(App):
     # ── input handling ─────────────────────────────────────────────
     def on_input_submitted(self, event: Input.Submitted) -> None:
         text = event.value.strip()
+        # restore real newlines from the visible \n markers
+        text = text.replace("\\n", "\n")
         input_widget = event.input
         input_widget.value = ""
         if not text:
@@ -349,6 +378,7 @@ class ChatApp(App):
             elif body.startswith("[Provider Error"):
                 log.write(Text(body, style="bold red"))
             else:
+                self._last_response = body
                 log.write(Markdown(body))
 
             calls = res.get("tool_calls_count", 0)
@@ -363,6 +393,26 @@ class ChatApp(App):
             self._turn_task.cancel()
         elif not self._turn_active:
             self.query_one("#prompt", Input).focus()
+
+    # ── clipboard ──────────────────────────────────────────────────
+    def action_copy_last_response(self) -> None:
+        self._copy(self._last_response, "last reply")
+
+    def action_copy_prompt(self) -> None:
+        try:
+            value = self.query_one("#prompt", Input).value
+        except Exception:
+            value = ""
+        self._copy(value, "input")
+
+    def _copy(self, text: str, what: str) -> None:
+        log = self.query_one("#chat", RichLog)
+        if not text:
+            log.write(Text(f"◇ clipboard: nothing to copy ({what} is empty)", style="dim"))
+            return
+        self.copy_to_clipboard(text)
+        n = len(text)
+        log.write(Text(f"◇ copied {what} to clipboard ({n} chars)", style=f"bold {ACCENT}"))
 
     def action_clear(self) -> None:
         self.query_one("#chat", RichLog).clear()
