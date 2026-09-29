@@ -11,7 +11,7 @@ from typing import Optional
 
 APP_NAME = "AEX Agent"
 CLI_NAME = "aex"
-PACKAGE_NAME = "aaex_agent"
+PACKAGE_NAME = "aex_agent"
 VERSION = "1.0.0"
 
 # Bounded Memory Thresholds (Characters) matching Hermes Agent specification
@@ -107,8 +107,8 @@ def get_skills_dir() -> Path:
 
 
 def get_bundled_skills_dir() -> Path:
-    """Path to internal bundled skills packaged within aaex_agent."""
-    return Path(__file__).parent / "aaex_agent" / "skills" / "builtin"
+    """Path to internal bundled skills packaged within aex_agent."""
+    return Path(__file__).parent / "aex_agent" / "skills" / "builtin"
 
 
 def get_sessions_dir() -> Path:

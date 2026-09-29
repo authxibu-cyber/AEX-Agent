@@ -41,11 +41,11 @@ AEX-Agent/
 ├── pyproject.toml                 # Package definition & CLI entry points
 ├── setup.py                       # Setup installer
 ├── requirements.txt               # Core dependencies
-├── aaex_constants.py                # Environment & directory path resolver
+├── aex_constants.py                # Environment & directory path resolver
 ├── AGENTS.md                      # Workspace & project guidelines
 ├── SOUL.md                        # Sovereign persona & cognitive stance
 ├── .env.example                   # Environment configuration template
-├── aaex_agent/
+├── aex_agent/
 │   ├── agent/
 │   │   ├── core.py                # EXAgent main loop & turn coordinator
 │   │   ├── parser.py              # Resilient parser for OpenAI & Hermes XML tool calls
