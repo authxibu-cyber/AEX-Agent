@@ -27,6 +27,7 @@ from rich.markdown import Markdown
 from rich.text import Text
 
 from aex_agent.agent.core import EXAgent
+from aex_agent.cli.logo import LOGO, logo_splash
 from aex_agent.config import load_config
 from aex_constants import APP_NAME, VERSION
 
@@ -36,6 +37,7 @@ STREAM_FLUSH_S = 0.12
 
 
 class Banner(Static):
+    """Splash banner holding the ASCII emblem + title."""
     pass
 
 
@@ -108,7 +110,7 @@ class ChatApp(App):
 
     CSS = f"""
     Screen {{ layout: vertical; }}
-    #banner {{ dock: top; height: 3; border: round {GOLD} 70%;
+    #banner {{ dock: top; height: auto; max-height: 27; border: none;
                background: $surface; padding: 0 1; color: $text; }}
     #chat {{ height: 1fr; border: round {ACCENT} 40%; padding: 0 1; }}
     #chat:focus {{ border: round {ACCENT} 90%; }}
@@ -188,12 +190,13 @@ class ChatApp(App):
         bar = self.query_one("#statusbar", Static)
         bar.update(self._status_markup())
 
-    def _banner_markup(self) -> str:
-        return (
-            f"[b {ACCENT}]◆[/b {ACCENT}] [b]{APP_NAME}[/b] [dim]v{VERSION}[/dim]   "
-            f"[b {GOLD}]☤ {self._model_short()}[/b {GOLD}]   "
-            f"[dim]{self.cfg.provider}[/dim]   "
-            f"[dim]· session {self.agent.session_id[:8] if self.agent else '—'}[/dim]"
+    def _banner_markup(self) -> Text:
+        return logo_splash(
+            title=APP_NAME,
+            subtitle=f"v{VERSION}  ·  {self._model_short()}  ·  {self.cfg.provider}"
+                    + (f"  ·  session {self.agent.session_id[:8]}" if self.agent else ""),
+            style=GOLD,
+            accent=ACCENT,
         )
 
     def _refresh_banner(self) -> None:

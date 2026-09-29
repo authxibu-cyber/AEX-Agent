@@ -29,8 +29,9 @@ from rich.text import Text
 
 from aex_agent.agent.core import EXAgent
 from aex_agent.cli.commands import commands_registry
+from aex_agent.cli.logo import logo_splash
 from aex_agent.config import load_config
-from aex_constants import APP_NAME, get_aex_home
+from aex_constants import APP_NAME, VERSION, get_aex_home
 
 console = Console()
 
@@ -129,6 +130,13 @@ async def run_interactive_tui(session_id: Optional[str] = None) -> None:
     agent = EXAgent(config=cfg, session_id=session_id)
     ctx = {"agent": agent, "config": cfg}
 
+    # Emblem splash, then the compact header
+    console.print(logo_splash(
+        title=APP_NAME,
+        subtitle=f"v{VERSION}  ·  {cfg.model}  ·  {cfg.provider}",
+        style="gold3",
+        accent="bright_cyan",
+    ))
     print_header(cfg.model, cfg.provider)
 
     while True:
