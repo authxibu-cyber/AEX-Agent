@@ -11,7 +11,7 @@ from rich.table import Table
 
 from aex_agent.cli.setup_wizard import run_setup_wizard
 from aex_agent.cli.tui import run_interactive_tui
-from aex_agent.config import load_config, save_config
+from aex_agent.config import get_config_path, load_config, save_config
 from aex_agent.gateway.scheduler import CronScheduler
 from aex_agent.gateway.server import run_gateway
 from aex_agent.memory.persistent import MemoryManager
@@ -22,6 +22,36 @@ from aex_constants import APP_NAME, VERSION
 console = Console()
 
 
+def needs_setup() -> bool:
+    """True when AEX has never been configured (fresh install)."""
+    return not get_config_path().exists()
+
+
+def first_run_guard(console_: Console) -> bool:
+    """Fresh-install onboarding: walk the user through setup before first chat.
+
+    Returns True when a chat session may start (configured, or setup completed).
+    """
+    if not needs_setup():
+        return True
+    console_.print()
+    console_.print(f"[bold gold3]Welcome to {APP_NAME} v{VERSION}[/bold gold3]")
+    console_.print("[dim]No configuration found yet — let's connect you to a model.[/dim]")
+    console_.print("[dim]This takes under a minute: pick a provider, paste an API key,[/dim]")
+    console_.print("[dim]and the wizard tests the connection live before saving.[/dim]")
+    console_.print()
+    try:
+        run_setup_wizard()
+    except KeyboardInterrupt:
+        console_.print("\n[yellow]Setup skipped. Run `aex setup` any time.[/yellow]")
+        return False
+    if needs_setup():  # user aborted before saving
+        console_.print("[yellow]Setup not saved. Run `aex setup` any time.[/yellow]")
+        return False
+    console_.print("\n[green]You're set. Launching the chat...[/green]\n")
+    return True
+
+
 @click.group(invoke_without_command=True)
 @click.pass_context
 def main(ctx: click.Context):
@@ -30,13 +60,15 @@ def main(ctx: click.Context):
         # self-heal: if pip put our scripts dir outside PATH, fix it now
         from aex_agent.cli.pathfix import ensure_aex_on_path
         ensure_aex_on_path(verbose=False)
+        if not first_run_guard(console):
+            return
         from aex_agent.cli.textual_tui import run_interactive_tui
         run_interactive_tui()
 
 
 @main.command("doctor")
 def cmd_doctor():
-    """Diagnose and repair the `aex` command / PATH automatically."""
+    """Diagnose and repair the `aex` command, PATH, and provider connection."""
     from aex_agent.cli.pathfix import ensure_aex_on_path
     res = ensure_aex_on_path(verbose=True)
     if res["already"]:
@@ -47,6 +79,24 @@ def cmd_doctor():
         console.print("[red]FAILED[/red] could not repair:")
         for n in res["actions"]:
             console.print(f"  - {n}")
+
+    # connectivity check against the configured provider
+    console.print()
+    try:
+        from aex_agent.cli.setup_wizard import _test_connection
+        cfg = load_config()
+        base = cfg.resolve_base_url()
+        console.print(f"Provider: [bold]{cfg.provider}[/bold]  Model: [bold]{cfg.model}[/bold]")
+        console.print(f"Endpoint: [dim]{base}[/dim]")
+        ok, msg = _test_connection(cfg)
+        if ok:
+            console.print(f"[green]OK[/green] Connection test passed: {msg}")
+        else:
+            console.print(f"[red]FAILED[/red] Connection test: {msg}")
+            console.print("[yellow]→ Run  aex setup  to reconfigure provider/model/key.[/yellow]")
+    except Exception as e:
+        console.print(f"[yellow]Config check skipped:[/yellow] {e}")
+        console.print("[yellow]→ Run  aex setup  to configure a provider.[/yellow]")
 
 
 @main.command("chat")
