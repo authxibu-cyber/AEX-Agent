@@ -65,20 +65,19 @@ class ChatApp(App):
     Screen { layout: vertical; }
     #banner { dock: top; height: 3; border: round $accent; padding: 0 1;
               background: $surface; color: $text; }
-    #banner-line1 { color: $text; }
-    #statusbar { dock: top; height: 1; padding: 0 1; background: $surface;
-                 color: $text; }
     #chat { border: round $accent-muted; margin: 0 0; height: 1fr; }
     #chat:focus { border: round $accent; }
+    #statusbar { dock: bottom; height: 1; padding: 0 1; background: $surface;
+                 color: $text; }
     Input { dock: bottom; border: round $accent; }
     Footer { dock: bottom; }
     """
 
     def compose(self) -> ComposeResult:
         yield Banner(self._banner_markup(), id="banner")
-        yield Static(self._status_markup(), id="statusbar")
         yield RichLog(highlight=False, markup=True, wrap=True, id="chat")
         yield Input(placeholder="Ask anything…", id="prompt")
+        yield Static(self._status_markup(), id="statusbar")
         yield Footer()
 
     # ── status bar ─────────────────────────────────────────────────
