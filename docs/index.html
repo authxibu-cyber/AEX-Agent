@@ -205,12 +205,24 @@
   .foot a:hover { color: var(--gold-bright); }
 
     /* ── reference tables (CLI + slash commands) ── */
+  .ref-h {
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--gold-bright); margin: 34px 0 14px;
+  }
+  .ref-h:first-of-type { margin-top: 0; }
   .ref { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-  .ref-row { display: grid; grid-template-columns: 200px 1fr; gap: 20px; padding: 16px 22px; border-top: 1px solid var(--line-soft); }
+  .ref-row { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 24px; padding: 15px 22px; border-top: 1px solid var(--line-soft); align-items: start; }
   .ref-row:first-child { border-top: 0; }
-  .ref-row code.k { font-family: var(--mono); font-size: 13px; color: var(--gold-bright); white-space: nowrap; }
-  .ref-row p { color: var(--ink-dim); font-size: 13.5px; }
+  .ref-row code.k {
+    font-family: var(--mono); font-size: 13px; color: var(--gold-bright);
+    white-space: normal; word-break: break-word; line-height: 1.5;
+  }
+  .ref-row p { color: var(--ink-dim); font-size: 13.5px; line-height: 1.65; }
   .ref-row p code { font-family: var(--mono); font-size: .85em; color: var(--gold-bright); background: rgba(181,137,0,.1); padding: 1px 5px; border-radius: 3px; }
+  .ref-row.wide { grid-template-columns: 1fr; gap: 6px; }
+  .ref-row.wide p { margin-top: 0; }
+  .ref-row.wide code.k { font-size: 13.5px; }
 
   /* getting-started steps */
   .steps { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); }
@@ -231,7 +243,8 @@
   @media (max-width: 920px) {
     .steps { grid-template-columns: 1fr 1fr; }
     .steps .step { border-bottom: 1px solid var(--line); }
-    .ref-row { grid-template-columns: 1fr; gap: 6px; }
+    .ref-row, .ref-row.wide { grid-template-columns: 1fr; gap: 6px; }
+  .ref-row.wide p { margin-top: 0; }
     .nav-r a:not(.cta) { display: none; }
   }
   @media (max-width: 640px) {
@@ -474,11 +487,11 @@
       <p>Shell commands for daily driving, slash commands inside the chat, and keys that control the TUI.</p>
     </div>
 
-    <h3 class="label" style="margin-bottom:14px">Shell — <code style="color:var(--gold-bright)">aex &lt;command&gt;</code></h3>
+    <h3 class="ref-h">Shell — aex &lt;command&gt;</h3>
     <div class="ref" style="margin-bottom:40px">
       <div class="ref-row"><code class="k">aex</code><p>Launch the full-screen interactive TUI. This is where you'll live.</p></div>
       <div class="ref-row"><code class="k">aex setup</code><p>Interactive wizard: provider, model, base URL, masked API key, live connection test. Safe to re-run any time.</p></div>
-      <div class="ref-row"><code class="k">aex model [name] [-p provider]</code><p>View or switch the active model/provider without opening a chat.</p></div>
+      <div class="ref-row wide"><code class="k">aex model [name] [-p provider]</code><p>View or switch the active model/provider without opening a chat.</p></div>
       <div class="ref-row"><code class="k">aex memory</code><p>Inspect the persistent <code>MEMORY.md</code> and <code>USER.md</code> files and their character budgets.</p></div>
       <div class="ref-row"><code class="k">aex skills</code><p>List every loaded skill — bundled ones plus the ones the agent taught itself.</p></div>
       <div class="ref-row"><code class="k">aex gateway [--port 8642]</code><p>Start the OpenAI-compatible API server + cron scheduler. Point any client at <code>http://localhost:8642/v1</code>.</p></div>
@@ -486,24 +499,24 @@
       <div class="ref-row"><code class="k">aex tools</code><p>Show the registered toolsets (terminal, file, web, memory, skills, code execution…).</p></div>
     </div>
 
-    <h3 class="label" style="margin-bottom:14px">Inside the chat — slash commands</h3>
+    <h3 class="ref-h">Inside the chat — slash commands</h3>
     <div class="ref" style="margin-bottom:40px">
       <div class="ref-row"><code class="k">/help</code><p>List every command below — you never have to memorize this page.</p></div>
-      <div class="ref-row"><code class="k">/model [name] · /provider [name]</code><p>Switch model or provider mid-conversation, on the fly.</p></div>
+      <div class="ref-row wide"><code class="k">/model [name] · /provider [name]</code><p>Switch model or provider mid-conversation, on the fly.</p></div>
       <div class="ref-row"><code class="k">/memory</code><p>See what the agent remembers about the world and about you.</p></div>
-      <div class="ref-row"><code class="k">/skills · /learn name description</code><p>Browse loaded skills, or have the agent author a new one from the current session.</p></div>
-      <div class="ref-row"><code class="k">/sessions · /search query</code><p>List past sessions and full-text search every message you've ever exchanged (SQLite FTS5).</p></div>
+      <div class="ref-row wide"><code class="k">/skills · /learn name description</code><p>Browse loaded skills, or have the agent author a new one from the current session.</p></div>
+      <div class="ref-row wide"><code class="k">/sessions · /search query</code><p>List past sessions and full-text search every message you've ever exchanged (SQLite FTS5).</p></div>
       <div class="ref-row"><code class="k">/tools</code><p>Inspect the active toolsets available to the agent.</p></div>
-      <div class="ref-row"><code class="k">/copy [n] · /export</code><p>Copy the last reply to clipboard, or export the session trajectory (ShareGPT format) for training.</p></div>
+      <div class="ref-row wide"><code class="k">/copy [n] · /export</code><p>Copy the last reply to clipboard, or export the session trajectory (ShareGPT format) for training.</p></div>
     </div>
 
-    <h3 class="label" style="margin-bottom:14px">Keys</h3>
+    <h3 class="ref-h">Keys</h3>
     <div class="ref">
       <div class="ref-row"><code class="k">Enter</code><p>Send the message.</p></div>
       <div class="ref-row"><code class="k">Esc</code><p>Cancel the running turn.</p></div>
       <div class="ref-row"><code class="k">Ctrl+C</code><p>Quit the session (memory is preserved automatically).</p></div>
       <div class="ref-row"><code class="k">Ctrl+L</code><p>Clear the transcript view.</p></div>
-      <div class="ref-row"><code class="k">Ctrl+Y / Ctrl+P</code><p>Copy the last reply / copy the input line to the clipboard.</p></div>
+      <div class="ref-row wide"><code class="k">Ctrl+Y / Ctrl+P</code><p>Copy the last reply / copy the input line to the clipboard.</p></div>
     </div>
   </div>
 </section>
