@@ -1,4 +1,4 @@
-# EX Agent ☤
+# AEX Agent ☤
 
 <p align="center">
   <b>The Sovereign, Self-Improving AI Agent Harness</b><br>
