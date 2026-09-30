@@ -20,21 +20,61 @@ import time
 from typing import Any, Dict, Optional
 
 from textual.app import App, ComposeResult
+from textual.screen import ModalScreen
 from textual.containers import Vertical
 from textual.events import Paste
 from textual.widgets import Footer, Header, Input, RichLog, Static
+from textual.containers import Horizontal
 from rich.markdown import Markdown
 from rich.text import Text
 
 from aex_agent.agent.core import EXAgent
 from aex_agent.cli.logo import logo_splash
 from aex_agent.config import load_config
+from aex_agent.tools.base import BaseTool
 from aex_constants import APP_NAME, VERSION
 
 GOLD = "#e6c04a"      # Angel Wish gold-bright
 ACCENT = "#93a1a1"    # Solarized ink
 PARCHMENT = "#fdf6e3" # hero headline color
 STREAM_FLUSH_S = 0.12
+
+
+class ApprovalModal(ModalScreen[bool]):
+    """Modal Y/N confirmation for dangerous tool calls (fail-closed default).
+
+    Push with app.push_screen(modal, callback). The callback receives True
+    only on Y/Enter; N/Escape/anything else dismisses as False.
+    """
+
+    BINDINGS = [
+        ("y", "approve", "allow"),
+        ("enter", "approve", "allow"),
+        ("n", "deny", "deny"),
+        ("escape", "deny", "deny"),
+    ]
+
+    def __init__(self, tool_name: str, args_preview: str) -> None:
+        super().__init__()
+        self.tool_name = tool_name
+        self.args_preview = args_preview
+
+    def compose(self) -> ComposeResult:
+        yield Vertical(
+            Static(
+                f"⚠ DANGEROUS TOOL REQUEST\n\n"
+                f"tool:    {self.tool_name}\n"
+                f"args:    {self.args_preview}\n\n"
+                f"[Y] allow    [N] deny    (Esc = deny)",
+                classes="approval_box",
+            ),
+        )
+
+    def action_approve(self) -> None:
+        self.dismiss(True)
+
+    def action_deny(self) -> None:
+        self.dismiss(False)
 
 
 class Banner(Static):
@@ -125,6 +165,10 @@ class ChatApp(App):
     Input {{ dock: bottom; border: round #b58900 50%; background: #002b36; }}
     Input:focus {{ border: round {GOLD}; }}
     Footer {{ dock: bottom; }}
+
+    ApprovalModal {{ align: center middle; background: #002b36 90%; }}
+    #approval_box {{ width: 64; height: auto; border: thick red;
+                     background: #073642; padding: 1 2; }}
     """
 
     def compose(self) -> ComposeResult:
@@ -218,8 +262,33 @@ class ChatApp(App):
         if self._turn_active:
             self._refresh_status()
 
+    async def _request_approval(self, tool, arguments) -> bool:
+        """Modal Y/N prompt for dangerous tools; safe default when no app UI."""
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return False  # no running loop (scripted use) → deny
+        fut: asyncio.Future = asyncio.get_running_loop().create_future()
+
+        def _cb(approved: bool | None) -> None:
+            if not fut.done():
+                fut.set_result(bool(approved))  # None (screen swap) = deny
+
+        preview = ""
+        if isinstance(arguments, dict):
+            preview = ", ".join(
+                f"{k}={str(v)[:70]}" for k, v in list(arguments.items())[:3]
+            )
+        modal = ApprovalModal(getattr(tool, "name", str(tool)), preview)
+        self.call_later(lambda: self.push_screen(modal, _cb))
+        return await fut
+
     def on_mount(self) -> None:
-        self.agent = EXAgent(config=self.cfg, session_id=self.session_id)
+        self.agent = EXAgent(
+            config=self.cfg,
+            session_id=self.session_id,
+            approval_callback=self._request_approval,
+        )
         self.agent.state.context_limit = self._ctx_limit
         self._ctx_limit = self._resolve_ctx_limit(self.agent.model)
         log = self.query_one("#chat", RichLog)

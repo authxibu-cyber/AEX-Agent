@@ -29,6 +29,10 @@ load_dotenv(dotenv_path=Path.cwd() / ".env")
 class ChannelConfig(BaseModel):
     enabled: bool = False
     token: Optional[str] = None
+    allowed_ids: List[str] = Field(
+        default_factory=list,
+        description="Allowlist of chat/channel IDs permitted to use this channel. Empty = deny all (fail-closed).",
+    )
     extra: Dict[str, Any] = Field(default_factory=dict)
 
 
@@ -58,6 +62,10 @@ class Config(BaseModel):
     )
     gateway_host: str = Field(default=DEFAULT_GATEWAY_HOST)
     gateway_port: int = Field(default=DEFAULT_GATEWAY_PORT)
+    gateway_api_key: Optional[str] = Field(
+        default=None,
+        description="Bearer/API key required by gateway clients (env AEX_GATEWAY_API_KEY overrides)",
+    )
     save_trajectories: bool = Field(default=True, description="Save interaction trajectories for RL/training")
 
     # Multi-channel gateway configurations
@@ -188,6 +196,14 @@ def load_config() -> Config:
             data["gateway_port"] = int(os.environ["AEX_GATEWAY_PORT"])
         except ValueError:
             pass
+    if "AEX_GATEWAY_API_KEY" in os.environ:
+        data["gateway_api_key"] = os.environ["AEX_GATEWAY_API_KEY"]
+    if "TELEGRAM_ALLOWED_CHAT_IDS" in os.environ:
+        ids = [x.strip() for x in os.environ["TELEGRAM_ALLOWED_CHAT_IDS"].split(",") if x.strip()]
+        channels = data.setdefault("channels", {})
+        if not isinstance(channels.get("telegram"), dict):
+            channels["telegram"] = {}
+        channels["telegram"]["allowed_ids"] = ids
 
     config = Config(**data)
     return config

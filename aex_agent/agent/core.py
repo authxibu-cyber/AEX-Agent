@@ -44,6 +44,7 @@ class EXAgent:
         system_instructions: Optional[str] = None,
         session_id: Optional[str] = None,
         tool_registry: Optional[ToolRegistry] = None,
+        approval_callback: Optional[Callable] = None,
     ):
         self.config = config or load_config()
         self.model = model or self.config.model
@@ -65,6 +66,7 @@ class EXAgent:
         self.tool_executor = ToolExecutor(
             tool_registry=self.tool_registry,
             approval_mode=self.config.approval_mode,
+            approval_callback=approval_callback,
         )
 
         # Active Session

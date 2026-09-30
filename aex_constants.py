@@ -19,7 +19,7 @@ MEMORY_MD_MAX_CHARS: int = 2200
 USER_MD_MAX_CHARS: int = 1375
 
 # Default Gateway Configuration
-DEFAULT_GATEWAY_HOST: str = "0.0.0.0"
+DEFAULT_GATEWAY_HOST: str = "127.0.0.1"
 DEFAULT_GATEWAY_PORT: int = 8642
 
 # Default Models

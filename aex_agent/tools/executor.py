@@ -5,7 +5,8 @@ Handles concurrent execution via asyncio.gather, output budgeting, and approval 
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Callable, Dict, List, Optional
+import inspect
+from typing import Any, Awaitable, Callable, Dict, List, Optional, Union
 
 from aex_agent.tools.base import BaseTool, ToolRegistry, ToolResult, registry
 
@@ -17,7 +18,9 @@ class ToolExecutor:
         approval_mode: str = "dangerous",
         max_output_chars: int = 15000,
         timeout_seconds: float = 60.0,
-        approval_callback: Optional[Callable[[BaseTool, Dict[str, Any]], bool]] = None,
+        approval_callback: Optional[
+            Callable[[BaseTool, Dict[str, Any]], Union[bool, Awaitable[bool]]]
+        ] = None,
     ):
         self.registry = tool_registry or registry
         self.approval_mode = approval_mode
@@ -34,16 +37,26 @@ class ToolExecutor:
                 error=f"Tool '{name}' is not registered or not permitted.",
             )
 
-        # Security Approval Gate
+        # Security Approval Gate (fail-closed: a missing callback blocks the call)
         if self._requires_approval(tool_obj):
-            if self.approval_callback:
-                approved = self.approval_callback(tool_obj, arguments)
-                if not approved:
-                    return ToolResult(
-                        success=False,
-                        output="",
-                        error=f"Execution of dangerous tool '{name}' was rejected by user.",
-                    )
+            if self.approval_callback is None:
+                return ToolResult(
+                    success=False,
+                    output="",
+                    error=(
+                        f"Tool '{name}' requires approval but no approval callback is "
+                        f"configured. Execution blocked (fail-closed)."
+                    ),
+                )
+            approved = self.approval_callback(tool_obj, arguments)
+            if inspect.isawaitable(approved):
+                approved = await approved
+            if not approved:
+                return ToolResult(
+                    success=False,
+                    output="",
+                    error=f"Execution of dangerous tool '{name}' was rejected by user.",
+                )
 
         # Execution with timeout
         try:

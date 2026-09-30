@@ -41,13 +41,54 @@ def create_gateway_app(config: Optional[Config] = None) -> FastAPI:
     cfg = config or load_config()
     app = FastAPI(title="AEX Agent Gateway", version=VERSION)
 
+    # CORS: same-origin only unless AEX_GATEWAY_CORS_ORIGINS is set explicitly.
+    # Wildcard + credentials is a browser-auth bypass; never combine them by default.
+    import os as _os
+
+    _cors_raw = _os.environ.get("AEX_GATEWAY_CORS_ORIGINS", "").strip()
+    _cors_origins = (
+        [o.strip() for o in _cors_raw.split(",") if o.strip()]
+        if _cors_raw
+        else []
+    )
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
-        allow_credentials=True,
+        allow_origins=_cors_origins,
+        allow_credentials=bool(_cors_origins),
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # --- Authentication gate -----------------------------------------------
+    # When no API key is configured, only loopback clients may call the API.
+    # When a key IS configured (config.yaml gateway_api_key or AEX_GATEWAY_API_KEY),
+    # remote clients must present it (Bearer header or ?key= query param).
+    _api_key = (cfg.gateway_api_key or "").strip()
+
+    async def _auth_gate(request: Request, call_next):
+        client_host = request.client.host if request.client else ""
+        is_local = client_host in ("127.0.0.1", "::1", "localhost")
+
+        if _api_key:
+            header = request.headers.get("authorization", "")
+            presented = header[7:].strip() if header.lower().startswith("bearer ") else ""
+            if not presented:
+                presented = request.query_params.get("key", "").strip()
+            key_ok = presented and presented == _api_key
+        else:
+            key_ok = False
+
+        # /health stays open (unauthenticated, harmless telemetry)
+        if request.url.path == "/health":
+            return await call_next(request)
+        if key_ok or is_local:
+            return await call_next(request)
+        return JSONResponse(
+            status_code=401,
+            content={"detail": "Unauthorized: missing or invalid API key."},
+        )
+
+    app.middleware("http")(_auth_gate)
 
     mem_manager = MemoryManager()
     session_store = SessionStore()
