@@ -43,10 +43,10 @@ class ContextEngine:
         Loads SOUL.md defining Merlin Agent's core intellect, tone, and cognitive pulse.
         Prioritizes MERLIN_HOME/SOUL.md, falling back to repository root SOUL.md or default.
         """
-        ex_home_soul = get_merlin_home() / "SOUL.md"
-        if ex_home_soul.is_file():
+        home_soul = get_merlin_home() / "SOUL.md"
+        if home_soul.is_file():
             try:
-                return ex_home_soul.read_text(encoding="utf-8")
+                return home_soul.read_text(encoding="utf-8")
             except Exception:
                 pass
 
