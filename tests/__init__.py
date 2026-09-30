@@ -1,1 +1,1 @@
-"""Tests package for AEX Agent."""
+"""Tests package for Merlin Agent."""

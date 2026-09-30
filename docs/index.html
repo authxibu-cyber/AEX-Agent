@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AEX Agent — Sovereign AI Agent Harness</title>
-<meta name="description" content="AEX Agent: an autonomous, self-improving AI agent harness. Persistent memory, self-authored skills, any model provider, terminal-native.">
+<title>Merlin Agent — Sovereign AI Agent Harness</title>
+<meta name="description" content="Merlin Agent: an autonomous, self-improving AI agent harness. Persistent memory, self-authored skills, any model provider, terminal-native.">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -324,14 +324,14 @@
           <line x1="27.5" y1="27.5" x2="36.5" y2="36.5"/><line x1="36.5" y1="27.5" x2="27.5" y2="36.5"/>
         </g>
       </svg>
-      <b>Aex Agent</b>
+      <b>Merlin Agent</b>
     </a>
     <div class="nav-r">
       <a href="#capabilities">Capabilities</a>
       <a href="#started">Get started</a>
       <a href="#reference">Reference</a>
       <a href="#faq">FAQ</a>
-      <a class="cta" href="https://github.com/authxibu-cyber/AEX-Agent" target="_blank">GitHub ↗</a>
+      <a class="cta" href="https://github.com/authxibu-cyber/Merlin-Agent" target="_blank">GitHub ↗</a>
     </div>
   </div>
 </nav>
@@ -342,18 +342,18 @@
       <div class="label">Sovereign · Self-Improving · Open Source</div>
       <h1>The agent that<br><em>outlives</em> the session.</h1>
       <p class="lede">
-        AEX Agent is a terminal-native AI harness with persistent memory,
+        Merlin Agent is a terminal-native AI harness with persistent memory,
         skills it writes for itself, and provider-agnostic inference.
         Close the window — it remembers. Come back — it's smarter.
       </p>
       <div class="hero-ctas">
         <a class="btn btn-solid" href="#install">Install in 60 seconds</a>
-        <a class="btn btn-line" href="https://github.com/authxibu-cyber/AEX-Agent" target="_blank">Read the source ↗</a>
+        <a class="btn btn-line" href="https://github.com/authxibu-cyber/Merlin-Agent" target="_blank">Read the source ↗</a>
       </div>
     </div>
 
     <div class="term">
-      <div class="term-top"><i></i><i></i><i></i><span>AEX — 110×30</span></div>
+      <div class="term-top"><i></i><i></i><i></i><span>Merlin — 110×30</span></div>
       <div class="term-b">
         <span class="dim">◆ session started · 3 skills loaded · memory 2.1K chars</span><br>
         <span class="pr">❯</span> ship the new landing page tonight<br>
@@ -459,10 +459,10 @@
     <div class="install-grid">
       <div>
         <div class="cmds">
-          <div class="cmd"><span><span class="p">$</span> pip install git+https://github.com/authxibu-cyber/AEX-Agent</span><span class="note">install straight from github</span></div>
-          <div class="cmd"><span><span class="p">$</span> python -m aex_agent doctor</span><span class="note">windows non-admin? self-repairs PATH</span></div>
-          <div class="cmd"><span><span class="p">$</span> aex setup</span><span class="note">provider · model · key — live-tested</span></div>
-          <div class="cmd"><span><span class="p">$</span> aex</span><span class="note">full-screen session</span></div>
+          <div class="cmd"><span><span class="p">$</span> pip install git+https://github.com/authxibu-cyber/Merlin-Agent</span><span class="note">install straight from github</span></div>
+          <div class="cmd"><span><span class="p">$</span> python -m merlin_agent doctor</span><span class="note">windows non-admin? self-repairs PATH</span></div>
+          <div class="cmd"><span><span class="p">$</span> merlin setup</span><span class="note">provider · model · key — live-tested</span></div>
+          <div class="cmd"><span><span class="p">$</span> merlin</span><span class="note">full-screen session</span></div>
         </div>
         <div class="os-note">windows: .\scripts\install.ps1 · linux/macOS/wsl: ./scripts/install.sh</div>
       </div>
@@ -470,11 +470,11 @@
         <p style="color:var(--ink-dim); font-size:13.5px; max-width:460px;">
           The setup wizard runs a <span style="color:var(--gold-bright)">live connection test</span> against your
           real endpoint before saving anything. API keys are masked on entry and stored in
-          <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">AEX_HOME/.env</code> — never in config.yaml.
+          <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">MERLIN_HOME/.env</code> — never in config.yaml.
         </p>
         <p style="color:var(--ink-dim); font-size:13.5px; max-width:460px; margin-top:14px;">
-          Home lives at <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">%LOCALAPPDATA%\aex</code>
-          (Windows) or <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">~/.aex</code> —
+          Home lives at <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">%LOCALAPPDATA%\merlin</code>
+          (Windows) or <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">~/.merlin</code> —
           memory, skills, sessions, and trajectories in plain files you own.
         </p>
       </div>
@@ -497,17 +497,17 @@
       <div class="step">
         <div class="num">STEP 1</div>
         <h4>Install</h4>
-        <p><code>pip install git+https://github.com/authxibu-cyber/AEX-Agent</code> — or run the platform installer: <code>.\scripts\install.ps1</code> (Windows) / <code>./scripts/install.sh</code> (Linux, macOS, WSL).</p>
+        <p><code>pip install git+https://github.com/authxibu-cyber/Merlin-Agent</code> — or run the platform installer: <code>.\scripts\install.ps1</code> (Windows) / <code>./scripts/install.sh</code> (Linux, macOS, WSL).</p>
       </div>
       <div class="step">
         <div class="num">STEP 2</div>
         <h4>Connect</h4>
-        <p>Run <code>aex setup</code>. Pick a provider from the numbered table (or <code>custom</code> for any OpenAI-compatible endpoint), paste your API key — the wizard <span style="color:var(--gold-bright)">tests the connection live</span> before saving.</p>
+        <p>Run <code>merlin setup</code>. Pick a provider from the numbered table (or <code>custom</code> for any OpenAI-compatible endpoint), paste your API key — the wizard <span style="color:var(--gold-bright)">tests the connection live</span> before saving.</p>
       </div>
       <div class="step">
         <div class="num">STEP 3</div>
         <h4>Chat</h4>
-        <p>Type <code>aex</code>. You're in the full-screen TUI: scrollable transcript, tool-call cards, and the telemetry bar at the bottom showing context, latency and stream health.</p>
+        <p>Type <code>merlin</code>. You're in the full-screen TUI: scrollable transcript, tool-call cards, and the telemetry bar at the bottom showing context, latency and stream health.</p>
       </div>
       <div class="step">
         <div class="num">STEP 4</div>
@@ -528,18 +528,18 @@
       <p>Shell commands for daily driving, slash commands inside the chat, and keys that control the TUI.</p>
     </div>
 
-    <h3 class="ref-h">Shell — aex &lt;command&gt;</h3>
+    <h3 class="ref-h">Shell — merlin &lt;command&gt;</h3>
     <div class="ref" style="margin-bottom:40px">
-      <div class="ref-row"><code class="k">aex</code><p>Launch the full-screen interactive TUI. First run guides you through setup automatically. This is where you'll live.</p></div>
-      <div class="ref-row"><code class="k">aex chat [--classic]</code><p>Same chat, choose your interface — full-screen TUI (default) or the classic inline terminal.</p></div>
-      <div class="ref-row"><code class="k">aex setup</code><p>Interactive wizard: provider, model, base URL, masked API key, live connection test. Safe to re-run any time.</p></div>
-      <div class="ref-row wide"><code class="k">aex doctor</code><p>One command, full health check: repairs the <code>aex</code> command (Windows non-admin PATH), then live-tests your provider connection and tells you exactly what to fix.</p></div>
-      <div class="ref-row wide"><code class="k">aex model [name] [-p provider]</code><p>View or switch the active model/provider without opening a chat.</p></div>
-      <div class="ref-row"><code class="k">aex memory</code><p>Inspect the persistent <code>MEMORY.md</code> and <code>USER.md</code> files and their character budgets.</p></div>
-      <div class="ref-row"><code class="k">aex skills</code><p>List every loaded skill — bundled ones plus the ones the agent taught itself.</p></div>
-      <div class="ref-row"><code class="k">aex gateway [--port 8642]</code><p>Start the OpenAI-compatible API server + cron scheduler. Point any client at <code>http://localhost:8642/v1</code>.</p></div>
-      <div class="ref-row"><code class="k">aex cron</code><p>List scheduled background automations.</p></div>
-      <div class="ref-row"><code class="k">aex tools</code><p>Show the registered toolsets (terminal, file, web, memory, skills, code execution…).</p></div>
+      <div class="ref-row"><code class="k">merlin</code><p>Launch the full-screen interactive TUI. First run guides you through setup automatically. This is where you'll live.</p></div>
+      <div class="ref-row"><code class="k">merlin chat [--classic]</code><p>Same chat, choose your interface — full-screen TUI (default) or the classic inline terminal.</p></div>
+      <div class="ref-row"><code class="k">merlin setup</code><p>Interactive wizard: provider, model, base URL, masked API key, live connection test. Safe to re-run any time.</p></div>
+      <div class="ref-row wide"><code class="k">merlin doctor</code><p>One command, full health check: repairs the <code>merlin</code> command (Windows non-admin PATH), then live-tests your provider connection and tells you exactly what to fix.</p></div>
+      <div class="ref-row wide"><code class="k">merlin model [name] [-p provider]</code><p>View or switch the active model/provider without opening a chat.</p></div>
+      <div class="ref-row"><code class="k">merlin memory</code><p>Inspect the persistent <code>MEMORY.md</code> and <code>USER.md</code> files and their character budgets.</p></div>
+      <div class="ref-row"><code class="k">merlin skills</code><p>List every loaded skill — bundled ones plus the ones the agent taught itself.</p></div>
+      <div class="ref-row"><code class="k">merlin gateway [--port 8642]</code><p>Start the OpenAI-compatible API server + cron scheduler. Point any client at <code>http://localhost:8642/v1</code>.</p></div>
+      <div class="ref-row"><code class="k">merlin cron</code><p>List scheduled background automations.</p></div>
+      <div class="ref-row"><code class="k">merlin tools</code><p>Show the registered toolsets (terminal, file, web, memory, skills, code execution…).</p></div>
     </div>
 
     <h3 class="ref-h">Inside the chat — slash commands</h3>
@@ -579,15 +579,15 @@
     </div>
     <div class="faq-item">
       <h4>Where does my data live?</h4>
-      <p>In plain files you own: <code>%LOCALAPPDATA%\aex</code> on Windows, <code>~/.aex</code> on Linux/macOS. Memory in <code>MEMORY.md</code>/<code>USER.md</code>, skills in <code>skills/</code>, session history in a local SQLite database, trajectories as JSON. Delete the folder and it's gone — no cloud account, no sync, no telemetry.</p>
+      <p>In plain files you own: <code>%LOCALAPPDATA%\merlin</code> on Windows, <code>~/.merlin</code> on Linux/macOS. Memory in <code>MEMORY.md</code>/<code>USER.md</code>, skills in <code>skills/</code>, session history in a local SQLite database, trajectories as JSON. Delete the folder and it's gone — no cloud account, no sync, no telemetry.</p>
     </div>
     <div class="faq-item">
       <h4>How is this different from a chat wrapper?</h4>
-      <p>Chat wrappers are stateless. AEX Agent bounds its memory so context stays small, writes its own skills after real tasks, searches every past session with FTS5, schedules cron jobs that inject conversational memory, and exposes an OpenAI-compatible API so other tools can use it too. It compounds; wrappers forget.</p>
+      <p>Chat wrappers are stateless. Merlin Agent bounds its memory so context stays small, writes its own skills after real tasks, searches every past session with FTS5, schedules cron jobs that inject conversational memory, and exposes an OpenAI-compatible API so other tools can use it too. It compounds; wrappers forget.</p>
     </div>
     <div class="faq-item">
       <h4>Can I use it from other apps?</h4>
-      <p>Yes — run <code>aex gateway</code> and point Open WebUI, LangChain, or any OpenAI-style client at <code>http://localhost:8642/v1</code>. Telegram, Discord, and Slack bridges are built in.</p>
+      <p>Yes — run <code>merlin gateway</code> and point Open WebUI, LangChain, or any OpenAI-style client at <code>http://localhost:8642/v1</code>. Telegram, Discord, and Slack bridges are built in.</p>
     </div>
     <div class="faq-item">
       <h4>What does the telemetry bar show?</h4>
@@ -613,12 +613,12 @@
           <line x1="27.5" y1="27.5" x2="36.5" y2="36.5"/><line x1="36.5" y1="27.5" x2="27.5" y2="36.5"/>
         </g>
       </svg>
-      AEX Agent — sovereign, self-improving, MIT licensed.
+      Merlin Agent — sovereign, self-improving, MIT licensed.
     </div>
     <div class="r">
-      <a href="https://github.com/authxibu-cyber/AEX-Agent" target="_blank">GitHub</a>
-      <a href="https://github.com/authxibu-cyber/AEX-Agent/issues" target="_blank">Issues</a>
-      <a href="https://github.com/authxibu-cyber/AEX-Agent/blob/main/README.md" target="_blank">Docs</a>
+      <a href="https://github.com/authxibu-cyber/Merlin-Agent" target="_blank">GitHub</a>
+      <a href="https://github.com/authxibu-cyber/Merlin-Agent/issues" target="_blank">Issues</a>
+      <a href="https://github.com/authxibu-cyber/Merlin-Agent/blob/main/README.md" target="_blank">Docs</a>
     </div>
   </div>
 </footer>

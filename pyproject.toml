@@ -3,14 +3,14 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "aex-agent"
+name = "merlin-agent"
 version = "1.0.0"
-description = "AEX Agent: Autonomous, self-improving AI agent harness with Tier-3 deep architecture, 3-layer persistent memory, dynamic skill synthesis, and multi-channel gateway."
+description = "Merlin Agent: Autonomous, self-improving AI agent harness with Tier-3 deep architecture, 3-layer persistent memory, dynamic skill synthesis, and multi-channel gateway."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-    { name = "AEX Team & GodEye Mandate", email = "aexagent@internal.ai" }
+    { name = "Epinoia Horizon & GodEye Mandate", email = "merlin@epinoia.ai" }
 ]
 keywords = ["ai-agent", "autonomous-agent", "nous-hermes", "self-improving", "memory", "tui", "gateway"]
 dependencies = [
@@ -42,10 +42,10 @@ dev = [
 ]
 
 [project.scripts]
-aex = "aex_agent.cli.main:main"
-aex-agent = "aex_agent.agent.core:main"
-aex-gateway = "aex_agent.gateway.server:main"
+merlin = "merlin_agent.cli.main:main"
+merlin-agent = "merlin_agent.agent.core:main"
+merlin-gateway = "merlin_agent.gateway.server:main"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["aex_agent*", "scripts*"]
+include = ["merlin_agent*", "scripts*"]

@@ -1,0 +1,49 @@
+# Merlin Agent — merlinagent.site
+# Landing page: static docs/ ; API: reverse proxy to Merlin gateway :8642
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name merlinagent.site www.merlinagent.site;
+
+    root /var/www/merlinagent/docs;
+    index index.html;
+
+    # landing page + assets
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # OpenAI-compatible API -> Merlin gateway (when running)
+    location /v1/ {
+        proxy_pass http://127.0.0.1:8642;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Connection "";
+        proxy_buffering off;
+        proxy_read_timeout 300;
+    }
+
+    # health endpoint for the gateway root
+    location = /healthz {
+        proxy_pass http://127.0.0.1:8642/healthz;
+    }
+
+    add_header X-Merlin-Agent "Merlin" always;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name gateway.merlinagent.site;
+    location / {
+        proxy_pass http://127.0.0.1:8642;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 86400;
+    }
+}

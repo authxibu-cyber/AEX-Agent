@@ -1,9 +1,9 @@
-# AEX AGENT REPOSITORY CONTEXT & PROTOCOLS
+# Merlin AGENT REPOSITORY CONTEXT & PROTOCOLS
 
-Welcome to the **AEX Agent** workspace.
-AEX Agent is a self-improving, autonomous AI agent platform architected for persistent execution, multi-channel orchestration, and Tier-3 deep algorithmic optimizations.
+Welcome to the **Merlin Agent** workspace.
+Merlin Agent is a self-improving, autonomous AI agent platform architected for persistent execution, multi-channel orchestration, and Tier-3 deep algorithmic optimizations.
 
-## Core Rules for AEX Agent
+## Core Rules for Merlin Agent
 
 1. **Self-Improving Memory Loop:**
    - Always read and respect `MEMORY.md` (World facts) and `USER.md` (User habits/preferences).

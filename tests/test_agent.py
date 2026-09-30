@@ -1,10 +1,10 @@
 """
-Unit Tests for AEX Agent Brain & Parser.
+Unit Tests for Merlin Agent Brain & Parser.
 Verifies Hermes XML and thought block parsing, and agent initialization.
 """
-from aex_agent.agent.core import EXAgent
-from aex_agent.agent.parser import ToolParser
-from aex_agent.agent.selective_pulse import CognitivePulseGate
+from merlin_agent.agent.core import MerlinAgent
+from merlin_agent.agent.parser import ToolParser
+from merlin_agent.agent.selective_pulse import CognitivePulseGate
 
 
 def test_tool_parser_thought_and_xml():
@@ -36,17 +36,17 @@ def test_cognitive_pulse_gate():
 
 
 def test_agent_initialization():
-    agent = EXAgent()
+    agent = MerlinAgent()
     assert agent.model is not None
     assert agent.session_id is not None
     system_prompt = agent.assemble_system_message()
-    assert "AEX Agent" in system_prompt
+    assert "Merlin Agent" in system_prompt
     assert "Persistent Memory Cabinet" in system_prompt
 
 
 def test_skill_activation_on_trigger():
     """Trigger-matched skills inject full instructions into the system prompt."""
-    agent = EXAgent()
+    agent = MerlinAgent()
     prompt = agent.assemble_system_message(
         user_message="gua mau bikin node sensor pakai ESP32, bantu pinout"
     )
@@ -57,7 +57,7 @@ def test_skill_activation_on_trigger():
 
 def test_no_skill_leak_on_unrelated_message():
     """Unrelated messages must not activate any skill protocol."""
-    agent = EXAgent()
+    agent = MerlinAgent()
     prompt = agent.assemble_system_message(user_message="halo gimana kabarnya")
     assert agent.active_skill_names == []
     assert "Active Skill Protocols" not in prompt

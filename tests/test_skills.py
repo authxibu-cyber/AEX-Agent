@@ -1,11 +1,11 @@
 """
-Unit Tests for AEX Agent Skills Engine.
+Unit Tests for Merlin Agent Skills Engine.
 Verifies dynamic skill discovery and autonomous learning persistence.
 """
 import tempfile
 from pathlib import Path
-from aex_agent.skills.learner import SkillLearner
-from aex_agent.skills.manager import SkillManager
+from merlin_agent.skills.learner import SkillLearner
+from merlin_agent.skills.manager import SkillManager
 
 
 def test_dynamic_skill_discovery_and_learning():

@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="aex-agent",
+    name="merlin-agent",
     version="1.0.0",
     packages=find_packages(),
-    py_modules=["aex_constants"],
+    py_modules=["merlin_constants"],
     install_requires=[
         "pydantic>=2.0.0",
         "rich>=13.0.0",
@@ -20,9 +20,9 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "aex = aex_agent.cli.main:main",
-            "aex-agent = aex_agent.agent.core:main",
-            "aex-gateway = aex_agent.gateway.server:main",
+            "merlin = merlin_agent.cli.main:main",
+            "merlin-agent = merlin_agent.agent.core:main",
+            "merlin-gateway = merlin_agent.gateway.server:main",
         ],
     },
 )

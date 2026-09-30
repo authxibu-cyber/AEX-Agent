@@ -1,4 +1,4 @@
-# AEX Agent ☤
+# Merlin Agent ☤
 
 <p align="center">
   <b>The Sovereign, Self-Improving AI Agent Harness</b><br>
@@ -9,9 +9,9 @@
 
 ## Overview
 
-**AEX Agent** is an autonomous, infrastructure-agnostic AI agent harness designed for persistent, long-horizon workflows. Unlike transient chatbot wrappers, AEX Agent treats the local filesystem as a filing cabinet: it remembers interactions across sessions in bounded persistent memory files, dynamically acquires new capabilities by writing its own executable skills, and operates seamlessly across native terminals, background cron schedules, and messaging gateways.
+**Merlin Agent** is an autonomous, infrastructure-agnostic AI agent harness designed for persistent, long-horizon workflows. Unlike transient chatbot wrappers, Merlin Agent treats the local filesystem as a filing cabinet: it remembers interactions across sessions in bounded persistent memory files, dynamically acquires new capabilities by writing its own executable skills, and operates seamlessly across native terminals, background cron schedules, and messaging gateways.
 
-Elevated by the **GodEye Mandate**, AEX Agent embeds **Tier-3 deep architectural principles**:
+Elevated by the **GodEye Mandate**, Merlin Agent embeds **Tier-3 deep architectural principles**:
 - **Sovereign Cognitive Pulse:** Input-dependent selectivity gates ($\Delta_t, B_t, C_t$) and Kogge-Stone parallel associative scans ($O(L) \to O(\log L)$) for dynamic context compression.
 - **Hardware-Aware Execution:** Native Tensor Core (BF16/TF32) audit and fused operators.
 - **Closed Learning Loop:** Autonomous post-task knowledge distillation and automated skill synthesis conforming to the `agentskills.io` standard.
@@ -26,7 +26,7 @@ Elevated by the **GodEye Mandate**, AEX Agent embeds **Tier-3 deep architectural
 | **3-Layer Bounded Memory** | `MEMORY.md` (~2,200 char world/project facts) and `USER.md` (~1,375 char user traits) with automatic FIFO consolidation to maintain zero context bloat. |
 | **FTS5 Cross-Session Recall** | SQLite with Write-Ahead Logging (WAL) and FTS5 BM25-ranked full-text search across all historical conversation turns. |
 | **Autonomous Skill Creation** | Self-authoring skill loop (`/learn` and `learn_skill` tool) that writes YAML-frontmattered `SKILL.md` packages into `~/.ex/skills/`. |
-| **Universal Model Support** | Native adapters for **Nous Portal** (Hermes 3 / Hermes 2 Pro), **OpenRouter**, **OpenAI**, **Anthropic**, **Gemini**, and **Local LLMs** (vLLM / Ollama). Switch on the fly with `aex model`. |
+| **Universal Model Support** | Native adapters for **Nous Portal** (Hermes 3 / Hermes 2 Pro), **OpenRouter**, **OpenAI**, **Anthropic**, **Gemini**, and **Local LLMs** (vLLM / Ollama). Switch on the fly with `merlin model`. |
 | **Multi-Channel Gateway** | High-performance FastAPI server running on port `8642` with OpenAI-compatible `/v1/chat/completions` (SSE streaming) plus Telegram, Discord, and Slack connectors. |
 | **Embedded Cron Scheduler** | Unattended natural-language periodic automations (`schedule_cron`) with conversational memory injection so the agent recalls past background task outputs. |
 | **Subagent Delegation** | Spawns parallel subagent instances (`delegate_task`) to collapse complex multi-stage tasks into zero-context-cost turns. |
@@ -56,25 +56,25 @@ chmod +x scripts/install.sh
 
 ### 3. First-Run Setup Wizard
 
-After installation, if `aex` is not recognized (common on Windows non-admin installs — pip places the command outside PATH), run the self-repair:
+After installation, if `merlin` is not recognized (common on Windows non-admin installs — pip places the command outside PATH), run the self-repair:
 
 ```powershell
-python -m aex_agent doctor
+python -m merlin_agent doctor
 ```
 
 This adds the command to PATH automatically. Then configure your provider, model, and API key interactively:
 
 ```bash
-aex setup
+merlin setup
 ```
 
 The wizard:
 - **Pick a provider** from a numbered table (openrouter, nous_portal, openai, anthropic, gemini, groq, deepseek, together, mistral, xai, ollama, vllm, or `custom` for any OpenAI-compatible endpoint)
 - **Set the base URL** (editable — defaults per provider; `custom` requires manual entry)
-- **Paste your API key** (input is masked; stored in `AEX_HOME/.env`, never in config.yaml)
+- **Paste your API key** (input is masked; stored in `MERLIN_HOME/.env`, never in config.yaml)
 - **Runs a live connection test** against the real endpoint before saving — you see `✔ Connection OK` or the exact HTTP error
 
-Home directory (`AEX_HOME`) defaults to `%LOCALAPPDATA%\aex` on Windows, `~/.aex` on Linux/macOS.
+Home directory (`MERLIN_HOME`) defaults to `%LOCALAPPDATA%\merlin` on Windows, `~/.merlin` on Linux/macOS.
 
 ### 4. Environment Configuration (manual alternative)
 
@@ -82,7 +82,7 @@ Copy `.env.example` to `.env` or set environment variables:
 ```bash
 cp .env.example .env
 ```
-Configure your primary API key (e.g. `AEX_API_KEY`, `OPENROUTER_API_KEY`, `NOUS_PORTAL_API_KEY`, or `OPENAI_API_KEY`). Model/provider can be set with `AEX_MODEL`, `AEX_PROVIDER`, `AEX_BASE_URL`.
+Configure your primary API key (e.g. `Merlin_API_KEY`, `OPENROUTER_API_KEY`, `NOUS_PORTAL_API_KEY`, or `OPENAI_API_KEY`). Model/provider can be set with `Merlin_MODEL`, `Merlin_PROVIDER`, `Merlin_BASE_URL`.
 
 ---
 
@@ -90,44 +90,44 @@ Configure your primary API key (e.g. `AEX_API_KEY`, `OPENROUTER_API_KEY`, `NOUS_
 
 ### Start Interactive Chat Session
 ```bash
-aex
+merlin
 ```
 or explicitly:
 ```bash
-aex chat
+merlin chat
 ```
 The full-screen Textual TUI launches with the header panel, scrollable transcript, tool-call cards, and the bottom telemetry bar (`☤ model │ ~212K/1M │ [██░░░░░░░░] 20% │ ◎ health │ ◷ latency │ ↑ ↓ tokens`).
 
 For the classic prompt_toolkit interface:
 ```bash
-aex chat --classic
+merlin chat --classic
 ```
 
 ### Switch Model & Provider
 ```bash
 # View active model
-aex model
+merlin model
 
 # Switch model
-aex model glm-5.3-flash --provider ollama
+merlin model glm-5.3-flash --provider ollama
 ```
 
-Provider names: `openrouter`, `nous_portal`, `openai`, `anthropic`, `gemini`, `groq`, `deepseek`, `together`, `mistral`, `xai`, `ollama`, `vllm`, or set any OpenAI-compatible endpoint via `aex setup` → `custom`.
+Provider names: `openrouter`, `nous_portal`, `openai`, `anthropic`, `gemini`, `groq`, `deepseek`, `together`, `mistral`, `xai`, `ollama`, `vllm`, or set any OpenAI-compatible endpoint via `merlin setup` → `custom`.
 
 ### Start Gateway API Server & Cron Daemon
 ```bash
-aex gateway --port 8642
+merlin gateway --port 8642
 ```
 Once launched, connect any OpenAI-compatible client or Open WebUI to `http://localhost:8642/v1`.
 
 ### Inspect & Manage Memory
 ```bash
-aex memory
+merlin memory
 ```
 
 ### List Skills Catalog
 ```bash
-aex skills
+merlin skills
 ```
 
 ---

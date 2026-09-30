@@ -13,8 +13,8 @@ import pytest
 
 pytest.importorskip("textual.app")
 
-from aex_agent.agent.core import EXAgent
-from aex_agent.cli.textual_tui import ChatApp
+from merlin_agent.agent.core import MerlinAgent
+from merlin_agent.cli.textual_tui import ChatApp
 from textual.widgets import Input, RichLog, Static
 
 
@@ -33,7 +33,7 @@ def fake_agent_turn(monkeypatch):
             stream("content", "Hello ")
             # hold mid-stream until the test releases the gate
             await gate.wait()
-            stream("content", "**world** from AEX")
+            stream("content", "**world** from Merlin")
         if tool:
             tool("invoking", "terminal", {"command": "echo hi"})
             tool("completed", "terminal", {"success": True})
@@ -46,7 +46,7 @@ def fake_agent_turn(monkeypatch):
             })
         return {
             "session_id": self.session_id,
-            "response": "Hello **world** from AEX",
+            "response": "Hello **world** from Merlin",
             "reasoning": "",
             "tool_calls_count": 1,
             "messages": [],
@@ -54,7 +54,7 @@ def fake_agent_turn(monkeypatch):
             "turn_latency_s": 0.2,
         }
 
-    monkeypatch.setattr(EXAgent, "run_conversation_async", fake_turn)
+    monkeypatch.setattr(MerlinAgent, "run_conversation_async", fake_turn)
     return gate
 
 
@@ -176,7 +176,7 @@ async def test_textual_tui_clipboard_copy(fake_agent_turn):
         # (OSC 52 escape for real terminals; _clipboard is the in-app truth)
         await pilot.press("ctrl+y")
         await pilot.pause(0.1)
-        assert "Hello **world** from AEX" == app._clipboard, "OSC copy must set app clipboard"
+        assert "Hello **world** from Merlin" == app._clipboard, "OSC copy must set app clipboard"
         assert "copied last reply" in _transcript(app), "copy must be noted in transcript"
 
 
