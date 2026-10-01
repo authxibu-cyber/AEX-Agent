@@ -1,627 +1,2065 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Merlin Agent — Sovereign AI Agent Harness</title>
-<meta name="description" content="Merlin Agent: an autonomous, self-improving AI agent harness. Persistent memory, self-authored skills, any model provider, terminal-native.">
-<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  /* Angel Wish — blackletter display font (StringLabs Creative Studio)
-     Free for PERSONAL USE; commercial license required:
-     https://stringlabscreative.com/angel-wish */
-  @font-face {
-    font-family: "Angel Wish";
-    src: url("assets/fonts/angel-wish.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-  :root {
-    --bg: #002b36;
-    --bg-raise: #073642;
-    --line: rgba(131,148,150,.22);
-    --line-soft: rgba(131,148,150,.12);
-    --ink: #93a1a1;
-    --ink-dim: rgba(147,161,161,.72);
-    --ink-faint: rgba(147,161,161,.45);
-    --gold: #b58900;
-    --gold-bright: #e6c04a;
-    --gothic: "Angel Wish", "UnifrakturMaguntia", "Old English Text", serif;
-    --sans: Verdana, "Segoe UI", Geneva, sans-serif;
-    --mono: "JetBrains Mono", ui-monospace, monospace;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 14.5px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-  ::selection { background: rgba(181,137,0,.35); }
-  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-  .label {
-    font-family: var(--mono); font-size: 11px; font-weight: 500;
-    letter-spacing: .18em; text-transform: uppercase;
-    color: var(--gold);
-  }
-  .rule { border: 0; border-top: 1px solid var(--line); }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPINOIA HORIZON — 3D Art Design, Animation & Merlin Agent Harness</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 
-  /* ── nav ─────────────────────────────────── */
-  nav {
-    position: fixed; inset: 0 0 auto; z-index: 50;
-    border-bottom: 1px solid var(--line);
-    background: rgba(0,43,54,.85);
-    backdrop-filter: blur(14px);
-  }
-  .nav-in { display: flex; align-items: center; justify-content: space-between; height: 60px; }
-  .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
-  .brand svg { width: 26px; height: 26px; }
-  .brand b { font-family: var(--gothic); font-weight: 400; font-size: 26px; letter-spacing: .01em; color: #fdf6e3; line-height: 1; transform: translateY(2px); }
-  .nav-r { display: flex; align-items: center; gap: 30px; }
-  .nav-r a { color: var(--ink-dim); text-decoration: none; font-size: 12.5px; }
-  .nav-r a:hover { color: var(--ink); }
-  .nav-r .cta {
-    font-family: var(--mono); font-size: 12px; letter-spacing: .06em;
-    color: #002b36; background: var(--gold);
-    padding: 8px 16px; border-radius: 2px; font-weight: 500;
-    transition: background .15s;
-  }
-  .nav-r .cta:hover { background: var(--gold-bright); color: #002b36; }
+  <!-- Google Fonts: Luxury Angel Wish-style Display & Engineering Monospace -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;800&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  /* ── hero ─────────────────────────────────── */
-  .hero { padding: 168px 0 96px; position: relative; }
-  .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 64px; align-items: start; }
-  .hero h1 {
-    font-family: var(--gothic);
-    font-size: clamp(40px, 5.4vw, 66px);
-    font-weight: 400; line-height: 1.08; letter-spacing: .005em;
-    margin: 26px 0 0;
-    color: #fdf6e3;
-    text-shadow: 0 2px 24px rgba(181,137,0,.18);
-  }
-  .hero h1 em { font-style: normal; color: var(--gold); }
-  .hero .lede {
-    margin-top: 28px; max-width: 520px;
-    font-size: 15.5px; color: var(--ink-dim);
-  }
-  .hero-ctas { display: flex; gap: 14px; margin-top: 40px; }
-  .btn {
-    font-family: var(--mono); font-size: 13.5px; letter-spacing: .04em;
-    padding: 13px 22px; border-radius: 2px; text-decoration: none;
-    display: inline-flex; align-items: center; gap: 8px;
-    transition: all .15s;
-  }
-  .btn-solid { background: var(--gold); color: #002b36; font-weight: 700; }
-  .btn-solid:hover { background: var(--gold-bright); color: #002b36; }
-  .btn-line { border: 1px solid var(--line); color: var(--ink); }
-  .btn-line:hover { border-color: var(--gold); color: var(--gold-bright); }
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  /* hero stats strip */
-  .stats {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    margin-top: 58px; border-top: 1px solid var(--line);
-  }
-  .stat { padding: 22px 0 0; border-right: 1px solid var(--line-soft); padding-right: 24px; }
-  .stat:last-child { border-right: 0; }
-  .stat .v { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--ink); }
-  .stat .k { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-top: 4px; }
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  /* ── terminal (right of hero) ─────────────── */
-  .term {
-    background: var(--bg-raise);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    overflow: hidden;
-    font-family: var(--mono); font-size: 12.5px; line-height: 1.8;
-    box-shadow: 0 30px 90px rgba(0,19,25,.65);
-  }
-  .term-top {
-    display: flex; align-items: center; gap: 7px;
-    padding: 10px 14px; border-bottom: 1px solid var(--line-soft);
-  }
-  .term-top i { width: 10px; height: 10px; border-radius: 50%; }
-  .term-top i:nth-child(1) { background: #2a2a2e; }
-  .term-top i:nth-child(2) { background: #2a2a2e; }
-  .term-top i:nth-child(3) { background: #2a2a2e; }
-  .term-top span { margin-left: 8px; font-size: 10.5px; color: var(--ink-faint); letter-spacing: .1em; }
-  .term-b { padding: 18px 18px 14px; }
-  .term-b .dim { color: var(--ink-faint); }
-  .term-b .gold { color: var(--gold-bright); }
-  .term-b .grn { color: #859900; }
-  .term-b .pr { color: var(--gold); font-weight: 600; }
-  .term-status {
-    margin-top: 12px; padding-top: 10px;
-    border-top: 1px solid var(--line-soft);
-    color: var(--ink-dim); font-size: 11px; white-space: nowrap; overflow: hidden;
-  }
-  .term-status .g { color: var(--gold-bright); }
-  .cursor { display: inline-block; width: 7px; height: 13px; background: var(--gold); vertical-align: -2px; animation: blink 1.1s steps(2) infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
-  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  /* ── marquee providers ───────────────────── */
-  .providers {
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-    padding: 18px 0; overflow: hidden;
-    background: var(--bg-raise);
-  }
-  .marquee { display: flex; gap: 56px; width: max-content; animation: slide 34s linear infinite; }
-  .marquee span { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); white-space: nowrap; }
-  .marquee span.hl { color: var(--gold); }
-  @keyframes slide { to { transform: translateX(-50%); } }
-  @media (prefers-reduced-motion: reduce) { .marquee { animation: none; } }
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            solar: {
+              base03: '#002b36',
+              base02: '#073642',
+              base01: '#586e75',
+              base00: '#657b83',
+              base0:  '#839496',
+              base1:  '#93a1a1',
+              base2:  '#eee8d5',
+              base3:  '#fdf6e3',
+              yellow: '#b58900',
+              orange: '#cb4b16',
+              red:    '#dc322f',
+              magenta:'#d33682',
+              violet: '#6c71c4',
+              blue:   '#268bd2',
+              cyan:   '#2aa198',
+              green:  '#859900',
+            }
+          },
+          fontFamily: {
+            angel: ['"Cinzel Decorative"', '"Cinzel"', 'serif'],
+            serifLuxury: ['"Cinzel"', 'serif'],
+            monoTech: ['"Space Grotesk"', 'sans-serif'],
+            code: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
 
-  /* ── section scaffolding ─────────────────── */
-  section { padding: 108px 0; border-top: 1px solid var(--line); }
-  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 40px; margin-bottom: 64px; }
-  .sec-head h2 { font-family: var(--gothic); font-size: clamp(32px, 4.2vw, 50px); font-weight: 400; letter-spacing: .002em; line-height: 1.1; margin-top: 14px; color: #fdf6e3; }
-  .sec-head p { max-width: 380px; color: var(--ink-dim); font-size: 13.5px; }
+  <style>
+    @font-face {
+      font-family: 'AngelWishCustom';
+      src: local('Angel Wish'), local('Cinzel Decorative');
+    }
 
-  /* feature rows — editorial list, NOT cards */
-  .feat { display: grid; grid-template-columns: 64px 1fr 1.2fr; gap: 28px; padding: 30px 0; border-top: 1px solid var(--line-soft); align-items: start; }
-  .feat:last-child { border-bottom: 1px solid var(--line-soft); }
-  .feat .idx { font-family: var(--mono); font-size: 12px; color: var(--gold); padding-top: 5px; }
-  .feat h3 { font-family: var(--gothic); font-size: 25px; font-weight: 400; color: #fdf6e3; }
-  .feat h3 code { font-family: var(--mono); font-size: .82em; color: var(--gold-bright); background: rgba(181,137,0,.12); padding: 2px 7px; border-radius: 3px; }
-  .feat p { color: var(--ink-dim); font-size: 13.5px; margin-top: 6px; max-width: 460px; }
+    .font-angel-wish {
+      font-family: 'AngelWishCustom', 'Cinzel Decorative', 'Cinzel', serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
 
-  /* loop diagram — numbered steps in a row with hairlines */
-  .loop { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); }
-  .loop .cell { padding: 30px 26px; border-right: 1px solid var(--line); position: relative; }
-  .loop .cell:last-child { border-right: 0; }
-  .loop .n { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: .2em; }
-  .loop h4 { font-family: var(--gothic); font-size: 22px; font-weight: 400; margin-top: 14px; color: #fdf6e3; }
-  .loop p { font-size: 13.5px; color: var(--ink-dim); margin-top: 6px; }
-  .loop .arrow { position: absolute; right: 14px; top: 30px; color: var(--ink-faint); font-family: var(--mono); font-size: 14px; }
-  .loop .cell:last-child .arrow { display: none; }
+    /* Prismatic Chromatic Iridescent Gradient */
+    .iridescent-text {
+      background: linear-gradient(
+        135deg, 
+        #eee8d5 0%, 
+        #93a1a1 16%, 
+        #2aa198 34%, 
+        #268bd2 52%, 
+        #6c71c4 70%, 
+        #d33682 86%, 
+        #eee8d5 100%
+      );
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: iridescentShift 10s ease infinite;
+    }
 
-  /* install — split layout */
-  .install-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
-  .cmds { display: flex; flex-direction: column; gap: 8px; }
-  .cmd {
-    display: flex; justify-content: space-between; align-items: center;
-    background: var(--bg-raise); border: 1px solid var(--line);
-    padding: 14px 18px; border-radius: 4px;
-    font-family: var(--mono); font-size: 13px;
-  }
-  .cmd .note { color: var(--ink-faint); font-size: 11.5px; }
-  .cmd .p { color: var(--gold); }
-  .os-note { margin-top: 14px; font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+    .metallic-bevel {
+      text-shadow: 0 1px 0 rgba(255,255,255,0.4), 
+                   0 -1px 0 rgba(0,0,0,0.85), 
+                   0 10px 30px rgba(42, 161, 152, 0.45);
+    }
 
-  /* footer */
-  footer { border-top: 1px solid var(--line); padding: 40px 0 48px; }
-  .foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-  .foot .l { display: flex; align-items: center; gap: 10px; color: var(--ink-dim); font-size: 13px; }
-  .foot svg { width: 22px; height: 22px; }
-  .foot .r { display: flex; gap: 22px; }
-  .foot a { color: var(--ink-dim); text-decoration: none; font-size: 13px; font-family: var(--mono); }
-  .foot a:hover { color: var(--gold-bright); }
+    @keyframes iridescentShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-    /* ── desktop model (≥1400px) — spread out on big canvases ── */
-  @media (min-width: 1400px) {
-    .wrap { max-width: 1320px; }
-    body { font-size: 15px; }
-    .hero { padding: 190px 0 110px; }
-    .hero h1 { font-size: 74px; }
-    .term { font-size: 13.5px; }
-    .term-b { line-height: 1.85; }
-    section { padding: 120px 0; }
-    .feat h3 { font-size: 26px; }
-    .feat p { font-size: 14.5px; max-width: 620px; }
-    .sec-head h2 { font-size: 54px; }
-    .loop .cell { padding: 36px 30px; }
-    .loop p { font-size: 14.5px; }
-    .steps .step { padding: 34px 28px; }
-    .steps p { font-size: 14px; }
-    .ref-row { padding: 18px 26px; }
-    .ref-row p { font-size: 14.5px; }
-    .cmd { font-size: 14px; }
-  }
-  /* ── reference tables (CLI + slash commands) ── */
-  .ref-h {
-    font-family: var(--mono); font-size: 12px; font-weight: 500;
-    letter-spacing: .14em; text-transform: uppercase;
-    color: var(--gold-bright); margin: 34px 0 14px;
-  }
-  .ref-h:first-of-type { margin-top: 0; }
-  .ref { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-  .ref-row { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: 24px; padding: 15px 22px; border-top: 1px solid var(--line-soft); align-items: start; }
-  .ref-row:first-child { border-top: 0; }
-  .ref-row code.k {
-    font-family: var(--mono); font-size: 13px; color: var(--gold-bright);
-    white-space: normal; word-break: break-word; line-height: 1.5;
-  }
-  .ref-row p { color: var(--ink-dim); font-size: 13.5px; line-height: 1.65; }
-  .ref-row p code { font-family: var(--mono); font-size: .85em; color: var(--gold-bright); background: rgba(181,137,0,.1); padding: 1px 5px; border-radius: 3px; }
-  .ref-row.wide { grid-template-columns: 1fr; gap: 6px; }
-  .ref-row.wide p { margin-top: 0; }
-  .ref-row.wide code.k { font-size: 13.5px; }
+    /* Acrylic Trophy Glassmorphic Effect */
+    .acrylic-plaque {
+      background: rgba(7, 54, 66, 0.62);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid rgba(147, 161, 161, 0.18);
+      box-shadow: 
+        0 24px 60px rgba(0, 43, 54, 0.7),
+        inset 0 1px 2px rgba(255, 255, 255, 0.35),
+        inset 0 -1px 2px rgba(42, 161, 152, 0.25);
+    }
 
-  /* getting-started steps */
-  .steps { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); }
-  .steps .step { padding: 28px 24px; border-right: 1px solid var(--line); }
-  .steps .step:last-child { border-right: 0; }
-  .steps .num { font-family: var(--mono); font-size: 11px; color: var(--gold); letter-spacing: .2em; }
-  .steps h4 { font-family: var(--gothic); font-size: 22px; color: #fdf6e3; margin: 12px 0 8px; }
-  .steps p { font-size: 13px; color: var(--ink-dim); }
-  .steps p code { font-family: var(--mono); font-size: .85em; color: var(--gold-bright); background: rgba(181,137,0,.1); padding: 1px 5px; border-radius: 3px; }
+    .light .acrylic-plaque {
+      background: rgba(253, 246, 227, 0.9);
+      border: 1px solid rgba(88, 110, 117, 0.24);
+      box-shadow: 
+        0 20px 48px rgba(101, 123, 131, 0.15),
+        inset 0 1px 2px rgba(255, 255, 255, 0.95),
+        inset 0 -1px 2px rgba(38, 139, 210, 0.18);
+    }
 
-  /* faq */
-  .faq-item { padding: 20px 0; border-top: 1px solid var(--line-soft); }
-  .faq-item:first-child { border-top: 0; }
-  .faq-item h4 { font-size: 15.5px; color: #fdf6e3; margin-bottom: 6px; }
-  .faq-item p { color: var(--ink-dim); font-size: 14px; max-width: 720px; }
-  .faq-item code { font-family: var(--mono); font-size: .85em; color: var(--gold-bright); background: rgba(181,137,0,.1); padding: 1px 5px; border-radius: 3px; }
+    .prismatic-border {
+      position: relative;
+    }
+    .prismatic-border::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(130deg, rgba(42,161,152,0.85), rgba(38,139,210,0.35), rgba(108,113,196,0.75), rgba(211,54,130,0.45));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
 
-  @media (max-width: 920px) {
-    .steps { grid-template-columns: 1fr 1fr; }
-    .steps .step { border-bottom: 1px solid var(--line); }
-    .ref-row, .ref-row.wide { grid-template-columns: 1fr; gap: 6px; }
-  .ref-row.wide p { margin-top: 0; }
-    .nav-r a:not(.cta) { display: none; }
-  }
-    /* ── cellphone model (≤640px, refined ≤400px) ── */
-  @media (max-width: 640px) {
-    .wrap { padding: 0 18px; }
-    nav { backdrop-filter: blur(10px); }
-    .brand svg { width: 22px; height: 22px; }
-    .brand b { font-size: 21px; }
-    .hero { padding-top: 118px; }
-    .hero h1 { font-size: clamp(34px, 11vw, 44px); line-height: 1.12; }
-    .hero .lede { font-size: 14.5px; }
-    .hero-ctas { flex-direction: column; gap: 10px; }
-    .hero-ctas .btn { width: 100%; justify-content: center; padding: 14px 22px; min-height: 48px; }
-    .term { font-size: 8.5px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .term .term-b { overflow-x: auto; }
-    .term-b { line-height: 1.65; padding: 12px; }
-    .term-status { font-size: 8.5px; }
-    .stats { grid-template-columns: 1fr 1fr; margin-top: 36px; }
-    .stat { border-right: 0; padding-right: 0; }
-    .loop { grid-template-columns: 1fr; }
-    .sec-head { flex-direction: column; gap: 14px; margin-bottom: 40px; }
-    .sec-head p { max-width: 100%; }
-    section { padding: 72px 0; }
-    .cmd { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 14px; }
-    .cmd .note { font-size: 10.5px; }
-    .faq-item { padding: 16px 0; }
-    .feat { grid-template-columns: 34px 1fr; gap: 14px; padding: 22px 0; }
-    .feat h3 { font-size: 21px; }
-    .foot { flex-direction: column; gap: 18px; align-items: flex-start; }
-  }
-  @media (max-width: 400px) {
-    .hero h1 { font-size: 33px; }
-    .brand b { font-size: 19px; }
-    .term { font-size: 8.5px; }
-    .steps .step { padding: 22px 18px; }
-    .steps h4 { font-size: 19px; }
-  }
+    /* Interactive Cursor Canvas */
+    #cursor-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
 
-</style>
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #002b36;
+    }
+    .light ::-webkit-scrollbar-track {
+      background: #eee8d5;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2aa198;
+      border-radius: 4px;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-solar-base03 text-solar-base1 antialiased selection:bg-solar-cyan selection:text-solar-base03 transition-colors duration-500 overflow-x-hidden font-sans">
 
-<nav>
-  <div class="wrap nav-in">
-    <a class="brand" href="#top">
-      <svg viewBox="0 0 64 64" fill="none">
-        <g stroke="#b58900" stroke-width="2.3" stroke-linecap="round">
-          <line x1="10" y1="10" x2="52" y2="52"/><line x1="54" y1="8" x2="12" y2="50"/>
-        </g>
-        <g stroke="#b58900" stroke-width="2.3" stroke-linecap="round">
-          <line x1="19" y1="53" x2="13" y2="47"/><line x1="45" y1="55" x2="51" y2="49"/>
-          <circle cx="55.5" cy="6.5" r="2" fill="#b58900" stroke="none"/>
-          <circle cx="8.5" cy="6.5" r="2" fill="#b58900" stroke="none"/>
-        </g>
-        <path d="M32 20 L44 32 L32 44 L20 32 Z" fill="#002b36" stroke="#b58900" stroke-width="2.4" stroke-linejoin="round"/>
-        <g stroke="#b58900" stroke-width="2.4" stroke-linecap="round">
-          <line x1="27.5" y1="27.5" x2="36.5" y2="36.5"/><line x1="36.5" y1="27.5" x2="27.5" y2="36.5"/>
-        </g>
-      </svg>
-      <b>Merlin Agent</b>
-    </a>
-    <div class="nav-r">
-      <a href="#capabilities">Capabilities</a>
-      <a href="#started">Get started</a>
-      <a href="#reference">Reference</a>
-      <a href="#faq">FAQ</a>
-      <a class="cta" href="https://github.com/authxibu-cyber/Merlin-Agent" target="_blank">GitHub ↗</a>
-    </div>
-  </div>
-</nav>
+  <!-- Interactive Spectral Particle Canvas -->
+  <canvas id="cursor-canvas"></canvas>
 
-<header class="hero" id="top">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="label">Sovereign · Self-Improving · Open Source</div>
-      <h1>The agent that<br><em>outlives</em> the session.</h1>
-      <p class="lede">
-        Merlin Agent is a terminal-native AI harness with persistent memory,
-        skills it writes for itself, and provider-agnostic inference.
-        Close the window — it remembers. Come back — it's smarter.
-      </p>
-      <div class="hero-ctas">
-        <a class="btn btn-solid" href="#install">Install in 60 seconds</a>
-        <a class="btn btn-line" href="https://github.com/authxibu-cyber/Merlin-Agent" target="_blank">Read the source ↗</a>
-      </div>
-    </div>
-
-    <div class="term">
-      <div class="term-top"><i></i><i></i><i></i><span>Merlin — 110×30</span></div>
-      <div class="term-b">
-        <span class="dim">◆ session started · 3 skills loaded · memory 2.1K chars</span><br>
-        <span class="pr">❯</span> ship the new landing page tonight<br>
-        <span class="dim">◆ thought: reviewing repo layout first…</span><br>
-        <span class="gold">│ git-workflow</span> <span class="dim">docs: index.html</span><br>
-        <span class="gold">│ terminal</span> <span class="dim">git commit -m "site" &amp;&amp; git push</span><br>
-        <span class="grn">✓ terminal done · 4 files changed</span><br>
-        Live. Telemetry bar says we're at 21% context — room for more.<br>
-        <div class="term-status">▎ <span class="g">glm-5.3-flash</span> │ ~212K/1M │ <span class="g">[██░░░░░░░░]</span> 21% │ ⊙ 98.2% │ ⊘ 6.4s</div>
-        <span class="pr">❯</span> <span class="cursor"></span>
-      </div>
-    </div>
-  </div>
-
-  <div class="wrap">
-    <div class="stats">
-      <div class="stat"><div class="v">13+</div><div class="k">model providers incl. any custom endpoint</div></div>
-      <div class="stat"><div class="v">10</div><div class="k">slash commands + full-screen TUI</div></div>
-      <div class="stat"><div class="v">MIT</div><div class="k">open source · plain-file memory you own</div></div>
-    </div>
-  </div>
-</header>
-
-<div class="providers">
-  <div class="marquee">
-    <span class="hl">ollama · local or cloud</span><span>OpenRouter</span><span>Nous Portal</span><span>OpenAI</span><span>Anthropic</span><span>Gemini</span><span>Groq</span><span>DeepSeek</span><span>Together</span><span>Mistral</span><span>xAI</span><span>vLLM</span><span class="hl">+ any custom endpoint</span>
-    <span class="hl">ollama · local or cloud</span><span>OpenRouter</span><span>Nous Portal</span><span>OpenAI</span><span>Anthropic</span><span>Gemini</span><span>Groq</span><span>DeepSeek</span><span>Together</span><span>Mistral</span><span>xAI</span><span>vLLM</span><span class="hl">+ any custom endpoint</span>
-  </div>
-</div>
-
-<section id="capabilities">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="label">01 — Capabilities</div>
-        <h2>Built for long-horizon work,<br>not throwaway chats.</h2>
-      </div>
-      <p>Every subsystem is designed to persist, recall, and compound — the opposite of a stateless chatbot wrapper.</p>
-    </div>
-
-    <div class="feat">
-      <div class="idx">/01</div>
-      <h3>Persistent memory cabinet</h3>
-      <p><code>MEMORY.md</code> holds world facts, <code>USER.md</code> holds who you are — FIFO-bounded at 2.2K/1.4K chars so context never bloats. Every past session is FTS5-searchable from SQLite.</p>
-    </div>
-    <div class="feat">
-      <div class="idx">/02</div>
-      <h3>Skills it writes itself</h3>
-      <p>Finish a task once — the agent distills the procedure into an executable <code>SKILL.md</code> package and loads it into every future session automatically.</p>
-    </div>
-    <div class="feat">
-      <div class="idx">/03</div>
-      <h3>Full-screen terminal TUI</h3>
-      <p>Textual app: docked header, scrollable transcript, tool-call cards, and the live telemetry bar — context gauge, stream health, latency, token flow.</p>
-    </div>
-    <div class="feat">
-      <div class="idx">/04</div>
-      <h3>Any provider, mid-session</h3>
-      <p>Thirteen built-in providers plus <code>custom</code> for any OpenAI-compatible endpoint. Masked key entry with a live connection test before anything saves.</p>
-    </div>
-    <div class="feat">
-      <div class="idx">/05</div>
-      <h3>Gateway + channels</h3>
-      <p>FastAPI server on :8642 speaks OpenAI-compatible <code>/v1/chat/completions</code> — point Open WebUI or your stack at it, or bridge to Telegram, Discord, Slack.</p>
-    </div>
-    <div class="feat">
-      <div class="idx">/06</div>
-      <h3>Cron &amp; subagents</h3>
-      <p>Natural-language scheduled jobs with memory injection, plus parallel subagent delegation that collapses long task chains into zero-context-cost turns.</p>
-    </div>
-  </div>
-</section>
-
-<section id="loop">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="label">02 — The closed loop</div>
-        <h2>It gets better every time<br>you use it.</h2>
-      </div>
-      <p>Four steps, one compounding cycle. The agent you close tonight is not the agent you open tomorrow.</p>
-    </div>
-
-    <div class="loop">
-      <div class="cell"><div class="n">STEP 1</div><h4>Act</h4><p>Terminal, files, web search, code sandbox — real execution with tool-call cards in view.</p><div class="arrow">→</div></div>
-      <div class="cell"><div class="n">STEP 2</div><h4>Distill</h4><p>High-salience outcomes are folded into bounded persistent memory automatically.</p><div class="arrow">→</div></div>
-      <div class="cell"><div class="n">STEP 3</div><h4>Synthesize</h4><p>Reusable procedures become executable skills via <code style="color:var(--gold-bright)">/learn</code>.</p><div class="arrow">→</div></div>
-      <div class="cell"><div class="n">STEP 4</div><h4>Recall</h4><p>Next session starts with skills, memory, and FTS5 history pre-loaded. Smarter on open.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="install">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="label">03 — Install</div>
-        <h2>Sixty seconds to<br>a sovereign agent.</h2>
-      </div>
-      <p>No accounts, no telemetry, no lock-in. One pip install, point it at any model you already pay for.</p>
-    </div>
-
-    <div class="install-grid">
-      <div>
-        <div class="cmds">
-          <div class="cmd"><span><span class="p">$</span> pip install git+https://github.com/authxibu-cyber/Merlin-Agent</span><span class="note">install straight from github</span></div>
-          <div class="cmd"><span><span class="p">$</span> python -m merlin_agent doctor</span><span class="note">windows non-admin? self-repairs PATH</span></div>
-          <div class="cmd"><span><span class="p">$</span> merlin setup</span><span class="note">provider · model · key — live-tested</span></div>
-          <div class="cmd"><span><span class="p">$</span> merlin</span><span class="note">full-screen session</span></div>
+  <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-md border-b border-solar-base02/70 bg-solar-base03/90">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      
+      <!-- Logo Branding in Angel Wish Aesthetic -->
+      <a href="#hero" class="flex items-center gap-3.5 group">
+        <div class="w-10 h-10 rounded-xl acrylic-plaque prismatic-border flex items-center justify-center transition-transform group-hover:scale-105 duration-300">
+          <i class="fa-solid fa-shapes text-solar-cyan text-lg"></i>
         </div>
-        <div class="os-note">windows: .\scripts\install.ps1 · linux/macOS/wsl: ./scripts/install.sh</div>
+        <div>
+          <span class="font-angel-wish text-xl md:text-2xl font-bold tracking-widest text-solar-base2 block leading-none">
+            EPINOIA
+          </span>
+          <span class="text-[9px] uppercase tracking-[0.32em] text-solar-cyan font-monoTech font-semibold flex items-center gap-1.5 mt-0.5">
+            HORIZON <span class="w-1.5 h-1.5 rounded-full bg-solar-green inline-block animate-ping"></span>
+          </span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Items -->
+      <nav class="hidden lg:flex items-center gap-7 font-monoTech text-xs tracking-wider uppercase">
+        <a href="#hero" class="hover:text-solar-cyan transition-colors py-1">Overview</a>
+        <a href="#studio-3d" class="text-solar-cyan hover:text-solar-blue transition-colors py-1 flex items-center gap-1.5 font-bold">
+          <i class="fa-solid fa-cube text-[11px]"></i> 3D Art & Animation
+        </a>
+        <a href="#merlin" class="text-solar-violet hover:text-solar-magenta transition-colors py-1 flex items-center gap-1.5 font-bold">
+          <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i> Merlin Harness
+        </a>
+        <a href="#gallery" class="hover:text-solar-cyan transition-colors py-1">Archives</a>
+        <a href="#analyzer" class="hover:text-solar-cyan transition-colors py-1">Optic Lab</a>
+        <a href="#contact" class="hover:text-solar-cyan transition-colors py-1">Commission</a>
+      </nav>
+
+      <!-- Utility Cluster: Synthesizer Audio & Theme Mode Toggle -->
+      <div class="flex items-center gap-3">
+        <!-- Audio Synthesizer Toggle -->
+        <button id="audio-toggle" title="Toggle Synthesizer Feedback Sound" class="p-2.5 rounded-xl acrylic-plaque text-solar-base0 hover:text-solar-cyan transition-all text-xs flex items-center gap-1.5 px-3">
+          <i class="fa-solid fa-volume-xmark" id="audio-icon"></i>
+          <span class="font-monoTech text-[10px] hidden sm:inline uppercase tracking-widest">SFX</span>
+        </button>
+
+        <!-- Solarized Dark / Light Mode Toggle -->
+        <button id="theme-toggle" title="Toggle Solarized Light/Dark Mode" class="p-2.5 rounded-xl acrylic-plaque text-solar-yellow hover:text-solar-orange hover:scale-105 transition-all text-sm w-10 h-10 flex items-center justify-center">
+          <i class="fa-solid fa-sun" id="theme-icon"></i>
+        </button>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="mobile-menu-btn" class="lg:hidden p-2 text-solar-base1 text-xl">
+          <i class="fa-solid fa-bars-staggered"></i>
+        </button>
       </div>
-      <div>
-        <p style="color:var(--ink-dim); font-size:13.5px; max-width:460px;">
-          The setup wizard runs a <span style="color:var(--gold-bright)">live connection test</span> against your
-          real endpoint before saving anything. API keys are masked on entry and stored in
-          <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">MERLIN_HOME/.env</code> — never in config.yaml.
-        </p>
-        <p style="color:var(--ink-dim); font-size:13.5px; max-width:460px; margin-top:14px;">
-          Home lives at <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">%LOCALAPPDATA%\merlin</code>
-          (Windows) or <code style="font-family:var(--mono);font-size:.85em;color:var(--gold-bright)">~/.merlin</code> —
-          memory, skills, sessions, and trajectories in plain files you own.
-        </p>
+
+    </div>
+
+    <!-- Mobile Navigation Drawer -->
+    <div id="mobile-menu" class="hidden lg:hidden px-6 py-4 bg-solar-base02/95 border-b border-solar-base01/20 font-monoTech text-sm space-y-3">
+      <a href="#hero" class="block hover:text-solar-cyan">Overview</a>
+      <a href="#studio-3d" class="block text-solar-cyan font-bold">3D Art Design & Animation Studio</a>
+      <a href="#merlin" class="block text-solar-violet font-bold">Merlin Agent Harness</a>
+      <a href="#gallery" class="block hover:text-solar-cyan">Portfolio & Previs Archives</a>
+      <a href="#analyzer" class="block hover:text-solar-cyan">Optical Circuit Telemetry</a>
+      <a href="#contact" class="block hover:text-solar-cyan">Commission Studio</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-28 pb-16 px-6 overflow-hidden">
+      <!-- Ambient Background Ray Grid & Gradients -->
+      <div class="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#2aa198_1px,transparent_1px)] [background-size:32px_32px]"></div>
+      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-solar-cyan/10 rounded-full blur-[150px] pointer-events-none"></div>
+      <div class="absolute bottom-10 right-10 w-[550px] h-[550px] bg-solar-violet/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+      <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+        
+        <!-- Left Column: Studio Headline & Angel Wish Branding -->
+        <div class="lg:col-span-6 text-center lg:text-left space-y-6">
+          <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full acrylic-plaque text-solar-cyan text-xs font-monoTech tracking-wider border border-solar-cyan/30">
+            <span class="w-2 h-2 rounded-full bg-solar-cyan animate-pulse"></span>
+            3D ART DESIGN &bull; ANIMATION &bull; MERLIN AGENT HARNESS
+          </div>
+
+          <h1 class="font-angel-wish text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-wider leading-[1.05] metallic-bevel text-solar-base3">
+            <span class="iridescent-text block">EPINOIA</span>
+            <span>HORIZON</span>
+          </h1>
+
+          <p class="font-serifLuxury italic text-xl md:text-2xl text-solar-base0 font-light tracking-wide">
+            A previsualisation and prototyping group
+          </p>
+
+          <p class="text-solar-base1 text-sm md:text-base max-w-xl mx-auto lg:mx-0 leading-relaxed font-sans">
+            Uniting high-end <strong class="text-solar-cyan font-medium">3D Art Design & Cinematic Animation</strong> with the autonomous intelligence of the <strong class="text-solar-violet font-medium">Merlin Agent Harness</strong>—a cybernetic orchestrator that transforms speculative narratives into spatial topologies, skeletal kinematic rigs, and monolithic quartz optical prototypes.
+          </p>
+
+          <!-- Call to Action Buttons -->
+          <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-3">
+            <a href="#studio-3d" class="px-7 py-3.5 rounded-xl bg-solar-cyan text-solar-base03 font-monoTech text-xs font-bold uppercase tracking-widest hover:bg-solar-blue hover:text-white transition-all shadow-[0_0_30px_rgba(42,161,152,0.45)] flex items-center gap-2.5 group">
+              <i class="fa-solid fa-cubes"></i>
+              <span>Launch 3D Studio</span>
+              <i class="fa-solid fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+            </a>
+            
+            <a href="#merlin" class="px-7 py-3.5 rounded-xl acrylic-plaque prismatic-border text-solar-base2 font-monoTech text-xs font-semibold uppercase tracking-widest hover:text-solar-violet hover:border-solar-violet transition-all flex items-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles text-solar-violet"></i>
+              <span>Merlin Harness Console</span>
+            </a>
+          </div>
+
+          <!-- Studio Metrics Counter -->
+          <div class="grid grid-cols-3 gap-4 pt-6 border-t border-solar-base02/70 max-w-lg mx-auto lg:mx-0 font-monoTech text-left">
+            <div class="p-2.5 rounded-lg bg-solar-base02/40 border border-solar-base01/20">
+              <div class="text-[10px] text-solar-base01 uppercase">3D ANIMATION</div>
+              <div class="text-solar-cyan font-bold text-sm sm:text-base">120 FPS KINEMATICS</div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-solar-base02/40 border border-solar-base01/20">
+              <div class="text-[10px] text-solar-base01 uppercase">MERLIN HARNESS</div>
+              <div class="text-solar-violet font-bold text-sm sm:text-base">AGY v6.4 COG</div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-solar-base02/40 border border-solar-base01/20">
+              <div class="text-[10px] text-solar-base01 uppercase">QUARTZ ETCH</div>
+              <div class="text-solar-magenta font-bold text-sm sm:text-base">0.2 &micro;m OPTIC</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Glass Trophy Plaque Replica with Three.js Holographic Pyramid -->
+        <div class="lg:col-span-6 flex justify-center">
+          <div class="relative w-full max-w-[500px] aspect-[4/5] rounded-3xl acrylic-plaque prismatic-border p-6 sm:p-8 shadow-2xl flex flex-col justify-between overflow-hidden group">
+            
+            <!-- Glass Specular Reflection Sheen -->
+            <div class="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-to-br from-white/10 via-transparent to-solar-cyan/5 rotate-45 pointer-events-none transition-transform duration-700 group-hover:translate-x-4"></div>
+            
+            <!-- Plaque Header Details -->
+            <div class="relative z-10 flex items-center justify-between text-[11px] font-monoTech text-solar-base01 tracking-widest uppercase">
+              <span class="flex items-center gap-1.5 text-solar-cyan">
+                <i class="fa-solid fa-shapes"></i> SPECIMEN // EP-HOLO-01
+              </span>
+              <span class="px-2 py-0.5 rounded bg-solar-base02/80 text-solar-base0 border border-solar-base01/30">CIRCUIT QUARTZ</span>
+            </div>
+
+            <!-- 3D Three.js Hero Viewport -->
+            <div id="three-pyramid-container" class="relative z-10 w-full h-[320px] sm:h-[390px] cursor-grab active:cursor-grabbing flex items-center justify-center">
+              <div class="absolute bottom-2 text-center text-[10px] text-solar-base01 font-monoTech pointer-events-none uppercase tracking-widest opacity-80">
+                [ Click & Drag to Rotate Optical Circuit Crystal ]
+              </div>
+            </div>
+
+            <!-- Plaque Base Stand Matching Reference Trophy Plinth -->
+            <div class="relative z-10 pt-4 border-t border-solar-base01/20 text-center">
+              <h3 class="font-angel-wish text-xl sm:text-2xl text-solar-base2 tracking-widest uppercase font-bold metallic-bevel">
+                EPINOIA HORIZON
+              </h3>
+              <p class="font-sans text-xs text-solar-base0 tracking-wide mt-1">
+                A previsualisation and prototyping group
+              </p>
+              <div class="mt-2.5 flex justify-center gap-3 text-xs text-solar-cyan">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-solar-cyan"></span>
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-solar-violet"></span>
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-solar-magenta"></span>
+              </div>
+            </div>
+
+            <!-- Heavy Black Pedestal Illusion -->
+            <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 w-56 h-3.5 bg-solar-base02 rounded-t-xl border-t border-solar-base01/40 shadow-inner"></div>
+          </div>
+        </div>
+
       </div>
+    </section>
+
+    <section id="studio-3d" class="py-24 px-6 relative border-t border-solar-base02/60 bg-solar-base02/25">
+      <div class="max-w-7xl mx-auto space-y-12">
+        
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-solar-cyan/15 text-solar-cyan font-monoTech text-xs uppercase tracking-widest mb-3 border border-solar-cyan/30">
+              <i class="fa-solid fa-film"></i> INTERACTIVE 3D ART & ANIMATION SUITE
+            </div>
+            <h2 class="font-angel-wish text-3xl sm:text-5xl font-bold text-solar-base3 tracking-wide">
+              3D ART DESIGN & ANIMATION
+            </h2>
+            <p class="text-solar-base0 font-serifLuxury italic text-lg sm:text-xl mt-1">
+              Real-time Procedural Geometry, Kinematic Rigging & Dynamic Simulation
+            </p>
+          </div>
+          <p class="text-solar-base1 text-sm max-w-xl font-sans leading-relaxed">
+            The Epinoia Horizon 3D laboratory engineers cinematic digital worlds: from organic procedural deformers and articulated robotic kinematics to high-refraction quartz optics orchestrated in real-time.
+          </p>
+        </div>
+
+        <!-- 3D Studio Live Interactive Sandbox Viewport -->
+        <div class="acrylic-plaque prismatic-border rounded-3xl p-6 sm:p-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            <!-- 3D Studio Canvas Container -->
+            <div class="lg:col-span-8 relative rounded-2xl overflow-hidden bg-solar-base03 border border-solar-base01/30 shadow-inner h-[380px] sm:h-[460px]">
+              
+              <!-- Floating On-Screen Viewport Overlay Controls -->
+              <div class="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2 font-monoTech text-[11px]">
+                <span class="px-2.5 py-1 rounded-md bg-solar-base02/80 text-solar-cyan border border-solar-cyan/40">
+                  <i class="fa-solid fa-video mr-1"></i> VIEWPORT: <span id="active-viewport-label">KINEMATIC POLYHEDRON</span>
+                </span>
+                <span class="px-2.5 py-1 rounded-md bg-solar-base02/80 text-solar-green border border-solar-base01/30">
+                  FRAME RATE: <span id="studio-fps">120</span> FPS
+                </span>
+              </div>
+
+              <!-- Interactive Three.js Studio Canvas -->
+              <div id="three-studio-viewport" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+              <!-- Viewport Controls Bottom Bar -->
+              <div class="absolute bottom-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 bg-solar-base03/85 backdrop-blur-md p-3 rounded-xl border border-solar-base01/30 font-monoTech text-xs">
+                <div class="flex items-center gap-2">
+                  <span class="text-solar-base01 text-[10px] uppercase">Topology:</span>
+                  <button id="model-polyhedron" class="studio-model-btn px-2.5 py-1 rounded bg-solar-cyan text-solar-base03 font-bold text-[11px]">Polyhedron</button>
+                  <button id="model-torus" class="studio-model-btn px-2.5 py-1 rounded bg-solar-base02 text-solar-base1 hover:text-solar-cyan text-[11px]">Quantum Torus</button>
+                  <button id="model-skeleton" class="studio-model-btn px-2.5 py-1 rounded bg-solar-base02 text-solar-base1 hover:text-solar-cyan text-[11px]">Kinematic Bones</button>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <button id="toggle-wireframe" class="px-2.5 py-1 rounded bg-solar-base02 text-solar-base1 hover:text-solar-yellow border border-solar-base01/30 text-[11px] flex items-center gap-1">
+                    <i class="fa-solid fa-border-all"></i> <span>Wireframe</span>
+                  </button>
+                  <button id="toggle-anim" class="px-2.5 py-1 rounded bg-solar-base02 text-solar-base1 hover:text-solar-green border border-solar-base01/30 text-[11px] flex items-center gap-1">
+                    <i class="fa-solid fa-pause" id="anim-icon"></i> <span id="anim-state-text">Pause Anim</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Controls: Animation Parameters & Lighting Rig -->
+            <div class="lg:col-span-4 space-y-6 font-monoTech text-xs">
+              <div>
+                <h4 class="font-angel-wish text-lg font-bold text-solar-base2 mb-1">Animation & Shader Rig</h4>
+                <p class="font-sans text-solar-base0 text-xs">Fine-tune morphological deformation velocity and studio illumination temperatures.</p>
+              </div>
+
+              <!-- Speed Control Slider -->
+              <div class="space-y-2 p-4 rounded-xl bg-solar-base03 border border-solar-base01/20">
+                <div class="flex justify-between text-solar-base1">
+                  <span>ANIMATION VELOCITY</span>
+                  <span id="speed-val" class="text-solar-cyan font-bold">1.0x</span>
+                </div>
+                <input id="speed-slider" type="range" min="0.1" max="3.0" step="0.1" value="1.0" class="w-full accent-solar-cyan cursor-pointer">
+              </div>
+
+              <!-- Lighting Scheme Switcher -->
+              <div class="space-y-2 p-4 rounded-xl bg-solar-base03 border border-solar-base01/20">
+                <div class="text-solar-base1 uppercase text-[11px]">Studio Lighting Preset:</div>
+                <div class="grid grid-cols-3 gap-2">
+                  <button id="light-cyan" class="light-preset-btn p-2 rounded-lg bg-solar-cyan/20 border border-solar-cyan text-solar-cyan text-center text-[10px] font-bold">CYAN LAB</button>
+                  <button id="light-arcane" class="light-preset-btn p-2 rounded-lg bg-solar-base02 border border-solar-base01/30 text-solar-violet text-center text-[10px]">ARCANE</button>
+                  <button id="light-solar" class="light-preset-btn p-2 rounded-lg bg-solar-base02 border border-solar-base01/30 text-solar-orange text-center text-[10px]">SOLAR PRISM</button>
+                </div>
+              </div>
+
+              <!-- Quick Merlin Action Direct Hook -->
+              <div class="p-4 rounded-xl acrylic-plaque border border-solar-violet/40 space-y-2">
+                <div class="text-solar-violet font-bold flex items-center gap-1.5">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> MERLIN AGENT PASS
+                </div>
+                <p class="font-sans text-[11px] text-solar-base0">Delegate automated topology morphing and vertex reorganization to Merlin Harness.</p>
+                <button id="merlin-quick-morph" class="w-full py-2.5 rounded-lg bg-solar-violet hover:bg-solar-magenta text-solar-base3 font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-bolt"></i> Run Merlin Topology Morph
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="merlin" class="py-24 px-6 relative border-t border-solar-base02/50 bg-solar-base03/90">
+      <div class="max-w-7xl mx-auto space-y-16">
+        
+        <!-- Section Header -->
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-solar-violet/15 text-solar-violet font-monoTech text-xs uppercase tracking-widest mb-3 border border-solar-violet/30">
+              <i class="fa-solid fa-brain"></i> AUTONOMOUS COGNITIVE HARNESS
+            </div>
+            <h2 class="font-angel-wish text-3xl sm:text-5xl font-bold text-solar-base3 tracking-wide">
+              MERLIN AGENT HARNESS
+            </h2>
+            <p class="text-solar-base0 font-serifLuxury italic text-lg sm:text-xl mt-1">
+              Arcane Cybernetics & Autonomous Multi-Agent Previsualisation Engine
+            </p>
+          </div>
+          <p class="text-solar-base1 text-sm max-w-xl font-sans leading-relaxed">
+            Inspired by modular cognitive harness architectures, <strong>Merlin Agent</strong> executes recursive reasoning loops: deconstructing creative scripts into spatial DAG hierarchies, validating kinematic skeletal thresholds, and triggering real-time photometric rendering passes.
+          </p>
+        </div>
+
+        <!-- Merlin 4 Pillars — real shipped capabilities of the harness -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 font-monoTech">
+          <div class="acrylic-plaque prismatic-border p-6 rounded-2xl hover:border-solar-violet/60 transition-all">
+            <div class="w-10 h-10 rounded-xl bg-solar-violet/20 text-solar-violet flex items-center justify-center text-lg mb-4">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <h4 class="font-bold text-solar-base2 text-sm tracking-wider uppercase mb-2">01. Persistent Memory</h4>
+            <p class="font-sans text-xs text-solar-base0 leading-relaxed">
+              <code class="font-code text-solar-violet">MEMORY.md</code> holds world facts, <code class="font-code text-solar-violet">USER.md</code> holds who you are — FIFO-bounded so context never bloats. Every past session is FTS5-searchable from SQLite.
+            </p>
+          </div>
+
+          <div class="acrylic-plaque prismatic-border p-6 rounded-2xl hover:border-solar-cyan/60 transition-all">
+            <div class="w-10 h-10 rounded-xl bg-solar-cyan/20 text-solar-cyan flex items-center justify-center text-lg mb-4">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h4 class="font-bold text-solar-base2 text-sm tracking-wider uppercase mb-2">02. Skills It Writes Itself</h4>
+            <p class="font-sans text-xs text-solar-base0 leading-relaxed">
+              Finish a task once — <code class="font-code text-solar-cyan">/learn</code> distills the procedure into an executable <code class="font-code text-solar-cyan">SKILL.md</code> package that loads into every future session automatically.
+            </p>
+          </div>
+
+          <div class="acrylic-plaque prismatic-border p-6 rounded-2xl hover:border-solar-blue/60 transition-all">
+            <div class="w-10 h-10 rounded-xl bg-solar-blue/20 text-solar-blue flex items-center justify-center text-lg mb-4">
+              <i class="fa-solid fa-terminal"></i>
+            </div>
+            <h4 class="font-bold text-solar-base2 text-sm tracking-wider uppercase mb-2">03. Full-Screen TUI Telemetry</h4>
+            <p class="font-sans text-xs text-solar-base0 leading-relaxed">
+              Terminal-native docked layout: scrollable transcript, tool-call cards, and a live telemetry bar — context gauge, stream health, latency, token flow.
+            </p>
+          </div>
+
+          <div class="acrylic-plaque prismatic-border p-6 rounded-2xl hover:border-solar-magenta/60 transition-all">
+            <div class="w-10 h-10 rounded-xl bg-solar-magenta/20 text-solar-magenta flex items-center justify-center text-lg mb-4">
+              <i class="fa-solid fa-plug"></i>
+            </div>
+            <h4 class="font-bold text-solar-base2 text-sm tracking-wider uppercase mb-2">04. Any Provider + Gateway</h4>
+            <p class="font-sans text-xs text-solar-base0 leading-relaxed">
+              13 built-in providers plus <code class="font-code text-solar-magenta">custom</code> for any OpenAI-compatible endpoint. Gateway on :8642 bridges Telegram, Discord, Slack, cron &amp; subagents.
+            </p>
+          </div>
+        </div>
+
+        <!-- Real Install & Run (adapted from the previous landing page) -->
+        <div class="acrylic-plaque prismatic-border rounded-3xl p-6 sm:p-8">
+          <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-solar-base01/20">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-solar-green/15 text-solar-green font-monoTech text-xs uppercase tracking-widest mb-3 border border-solar-green/30">
+                <i class="fa-solid fa-download"></i> SHIPPED PRODUCT — 60 SECONDS TO A SOVEREIGN AGENT
+              </div>
+              <h3 class="font-angel-wish text-2xl sm:text-3xl font-bold text-solar-base3 tracking-wide">RUN THE REAL HARNESS</h3>
+              <p class="text-solar-base0 font-serifLuxury italic text-base mt-1">
+                Terminal-native &bull; MIT licensed &bull; no accounts, no telemetry, no lock-in
+              </p>
+            </div>
+            <p class="text-solar-base1 text-sm max-w-md font-sans leading-relaxed">
+              The cognitive console below is a live demo of the loop. The real harness installs in one line, runs entirely on your machine, and speaks OpenAI-compatible API on <code class="font-code text-solar-green">:8642</code>.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-8 items-start">
+            <!-- Install commands (real ones served by this site) -->
+            <div class="space-y-2.5 font-code text-[13px]">
+              <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 bg-solar-base03 border border-solar-base01/30 rounded-lg px-4 py-3">
+                <span><span class="text-solar-green font-bold">$</span> <span class="text-solar-base2">curl -fsSL https://merlin-agent.epinoiahorizon.com/install.sh | bash</span></span>
+                <span class="text-solar-base01 text-[10px] uppercase tracking-wider">linux · macOS · WSL2</span>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 bg-solar-base03 border border-solar-base01/30 rounded-lg px-4 py-3">
+                <span><span class="text-solar-green font-bold">&gt;</span> <span class="text-solar-base2">iex (irm https://merlin-agent.epinoiahorizon.com/install.ps1)</span></span>
+                <span class="text-solar-base01 text-[10px] uppercase tracking-wider">windows powershell</span>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 bg-solar-base03 border border-solar-base01/30 rounded-lg px-4 py-3">
+                <span><span class="text-solar-green font-bold">$</span> <span class="text-solar-base2">merlin setup</span></span>
+                <span class="text-solar-base01 text-[10px] uppercase tracking-wider">provider · model · key — live-tested</span>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 bg-solar-base03 border border-solar-base01/30 rounded-lg px-4 py-3">
+                <span><span class="text-solar-green font-bold">$</span> <span class="text-solar-base2">merlin</span></span>
+                <span class="text-solar-base01 text-[10px] uppercase tracking-wider">full-screen session</span>
+              </div>
+              <div class="text-solar-base01 text-[11px] font-monoTech pt-1">
+                bootstrap clones the repo &middot; heavy deps handled by <span class="text-solar-base0">merlin pm install</span> &middot; android/termux: signed apt repo
+              </div>
+            </div>
+
+            <!-- Home / data ownership facts -->
+            <div class="space-y-4 font-sans text-sm text-solar-base1 leading-relaxed">
+              <p>
+                The setup wizard runs a <span class="text-solar-green font-semibold">live connection test</span> against your real endpoint before saving anything.
+                API keys are masked on entry and stored in <code class="font-code text-solar-green">MERLIN_HOME/.env</code> — never in config.yaml.
+              </p>
+              <p>
+                Home lives at <code class="font-code text-solar-green">%LOCALAPPDATA%\merlin</code> (Windows native) or
+                <code class="font-code text-solar-green">~/.merlin</code> (Linux/macOS/WSL2) — memory, skills, sessions, and trajectories
+                in plain files you own. Stuck on PATH after install? <code class="font-code text-solar-green">merlin doctor</code> self-repairs.
+              </p>
+              <div class="flex flex-wrap items-center gap-3 pt-2 text-xs font-monoTech">
+                <a href="https://github.com/epinoiahorizon/Merlin-Agent" target="_blank" class="px-4 py-2 rounded-lg bg-solar-base03 border border-solar-base01/30 hover:border-solar-cyan hover:text-solar-cyan transition-all flex items-center gap-2 text-solar-base2">
+                  <i class="fa-brands fa-github"></i> SOURCE ↗
+                </a>
+                <a href="https://github.com/epinoiahorizon/Merlin-Agent/issues" target="_blank" class="px-4 py-2 rounded-lg bg-solar-base03 border border-solar-base01/30 hover:border-solar-yellow hover:text-solar-yellow transition-all text-solar-base2">
+                  ISSUES ↗
+                </a>
+                <a href="https://github.com/epinoiahorizon/Merlin-Agent/blob/main/README.md" target="_blank" class="px-4 py-2 rounded-lg bg-solar-base03 border border-solar-base01/30 hover:border-solar-violet hover:text-solar-violet transition-all text-solar-base2">
+                  DOCS ↗
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reference — real shell / slash / keys surface (generated from the shipped CLI) -->
+        <div>
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-solar-yellow/15 text-solar-yellow font-monoTech text-xs uppercase tracking-widest mb-3 border border-solar-yellow/30">
+                <i class="fa-solid fa-book"></i> REFERENCE
+              </div>
+              <h3 class="font-angel-wish text-2xl sm:text-3xl font-bold text-solar-base3 tracking-wide">EVERYTHING YOU CAN TYPE</h3>
+              <p class="text-solar-base0 font-serifLuxury italic text-base mt-1">Shell commands for daily driving, slash commands inside the chat, and keys that control the TUI.</p>
+            </div>
+            <p class="text-solar-base1 text-sm max-w-md font-sans">The three tables below mirror the shipped CLI surface — pull them fresh whenever the commands evolve.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Shell commands -->
+            <div class="lg:col-span-6 acrylic-plaque rounded-2xl border border-solar-base01/30 overflow-hidden font-sans">
+              <div class="px-5 py-3 bg-solar-base02/70 text-[11px] font-monoTech text-solar-yellow uppercase tracking-widest border-b border-solar-base01/20">
+                Shell — merlin &lt;command&gt;
+              </div>
+              <div id="ref-shell">
+                <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15 first:border-t-0">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Launch the full-screen interactive TUI. First run guides you through setup automatically. This is where you'll live.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin chat [--classic]</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Same chat, choose your interface — full-screen TUI (default) or the classic inline terminal.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin setup</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Interactive wizard: provider, model, base URL, masked API key, live connection test. Safe to re-run any time.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin doctor</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">One command, full health check: repairs the <code class="font-code text-solar-yellow">merlin</code> command (Windows non-admin PATH), then live-tests your provider connection and tells you exactly what to fix.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin model [name] [-p provider]</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">View or switch the active model/provider without opening a chat.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin memory</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Inspect the persistent <code class="font-code text-solar-yellow">MEMORY.md</code> and <code class="font-code text-solar-yellow">USER.md</code> files and their character budgets.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin skills</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">List every loaded skill — bundled ones plus the ones the agent taught itself.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin gateway [--port 8642]</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Start the OpenAI-compatible API server + cron scheduler. Point any client at <code class="font-code text-solar-yellow">http://localhost:8642/v1</code>.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin cron</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">List scheduled background automations.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                  <code class="font-code text-solar-yellow text-[13px]">merlin tools</code>
+                  <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Show the registered toolsets (terminal, file, web, memory, skills, code execution&hellip;).</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slash commands + Keys -->
+            <div class="lg:col-span-6 space-y-6">
+              <div class="acrylic-plaque rounded-2xl border border-solar-base01/30 overflow-hidden font-sans">
+                <div class="px-5 py-3 bg-solar-base02/70 text-[11px] font-monoTech text-solar-cyan uppercase tracking-widest border-b border-solar-base01/20">
+                  Inside the chat — slash commands
+                </div>
+                <div id="ref-slash">
+                  <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15 first:border-t-0">
+                    <code class="font-code text-solar-cyan text-[13px]">/help</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">List every command below — you never have to memorize this page.</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-cyan text-[13px]">/model [name] · /provider [name]</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Switch model or provider mid-conversation, on the fly.</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-cyan text-[13px]">/memory</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">See what the agent remembers about the world and about you.</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-cyan text-[13px]">/skills · /learn name description</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Browse loaded skills, or have the agent author a new one from the current session.</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-cyan text-[13px]">/sessions · /search query</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">List past sessions and full-text search every message you've ever exchanged (SQLite FTS5).</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-[minmax(190px,260px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-cyan text-[13px]">/tools</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Inspect the active toolsets available to the agent.</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-cyan text-[13px]">/copy [n] · /export</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Copy the last reply to clipboard, or export the session trajectory (ShareGPT format) for training.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="acrylic-plaque rounded-2xl border border-solar-base01/30 overflow-hidden font-sans">
+                <div class="px-5 py-3 bg-solar-base02/70 text-[11px] font-monoTech text-solar-violet uppercase tracking-widest border-b border-solar-base01/20">
+                  Keys
+                </div>
+                <div id="ref-keys">
+                  <div class="grid grid-cols-1 sm:grid-cols-[minmax(120px,160px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15 first:border-t-0">
+                    <code class="font-code text-solar-violet text-[13px]">Enter</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Send the message.</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-[minmax(120px,160px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-violet text-[13px]">Esc</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Cancel the running turn.</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-[minmax(120px,160px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-violet text-[13px]">Ctrl+C</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Quit the session (memory is preserved automatically).</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-[minmax(120px,160px)_1fr] gap-x-5 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-violet text-[13px]">Ctrl+L</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Clear the transcript view.</p>
+                  </div>
+                  <div class="grid grid-cols-1 sm:grid-cols-1 gap-y-1 px-5 py-3 border-t border-solar-base01/15">
+                    <code class="font-code text-solar-violet text-[13px]">Ctrl+Y / Ctrl+P</code>
+                    <p class="text-solar-base0 text-[13px] leading-relaxed m-0">Copy the last reply / copy the input line to the clipboard.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Interactive Merlin Agent Terminal Console & Synchronized Neural Mesh -->
+        <div class="acrylic-plaque prismatic-border rounded-3xl p-6 sm:p-8 lg:p-10">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between pb-6 border-b border-solar-base01/20 gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-solar-green animate-pulse"></span>
+                <h3 class="font-angel-wish text-xl sm:text-2xl text-solar-base2 tracking-wider">
+                  MERLIN AGENT HARNESS TERMINAL
+                </h3>
+              </div>
+              <p class="text-xs font-monoTech text-solar-base0 mt-1">
+                Autonomous Loop: Thought &rarr; Action &rarr; Spatial Observation &rarr; Synthesis
+              </p>
+            </div>
+
+            <!-- Telemetry Badges -->
+            <div class="flex flex-wrap items-center gap-3 text-xs font-monoTech">
+              <div class="px-3 py-1.5 rounded-lg bg-solar-base03 border border-solar-base01/30">
+                <span class="text-solar-base01">HARNESS:</span> <span class="text-solar-violet font-bold">MERLIN-AGY v6.4</span>
+              </div>
+              <div class="px-3 py-1.5 rounded-lg bg-solar-base03 border border-solar-base01/30">
+                <span class="text-solar-base01">ACTIVE TOKENS:</span> <span id="token-counter" class="text-solar-yellow font-bold">594,220</span>
+              </div>
+              <div class="px-3 py-1.5 rounded-lg bg-solar-base03 border border-solar-base01/30">
+                <span class="text-solar-base01">AGENTS:</span> <span id="active-agents-badge" class="text-solar-cyan font-bold">8 CONCURRENT</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Merlin Command Preset Directives -->
+          <div class="py-6">
+            <label class="block text-xs font-monoTech text-solar-cyan tracking-wider uppercase mb-3">
+              Trigger Merlin Autonomous Directives (Synchronized with Neural Mesh):
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 font-monoTech text-xs">
+              
+              <!-- Directive 1 -->
+              <button class="merlin-task-btn px-4 py-3 rounded-xl bg-solar-base03 hover:bg-solar-base02 border border-solar-base01/30 hover:border-solar-cyan text-left text-solar-base2 transition-all flex items-center justify-between group" data-task="geometry">
+                <div>
+                  <div class="text-solar-cyan font-semibold">Spatial Geometry Synthesis</div>
+                  <div class="text-[10px] text-solar-base01">3D topology & camera frustums</div>
+                </div>
+                <i class="fa-solid fa-play text-xs text-solar-base01 group-hover:text-solar-cyan transition-colors"></i>
+              </button>
+
+              <!-- Directive 2 -->
+              <button class="merlin-task-btn px-4 py-3 rounded-xl bg-solar-base03 hover:bg-solar-base02 border border-solar-base01/30 hover:border-solar-violet text-left text-solar-base2 transition-all flex items-center justify-between group" data-task="kinematics">
+                <div>
+                  <div class="text-solar-violet font-semibold">Kinematic Rig Deconstruction</div>
+                  <div class="text-[10px] text-solar-base01">Skeletal hierarchies & IK joints</div>
+                </div>
+                <i class="fa-solid fa-play text-xs text-solar-base01 group-hover:text-solar-violet transition-colors"></i>
+              </button>
+
+              <!-- Directive 3 -->
+              <button class="merlin-task-btn px-4 py-3 rounded-xl bg-solar-base03 hover:bg-solar-base02 border border-solar-base01/30 hover:border-solar-magenta text-left text-solar-base2 transition-all flex items-center justify-between group" data-task="photometric">
+                <div>
+                  <div class="text-solar-magenta font-semibold">Photometric Raytrace Bake</div>
+                  <div class="text-[10px] text-solar-base01">Optical caustics & dispersion</div>
+                </div>
+                <i class="fa-solid fa-play text-xs text-solar-base01 group-hover:text-solar-magenta transition-colors"></i>
+              </button>
+
+              <!-- Directive 4 -->
+              <button class="merlin-task-btn px-4 py-3 rounded-xl bg-solar-base03 hover:bg-solar-base02 border border-solar-base01/30 hover:border-solar-yellow text-left text-solar-base2 transition-all flex items-center justify-between group" data-task="consensus">
+                <div>
+                  <div class="text-solar-yellow font-semibold">Swarm Consensus Audit</div>
+                  <div class="text-[10px] text-solar-base01">Multi-agent verification pass</div>
+                </div>
+                <i class="fa-solid fa-play text-xs text-solar-base01 group-hover:text-solar-yellow transition-colors"></i>
+              </button>
+
+            </div>
+          </div>
+
+          <!-- Split Console: Live Reasoning Logs & Dynamic Synchronized Neural Mesh -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Terminal Log Feed -->
+            <div class="lg:col-span-7 bg-solar-base03 rounded-2xl border border-solar-base01/30 p-4 font-code text-xs flex flex-col justify-between shadow-inner">
+              <div class="flex items-center justify-between pb-3 border-b border-solar-base02 text-[11px] text-solar-base01 font-monoTech">
+                <span class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-solar-red inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-solar-yellow inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-solar-green inline-block"></span>
+                  <span class="text-solar-base1 ml-2">merlin-agent@epinoia-harness:~$</span>
+                </span>
+                <span id="merlin-status-badge" class="text-solar-green">MERLIN_IDLE</span>
+              </div>
+
+              <!-- Log Container -->
+              <div id="merlin-terminal-feed" class="h-64 sm:h-72 overflow-y-auto space-y-2.5 py-3 pr-2 text-solar-base1 text-[11px] sm:text-xs">
+                <div class="text-solar-base01">[00:00:01] Merlin Agent Harness v6.4 initialized.</div>
+                <div class="text-solar-base01">[00:00:02] Connected to Epinoia Horizon 3D Art & Animation Pipeline.</div>
+                <div class="text-solar-violet">[00:00:03] Merlin Cognitive Loop stand-by. Select an autonomous directive or enter a custom prompt.</div>
+              </div>
+
+              <!-- Terminal Input Field -->
+              <div class="pt-3 border-t border-solar-base02 flex items-center gap-2 font-monoTech text-xs">
+                <span class="text-solar-violet font-bold">&gt;</span>
+                <input id="merlin-input" type="text" placeholder="Enter custom directive (e.g. 'Synthesize holographic prism dissolution')..." class="w-full bg-transparent text-solar-base2 placeholder-solar-base01/60 focus:outline-none text-xs">
+                <button id="merlin-run-btn" class="px-3.5 py-1.5 rounded bg-solar-violet/20 border border-solar-violet text-solar-violet hover:bg-solar-violet hover:text-solar-base3 text-xs uppercase font-bold transition-all">Invoke</button>
+              </div>
+            </div>
+
+            <!-- Merlin Synchronized Neural Mesh Visualizer -->
+            <div class="lg:col-span-5 bg-solar-base03 rounded-2xl border border-solar-base01/30 p-4 flex flex-col justify-between">
+              <div class="flex items-center justify-between text-[11px] font-monoTech text-solar-base01 pb-2 border-b border-solar-base02">
+                <span class="text-solar-violet font-semibold flex items-center gap-1.5">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i> MERLIN NEURAL MESH
+                </span>
+                <span class="text-solar-base0">ACTIVE WORKER: <span id="merlin-worker-tag" class="text-solar-cyan font-bold">[STANDBY]</span></span>
+              </div>
+
+              <!-- Interactive Mesh Canvas -->
+              <div class="py-2 flex items-center justify-center relative">
+                <canvas id="merlin-graph-canvas" class="w-full h-56 sm:h-64 block rounded-lg"></canvas>
+                <div id="neural-mesh-overlay-badge" class="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-solar-base02/90 border border-solar-base01/40 text-[9px] font-monoTech text-solar-base1 pointer-events-none">
+                  STATE: <span id="mesh-state-label" class="text-solar-cyan">HARMONIC_IDLE</span>
+                </div>
+              </div>
+
+              <!-- Telemetry Metrics Bar -->
+              <div class="grid grid-cols-3 gap-2 text-center font-monoTech text-[10px] pt-2 border-t border-solar-base02 text-solar-base01">
+                <div>ORCHESTRATOR: <span id="meta-orch" class="text-solar-violet">ACTIVE</span></div>
+                <div>KINEMATICS: <span id="meta-kin" class="text-solar-cyan">LOCKED</span></div>
+                <div>CONVERGENCE: <span id="meta-conv" class="text-solar-green">&gt;99.98%</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="gallery" class="py-24 px-6 relative border-t border-solar-base02/50">
+      <div class="max-w-7xl mx-auto space-y-16">
+        
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <div class="text-xs font-monoTech text-solar-cyan tracking-widest uppercase mb-2">// 3D ART & ANIMATION PORTFOLIO</div>
+            <h2 class="font-angel-wish text-3xl md:text-5xl font-bold text-solar-base3 tracking-wide">
+              PREVIS & CREATIVE ARCHIVES
+            </h2>
+          </div>
+          <p class="text-solar-base0 text-sm max-w-md font-sans">
+            Curated archive of speculative spatial prototypes, high-refraction optical plaques, and cinematic motion tests engineered by Epinoia Horizon.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          <!-- Card 1: Kinematic Motion -->
+          <div class="acrylic-plaque prismatic-border rounded-2xl p-7 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between">
+            <div>
+              <div class="h-48 rounded-xl bg-solar-base02/80 relative overflow-hidden mb-6 flex items-center justify-center border border-solar-base01/20">
+                <div class="absolute inset-0 bg-gradient-to-tr from-solar-cyan/20 to-solar-blue/20 opacity-50 group-hover:scale-105 transition-transform duration-500"></div>
+                <i class="fa-solid fa-person-running text-5xl text-solar-cyan drop-shadow-[0_0_20px_rgba(42,161,152,0.8)]"></i>
+                <div class="absolute bottom-2 left-3 text-[10px] font-monoTech text-solar-base0 tracking-widest">
+                  ANIM-01 // PROCEDURAL KINEMATICS
+                </div>
+              </div>
+              <span class="text-xs font-monoTech text-solar-cyan uppercase tracking-wider">3D Animation Design</span>
+              <h3 class="font-angel-wish text-xl font-bold text-solar-base2 mt-1 mb-3">Bionic Gait & Motion Rigging</h3>
+              <p class="text-sm text-solar-base0 leading-relaxed font-sans">
+                Dynamic skeletal rigging for biomechanical characters with adaptive muscle deformation optimized for LED volume virtual production.
+              </p>
+            </div>
+            <div class="pt-6 mt-6 border-t border-solar-base02 flex items-center justify-between font-monoTech text-xs">
+              <span class="text-solar-green"><i class="fa-solid fa-circle-check text-[10px] mr-1"></i> Production Ready</span>
+              <button onclick="triggerInspect('Bionic Gait Motion Rig')" class="text-solar-base1 hover:text-solar-cyan transition-colors">Inspect Rig <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i></button>
+            </div>
+          </div>
+
+          <!-- Card 2: Fused Quartz Hologram -->
+          <div class="acrylic-plaque prismatic-border rounded-2xl p-7 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between">
+            <div>
+              <div class="h-48 rounded-xl bg-solar-base02/80 relative overflow-hidden mb-6 flex items-center justify-center border border-solar-base01/20">
+                <div class="absolute inset-0 bg-gradient-to-tr from-solar-violet/20 to-solar-magenta/20 opacity-50 group-hover:scale-105 transition-transform duration-500"></div>
+                <i class="fa-solid fa-gem text-5xl text-solar-magenta drop-shadow-[0_0_20px_rgba(211,54,130,0.8)]"></i>
+                <div class="absolute bottom-2 left-3 text-[10px] font-monoTech text-solar-base0 tracking-widest">
+                  HOLO-04 // FUSED QUARTZ
+                </div>
+              </div>
+              <span class="text-xs font-monoTech text-solar-magenta uppercase tracking-wider">Holographic 3D Art</span>
+              <h3 class="font-angel-wish text-xl font-bold text-solar-base2 mt-1 mb-3">Subsurface Circuit Lithography</h3>
+              <p class="text-sm text-solar-base0 leading-relaxed font-sans">
+                Nanometer 3D PCB routing etched inside synthetic optical quartz crystal pyramids for glasses-free volumetric projection plaques.
+              </p>
+            </div>
+            <div class="pt-6 mt-6 border-t border-solar-base02 flex items-center justify-between font-monoTech text-xs">
+              <span class="text-solar-yellow"><i class="fa-solid fa-flask text-[10px] mr-1"></i> Experimental Spec</span>
+              <button onclick="triggerInspect('Fused Quartz Lithography')" class="text-solar-base1 hover:text-solar-magenta transition-colors">Schematics <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i></button>
+            </div>
+          </div>
+
+          <!-- Card 3: Camera Frustum Engine -->
+          <div class="acrylic-plaque prismatic-border rounded-2xl p-7 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between">
+            <div>
+              <div class="h-48 rounded-xl bg-solar-base02/80 relative overflow-hidden mb-6 flex items-center justify-center border border-solar-base01/20">
+                <div class="absolute inset-0 bg-gradient-to-tr from-solar-yellow/20 to-solar-cyan/20 opacity-50 group-hover:scale-105 transition-transform duration-500"></div>
+                <i class="fa-solid fa-clapperboard text-5xl text-solar-yellow drop-shadow-[0_0_20px_rgba(181,137,0,0.8)]"></i>
+                <div class="absolute bottom-2 left-3 text-[10px] font-monoTech text-solar-base0 tracking-widest">
+                  PREVIS-09 // CAMERA FRUSTUM
+                </div>
+              </div>
+              <span class="text-xs font-monoTech text-solar-yellow uppercase tracking-wider">Cinematic Previs</span>
+              <h3 class="font-angel-wish text-xl font-bold text-solar-base2 mt-1 mb-3">Virtual Cinematography Engine</h3>
+              <p class="text-sm text-solar-base0 leading-relaxed font-sans">
+                Real-time lighting continuity solver, anamorphic optical aberration simulation, and autonomous drone camera paths driven by Merlin.
+              </p>
+            </div>
+            <div class="pt-6 mt-6 border-t border-solar-base02 flex items-center justify-between font-monoTech text-xs">
+              <span class="text-solar-cyan"><i class="fa-solid fa-bolt text-[10px] mr-1"></i> OpenUSD Pipeline</span>
+              <button onclick="triggerInspect('Virtual Frustum Engine')" class="text-solar-base1 hover:text-solar-yellow transition-colors">Launch View <i class="fa-solid fa-chevron-right ml-1 text-[10px]"></i></button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="analyzer" class="py-20 px-6 bg-solar-base02/30 relative">
+      <div class="max-w-6xl mx-auto acrylic-plaque prismatic-border rounded-3xl p-8 md:p-12">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <div class="lg:col-span-5 space-y-4">
+            <span class="text-xs font-monoTech text-solar-cyan tracking-widest uppercase">// OPTICAL CIRCUIT TELEMETRY</span>
+            <h2 class="font-angel-wish text-2xl md:text-4xl font-bold text-solar-base3">
+              CIRCUIT WAVEFORM ANALYZER
+            </h2>
+            <p class="text-sm text-solar-base0 leading-relaxed font-sans">
+              Real-time oscilloscope monitoring quartz optic bus frequency and harmonic crystal dispersion feeding into Merlin Agent Harness.
+            </p>
+
+            <div class="space-y-3 pt-3 font-monoTech text-xs">
+              <div>
+                <div class="flex justify-between mb-1 text-solar-base1">
+                  <span>CARRIER FREQUENCY (GHz)</span>
+                  <span id="freq-val" class="text-solar-cyan">5.20</span>
+                </div>
+                <input id="freq-slider" type="range" min="1" max="10" step="0.1" value="5.20" class="w-full accent-solar-cyan cursor-pointer">
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1 text-solar-base1">
+                  <span>SOLAR HARMONIC DISPERSION</span>
+                  <span id="harm-val" class="text-solar-violet">3.60</span>
+                </div>
+                <input id="harm-slider" type="range" min="0.5" max="6" step="0.1" value="3.6" class="w-full accent-solar-violet cursor-pointer">
+              </div>
+            </div>
+
+            <div class="flex gap-3 pt-4">
+              <button id="pulse-btn" class="px-4 py-2.5 rounded-xl bg-solar-cyan/20 border border-solar-cyan text-solar-cyan hover:bg-solar-cyan hover:text-solar-base03 font-monoTech text-xs font-semibold uppercase tracking-wider transition-all">
+                Inject Pulse
+              </button>
+              <button id="reset-wave-btn" class="px-4 py-2.5 rounded-xl border border-solar-base01/30 text-solar-base1 hover:text-solar-base3 font-monoTech text-xs tracking-wider transition-all">
+                Reset Wave
+              </button>
+            </div>
+          </div>
+
+          <!-- Waveform Oscilloscope Display Canvas -->
+          <div class="lg:col-span-7 bg-solar-base03 rounded-2xl p-4 border border-solar-base01/30 shadow-inner relative overflow-hidden">
+            <div class="flex items-center justify-between text-[11px] font-monoTech text-solar-base01 border-b border-solar-base02 pb-2 mb-2">
+              <span class="text-solar-cyan"><i class="fa-solid fa-wave-square mr-1"></i> OPTIC SPECTRUM FLUCTUATION</span>
+              <span class="text-solar-green">MERLIN LOCKED</span>
+            </div>
+            
+            <canvas id="waveform-canvas" class="w-full h-64 block rounded-lg"></canvas>
+
+            <div class="mt-3 grid grid-cols-4 gap-2 text-center font-monoTech text-[10px] text-solar-base01 border-t border-solar-base02 pt-2">
+              <div>CHANNEL: <span class="text-solar-cyan">OPT-1</span></div>
+              <div>SPECT: <span class="text-solar-yellow">SOLARIZED</span></div>
+              <div>THD: <span class="text-solar-magenta">0.003%</span></div>
+              <div>PHASE: <span class="text-solar-green">0.2ms</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="py-24 px-6 border-t border-solar-base02/40 relative">
+      <div class="max-w-4xl mx-auto acrylic-plaque prismatic-border rounded-3xl p-8 md:p-14 relative overflow-hidden">
+        
+        <div class="text-center max-w-xl mx-auto mb-10">
+          <span class="text-xs font-monoTech text-solar-cyan tracking-widest uppercase">// INITIATE ENGAGEMENT</span>
+          <h2 class="font-angel-wish text-3xl md:text-4xl font-bold text-solar-base3 mt-2 mb-3">
+            COMMISSION 3D ART & PREVIS
+          </h2>
+          <p class="text-xs md:text-sm text-solar-base0 font-sans">
+            Submit your previsualisation specifications, 3D character briefs, or custom Merlin Agent pipeline integrations.
+          </p>
+        </div>
+
+        <form id="contact-form" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-xs font-monoTech text-solar-base1 uppercase tracking-wider mb-2">Project Name / Studio</label>
+              <input type="text" required placeholder="e.g. Apex Horizon Previs" class="w-full px-4 py-3 rounded-xl bg-solar-base03 border border-solar-base01/30 text-solar-base2 placeholder-solar-base01/50 focus:outline-none focus:border-solar-cyan transition-colors text-sm font-sans">
+            </div>
+            <div>
+              <label class="block text-xs font-monoTech text-solar-base1 uppercase tracking-wider mb-2">Direct Contact Email</label>
+              <input type="email" required placeholder="director@studio.vision" class="w-full px-4 py-3 rounded-xl bg-solar-base03 border border-solar-base01/30 text-solar-base2 placeholder-solar-base01/50 focus:outline-none focus:border-solar-cyan transition-colors text-sm font-sans">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-monoTech text-solar-base1 uppercase tracking-wider mb-2">Primary Domain</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-monoTech">
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-solar-base03 border border-solar-base01/20 cursor-pointer hover:border-solar-cyan">
+                <input type="radio" name="domain" checked class="accent-solar-cyan">
+                <span>3D Art & Animation</span>
+              </label>
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-solar-base03 border border-solar-base01/20 cursor-pointer hover:border-solar-cyan">
+                <input type="radio" name="domain" class="accent-solar-cyan">
+                <span>Merlin Harness</span>
+              </label>
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-solar-base03 border border-solar-base01/20 cursor-pointer hover:border-solar-cyan">
+                <input type="radio" name="domain" class="accent-solar-cyan">
+                <span>Virtual Previs</span>
+              </label>
+              <label class="flex items-center gap-2 p-3 rounded-lg bg-solar-base03 border border-solar-base01/20 cursor-pointer hover:border-solar-cyan">
+                <input type="radio" name="domain" class="accent-solar-cyan">
+                <span>Optic Trophy</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-monoTech text-solar-base1 uppercase tracking-wider mb-2">Directive Details</label>
+            <textarea rows="4" placeholder="Detail your previs timeline, character counts, skeletal complexity, or custom autonomous agent directives..." class="w-full px-4 py-3 rounded-xl bg-solar-base03 border border-solar-base01/30 text-solar-base2 placeholder-solar-base01/50 focus:outline-none focus:border-solar-cyan transition-colors text-sm font-sans"></textarea>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+            <div class="text-xs font-monoTech text-solar-base01">
+              <i class="fa-solid fa-lock text-solar-green mr-1"></i> ENCRYPTED PIPELINE DIRECTIVE
+            </div>
+            <button type="submit" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-solar-cyan text-solar-base03 font-monoTech text-xs font-bold uppercase tracking-widest hover:bg-solar-blue hover:text-white transition-all shadow-lg flex items-center justify-center gap-2">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Transmit Directive</span>
+            </button>
+          </div>
+        </form>
+
+        <div id="form-msg" class="hidden mt-6 p-4 rounded-xl bg-solar-base02 border border-solar-cyan text-solar-cyan font-monoTech text-xs text-center">
+          <i class="fa-solid fa-circle-check mr-2"></i> Directive registered in Merlin Agent Harness queue. Our studio directors will contact you shortly.
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="py-12 px-6 border-t border-solar-base02 text-solar-base01 text-xs font-monoTech">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-3">
+        <span class="font-angel-wish text-lg font-bold text-solar-base2">EPINOIA HORIZON</span>
+        <span class="text-solar-base01">|</span>
+        <span class="text-[11px] text-solar-base0">A PREVISUALISATION AND PROTOTYPING GROUP</span>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <span class="text-solar-violet">MERLIN AGENT HARNESS OPERATIONAL</span>
+        <a href="https://github.com/epinoiahorizon/Merlin-Agent" target="_blank" class="hover:text-solar-cyan transition-colors flex items-center gap-1.5">
+          <i class="fa-brands fa-github"></i> GitHub
+        </a>
+        <a href="#merlin" class="hover:text-solar-cyan transition-colors flex items-center gap-1">
+          Merlin Harness <i class="fa-solid fa-arrow-up text-[10px]"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Toast Notification Box -->
+  <div id="toast-modal" class="fixed bottom-6 right-6 z-50 transform translate-y-32 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="acrylic-plaque prismatic-border p-4 rounded-xl shadow-2xl flex items-center gap-3 text-xs font-monoTech text-solar-base2">
+      <i class="fa-solid fa-wand-magic-sparkles text-solar-violet text-base"></i>
+      <span id="toast-text">Specimen loaded.</span>
     </div>
   </div>
-</section>
 
+  <script>
+    /* ----------------------------------------------------
+       1. HERO 3D TROPHY PYRAMID (Three.js)
+    ---------------------------------------------------- */
+    let heroScene, heroCamera, heroRenderer, heroPyramidGroup, heroParticles;
+    let heroDragging = false;
+    let heroPrevMouse = { x: 0, y: 0 };
+    const heroContainer = document.getElementById('three-pyramid-container');
 
-<section id="started">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="label">04 — Getting started</div>
-        <h2>Four steps. Then<br>it runs itself.</h2>
-      </div>
-      <p>A straight path from zero to a working agent — no accounts, no dashboards, no lock-in.</p>
-    </div>
+    function initHeroPyramid() {
+      const w = heroContainer.clientWidth || 360;
+      const h = heroContainer.clientHeight || 360;
 
-    <div class="steps">
-      <div class="step">
-        <div class="num">STEP 1</div>
-        <h4>Install</h4>
-        <p><code>pip install git+https://github.com/authxibu-cyber/Merlin-Agent</code> — or run the platform installer: <code>.\scripts\install.ps1</code> (Windows) / <code>./scripts/install.sh</code> (Linux, macOS, WSL).</p>
-      </div>
-      <div class="step">
-        <div class="num">STEP 2</div>
-        <h4>Connect</h4>
-        <p>Run <code>merlin setup</code>. Pick a provider from the numbered table (or <code>custom</code> for any OpenAI-compatible endpoint), paste your API key — the wizard <span style="color:var(--gold-bright)">tests the connection live</span> before saving.</p>
-      </div>
-      <div class="step">
-        <div class="num">STEP 3</div>
-        <h4>Chat</h4>
-        <p>Type <code>merlin</code>. You're in the full-screen TUI: scrollable transcript, tool-call cards, and the telemetry bar at the bottom showing context, latency and stream health.</p>
-      </div>
-      <div class="step">
-        <div class="num">STEP 4</div>
-        <h4>Let it learn</h4>
-        <p>Finish real tasks. Ask <code>/learn &lt;name&gt; &lt;description&gt;</code> and the agent writes a reusable <code>SKILL.md</code> it loads in every future session. Close the terminal — everything persists.</p>
-      </div>
-    </div>
-  </div>
-</section>
+      heroScene = new THREE.Scene();
+      heroCamera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+      heroCamera.position.set(0, 0.35, 3.8);
 
-<section id="reference" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="label">05 — Reference</div>
-        <h2>Everything you can type.</h2>
-      </div>
-      <p>Shell commands for daily driving, slash commands inside the chat, and keys that control the TUI.</p>
-    </div>
+      heroRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      heroRenderer.setSize(w, h);
+      heroRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      heroRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+      heroContainer.appendChild(heroRenderer.domElement);
 
-    <h3 class="ref-h">Shell — merlin &lt;command&gt;</h3>
-    <div class="ref" style="margin-bottom:40px">
-      <div class="ref-row"><code class="k">merlin</code><p>Launch the full-screen interactive TUI. First run guides you through setup automatically. This is where you'll live.</p></div>
-      <div class="ref-row"><code class="k">merlin chat [--classic]</code><p>Same chat, choose your interface — full-screen TUI (default) or the classic inline terminal.</p></div>
-      <div class="ref-row"><code class="k">merlin setup</code><p>Interactive wizard: provider, model, base URL, masked API key, live connection test. Safe to re-run any time.</p></div>
-      <div class="ref-row wide"><code class="k">merlin doctor</code><p>One command, full health check: repairs the <code>merlin</code> command (Windows non-admin PATH), then live-tests your provider connection and tells you exactly what to fix.</p></div>
-      <div class="ref-row wide"><code class="k">merlin model [name] [-p provider]</code><p>View or switch the active model/provider without opening a chat.</p></div>
-      <div class="ref-row"><code class="k">merlin memory</code><p>Inspect the persistent <code>MEMORY.md</code> and <code>USER.md</code> files and their character budgets.</p></div>
-      <div class="ref-row"><code class="k">merlin skills</code><p>List every loaded skill — bundled ones plus the ones the agent taught itself.</p></div>
-      <div class="ref-row"><code class="k">merlin gateway [--port 8642]</code><p>Start the OpenAI-compatible API server + cron scheduler. Point any client at <code>http://localhost:8642/v1</code>.</p></div>
-      <div class="ref-row"><code class="k">merlin cron</code><p>List scheduled background automations.</p></div>
-      <div class="ref-row"><code class="k">merlin tools</code><p>Show the registered toolsets (terminal, file, web, memory, skills, code execution…).</p></div>
-    </div>
+      heroPyramidGroup = new THREE.Group();
+      heroScene.add(heroPyramidGroup);
 
-    <h3 class="ref-h">Inside the chat — slash commands</h3>
-    <div class="ref" style="margin-bottom:40px">
-      <div class="ref-row"><code class="k">/help</code><p>List every command below — you never have to memorize this page.</p></div>
-      <div class="ref-row wide"><code class="k">/model [name] · /provider [name]</code><p>Switch model or provider mid-conversation, on the fly.</p></div>
-      <div class="ref-row"><code class="k">/memory</code><p>See what the agent remembers about the world and about you.</p></div>
-      <div class="ref-row wide"><code class="k">/skills · /learn name description</code><p>Browse loaded skills, or have the agent author a new one from the current session.</p></div>
-      <div class="ref-row wide"><code class="k">/sessions · /search query</code><p>List past sessions and full-text search every message you've ever exchanged (SQLite FTS5).</p></div>
-      <div class="ref-row"><code class="k">/tools</code><p>Inspect the active toolsets available to the agent.</p></div>
-      <div class="ref-row wide"><code class="k">/copy [n] · /export</code><p>Copy the last reply to clipboard, or export the session trajectory (ShareGPT format) for training.</p></div>
-    </div>
+      // Procedural Circuit Pattern Texture
+      const circuitCanvas = document.createElement('canvas');
+      circuitCanvas.width = 512;
+      circuitCanvas.height = 512;
+      const cctx = circuitCanvas.getContext('2d');
+      cctx.fillStyle = '#073642';
+      cctx.fillRect(0, 0, 512, 512);
 
-    <h3 class="ref-h">Keys</h3>
-    <div class="ref">
-      <div class="ref-row"><code class="k">Enter</code><p>Send the message.</p></div>
-      <div class="ref-row"><code class="k">Esc</code><p>Cancel the running turn.</p></div>
-      <div class="ref-row"><code class="k">Ctrl+C</code><p>Quit the session (memory is preserved automatically).</p></div>
-      <div class="ref-row"><code class="k">Ctrl+L</code><p>Clear the transcript view.</p></div>
-      <div class="ref-row wide"><code class="k">Ctrl+Y / Ctrl+P</code><p>Copy the last reply / copy the input line to the clipboard.</p></div>
-    </div>
-  </div>
-</section>
+      cctx.strokeStyle = '#2aa198';
+      cctx.lineWidth = 3;
+      cctx.shadowBlur = 9;
+      cctx.shadowColor = '#2aa198';
+      
+      const traces = [
+        [[50, 80], [120, 80], [180, 160], [180, 340], [250, 420]],
+        [[460, 80], [390, 80], [330, 160], [330, 340], [260, 420]],
+        [[256, 30], [256, 210], [190, 260], [190, 470]],
+        [[256, 210], [322, 260], [322, 470]],
+        [[90, 450], [170, 450], [220, 400]],
+        [[422, 450], [342, 450], [292, 400]]
+      ];
 
-<section id="faq" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div>
-        <div class="label">06 — FAQ</div>
-        <h2>Before you ask.</h2>
-      </div>
-    </div>
+      traces.forEach(pts => {
+        cctx.beginPath();
+        cctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < pts.length; i++) cctx.lineTo(pts[i][0], pts[i][1]);
+        cctx.stroke();
+        pts.forEach(p => {
+          cctx.fillStyle = '#eee8d5';
+          cctx.beginPath();
+          cctx.arc(p[0], p[1], 4, 0, Math.PI * 2);
+          cctx.fill();
+        });
+      });
 
-    <div class="faq-item">
-      <h4>Which API keys work?</h4>
-      <p>Any of the 13 built-in providers — OpenRouter, Nous Portal, OpenAI, Anthropic, Gemini, Groq, DeepSeek, Together, Mistral, xAI, ollama.com, local Ollama, vLLM — or pick <code>custom</code> in the wizard and point it at any OpenAI-compatible endpoint (LM Studio, a proxy, a private gateway). The setup wizard live-tests the connection before saving, so you know immediately if a key works.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Where does my data live?</h4>
-      <p>In plain files you own: <code>%LOCALAPPDATA%\merlin</code> on Windows, <code>~/.merlin</code> on Linux/macOS. Memory in <code>MEMORY.md</code>/<code>USER.md</code>, skills in <code>skills/</code>, session history in a local SQLite database, trajectories as JSON. Delete the folder and it's gone — no cloud account, no sync, no telemetry.</p>
-    </div>
-    <div class="faq-item">
-      <h4>How is this different from a chat wrapper?</h4>
-      <p>Chat wrappers are stateless. Merlin Agent bounds its memory so context stays small, writes its own skills after real tasks, searches every past session with FTS5, schedules cron jobs that inject conversational memory, and exposes an OpenAI-compatible API so other tools can use it too. It compounds; wrappers forget.</p>
-    </div>
-    <div class="faq-item">
-      <h4>Can I use it from other apps?</h4>
-      <p>Yes — run <code>merlin gateway</code> and point Open WebUI, LangChain, or any OpenAI-style client at <code>http://localhost:8642/v1</code>. Telegram, Discord, and Slack bridges are built in.</p>
-    </div>
-    <div class="faq-item">
-      <h4>What does the telemetry bar show?</h4>
-      <p>Model name, context window usage (~used/limit with a fill gauge), stream health, and per-round latency — updated live while the agent works, so you always know what's happening under the hood.</p>
-    </div>
-  </div>
-</section>
+      // Merlin Agent Microcode Core on Texture
+      cctx.fillStyle = '#002b36';
+      cctx.strokeStyle = '#6c71c4';
+      cctx.lineWidth = 4;
+      cctx.strokeRect(206, 206, 100, 100);
+      cctx.fillRect(206, 206, 100, 100);
 
-<footer>
-  <div class="wrap foot">
-    <div class="l">
-      <svg viewBox="0 0 64 64" fill="none">
-        <g stroke="#b58900" stroke-width="2.3" stroke-linecap="round">
-          <line x1="10" y1="10" x2="52" y2="52"/><line x1="54" y1="8" x2="12" y2="50"/>
-        </g>
-        <g stroke="#b58900" stroke-width="2.3" stroke-linecap="round">
-          <line x1="19" y1="53" x2="13" y2="47"/><line x1="45" y1="55" x2="51" y2="49"/>
-          <circle cx="55.5" cy="6.5" r="2" fill="#b58900" stroke="none"/>
-          <circle cx="8.5" cy="6.5" r="2" fill="#b58900" stroke="none"/>
-        </g>
-        <path d="M32 20 L44 32 L32 44 L20 32 Z" fill="#002b36" stroke="#b58900" stroke-width="2.4" stroke-linejoin="round"/>
-        <g stroke="#b58900" stroke-width="2.4" stroke-linecap="round">
-          <line x1="27.5" y1="27.5" x2="36.5" y2="36.5"/><line x1="36.5" y1="27.5" x2="27.5" y2="36.5"/>
-        </g>
-      </svg>
-      Merlin Agent — sovereign, self-improving, MIT licensed.
-    </div>
-    <div class="r">
-      <a href="https://github.com/authxibu-cyber/Merlin-Agent" target="_blank">GitHub</a>
-      <a href="https://github.com/authxibu-cyber/Merlin-Agent/issues" target="_blank">Issues</a>
-      <a href="https://github.com/authxibu-cyber/Merlin-Agent/blob/main/README.md" target="_blank">Docs</a>
-    </div>
-  </div>
-</footer>
+      cctx.fillStyle = '#2aa198';
+      cctx.font = 'bold 12px monospace';
+      cctx.fillText('MERLIN-AGY', 216, 260);
 
+      const circuitTexture = new THREE.CanvasTexture(circuitCanvas);
+
+      // Glass Pyramid Cone
+      const pyramidGeo = new THREE.ConeGeometry(1.28, 1.75, 4, 1, false);
+      const crystalMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0x93a1a1,
+        emissive: 0x073642,
+        roughness: 0.08,
+        metalness: 0.25,
+        transmission: 0.88,
+        ior: 1.88,
+        reflectivity: 0.98,
+        clearcoat: 1.0,
+        map: circuitTexture,
+        transparent: true,
+        opacity: 0.92,
+      });
+
+      const pyramidMesh = new THREE.Mesh(pyramidGeo, crystalMaterial);
+      pyramidMesh.rotation.y = Math.PI / 4;
+      heroPyramidGroup.add(pyramidMesh);
+
+      // Wireframe
+      const wireframeGeo = new THREE.EdgesGeometry(pyramidGeo);
+      const wireframeMat = new THREE.LineBasicMaterial({ color: 0x2aa198, transparent: true, opacity: 0.85 });
+      const wireframeLines = new THREE.LineSegments(wireframeGeo, wireframeMat);
+      wireframeLines.rotation.y = Math.PI / 4;
+      heroPyramidGroup.add(wireframeLines);
+
+      // Inverted Inner Core (Pulsing Merlin Node)
+      const innerGeo = new THREE.ConeGeometry(0.68, 0.95, 4, 1);
+      const innerMat = new THREE.MeshStandardMaterial({
+        color: 0x6c71c4,
+        emissive: 0xd33682,
+        emissiveIntensity: 0.85,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.75
+      });
+      const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+      innerMesh.rotation.x = Math.PI;
+      innerMesh.rotation.y = Math.PI / 4;
+      heroPyramidGroup.add(innerMesh);
+
+      // Quantum Floating Sparkles
+      const pCount = 140;
+      const pGeo = new THREE.BufferGeometry();
+      const pPos = new Float32Array(pCount * 3);
+      for (let i = 0; i < pCount; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const rad = 0.85 + Math.random() * 1.5;
+        pPos[i * 3] = Math.cos(theta) * rad;
+        pPos[i * 3 + 1] = (Math.random() - 0.5) * 2.3;
+        pPos[i * 3 + 2] = Math.sin(theta) * rad;
+      }
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+      const pMat = new THREE.PointsMaterial({ size: 0.045, color: 0x2aa198, transparent: true, opacity: 0.8 });
+      heroParticles = new THREE.Points(pGeo, pMat);
+      heroPyramidGroup.add(heroParticles);
+
+      // Directional & Ambient Lights
+      heroScene.add(new THREE.AmbientLight(0x073642, 3.0));
+      const kLight = new THREE.DirectionalLight(0x2aa198, 3.2);
+      kLight.position.set(3, 4, 3);
+      heroScene.add(kLight);
+      const rLight = new THREE.DirectionalLight(0x6c71c4, 3.5);
+      rLight.position.set(-3, -2, -3);
+      heroScene.add(rLight);
+
+      setupHeroEvents();
+    }
+
+    function setupHeroEvents() {
+      const dom = heroRenderer.domElement;
+      dom.addEventListener('mousedown', (e) => {
+        heroDragging = true;
+        heroPrevMouse = { x: e.clientX, y: e.clientY };
+      });
+      window.addEventListener('mouseup', () => { heroDragging = false; });
+      window.addEventListener('mousemove', (e) => {
+        if (!heroDragging) {
+          const rect = heroContainer.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          heroPyramidGroup.rotation.y += (e.clientX - cx) * 0.00002;
+          return;
+        }
+        const dx = e.clientX - heroPrevMouse.x;
+        const dy = e.clientY - heroPrevMouse.y;
+        heroPyramidGroup.rotation.y += dx * 0.009;
+        heroPyramidGroup.rotation.x += dy * 0.009;
+        heroPrevMouse = { x: e.clientX, y: e.clientY };
+      });
+
+      dom.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          heroDragging = true;
+          heroPrevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => { heroDragging = false; });
+      window.addEventListener('touchmove', (e) => {
+        if (!heroDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - heroPrevMouse.x;
+        const dy = e.touches[0].clientY - heroPrevMouse.y;
+        heroPyramidGroup.rotation.y += dx * 0.012;
+        heroPyramidGroup.rotation.x += dy * 0.012;
+        heroPrevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }, { passive: true });
+    }
+
+    /* ----------------------------------------------------
+       2. 3D ART & ANIMATION STUDIO (Three.js Sandbox)
+    ---------------------------------------------------- */
+    let studioScene, studioCamera, studioRenderer, studioActiveMesh, studioRigLight;
+    let studioWireframeLines = null;
+    let isStudioAnimActive = true;
+    let studioAnimSpeed = 1.0;
+    let currentModelType = 'polyhedron';
+    const studioContainer = document.getElementById('three-studio-viewport');
+
+    function initStudioScene() {
+      const w = studioContainer.clientWidth || 600;
+      const h = studioContainer.clientHeight || 400;
+
+      studioScene = new THREE.Scene();
+      studioCamera = new THREE.PerspectiveCamera(50, w / h, 0.1, 100);
+      studioCamera.position.set(0, 0, 4.2);
+
+      studioRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      studioRenderer.setSize(w, h);
+      studioRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      studioContainer.appendChild(studioRenderer.domElement);
+
+      studioRigLight = new THREE.DirectionalLight(0x2aa198, 3.5);
+      studioRigLight.position.set(3, 4, 3);
+      studioScene.add(studioRigLight);
+
+      const amb = new THREE.AmbientLight(0x073642, 2.5);
+      studioScene.add(amb);
+
+      loadStudioModel('polyhedron');
+      setupStudioInteraction();
+    }
+
+    function loadStudioModel(type) {
+      if (studioActiveMesh) studioScene.remove(studioActiveMesh);
+      if (studioWireframeLines) studioScene.remove(studioWireframeLines);
+
+      currentModelType = type;
+      let geo, mat;
+
+      if (type === 'polyhedron') {
+        geo = new THREE.IcosahedronGeometry(1.4, 1);
+        mat = new THREE.MeshPhysicalMaterial({
+          color: 0x2aa198,
+          emissive: 0x073642,
+          roughness: 0.15,
+          metalness: 0.4,
+          transmission: 0.7,
+          ior: 1.6
+        });
+        document.getElementById('active-viewport-label').textContent = 'KINEMATIC POLYHEDRON';
+      } else if (type === 'torus') {
+        geo = new THREE.TorusKnotGeometry(1.0, 0.35, 128, 32);
+        mat = new THREE.MeshStandardMaterial({
+          color: 0x6c71c4,
+          roughness: 0.2,
+          metalness: 0.8
+        });
+        document.getElementById('active-viewport-label').textContent = 'QUANTUM TORUS MESH';
+      } else if (type === 'skeleton') {
+        const group = new THREE.Group();
+        for (let i = 0; i < 7; i++) {
+          const segGeo = new THREE.CylinderGeometry(0.12 - i * 0.012, 0.12 - i * 0.012, 0.5, 8);
+          const segMat = new THREE.MeshStandardMaterial({ color: 0x2aa198, metalness: 0.9, roughness: 0.2 });
+          const seg = new THREE.Mesh(segGeo, segMat);
+          seg.position.y = (i - 3) * 0.48;
+          group.add(seg);
+        }
+        studioActiveMesh = group;
+        studioScene.add(studioActiveMesh);
+        document.getElementById('active-viewport-label').textContent = 'KINEMATIC SKELETAL RIG';
+        return;
+      }
+
+      studioActiveMesh = new THREE.Mesh(geo, mat);
+      studioScene.add(studioActiveMesh);
+
+      const wireGeo = new THREE.WireframeGeometry(geo);
+      studioWireframeLines = new THREE.LineSegments(wireGeo, new THREE.LineBasicMaterial({ color: 0xeee8d5, transparent: true, opacity: 0.3 }));
+      studioScene.add(studioWireframeLines);
+    }
+
+    function setupStudioInteraction() {
+      let isDragging = false;
+      let prevMouse = { x: 0, y: 0 };
+      const dom = studioRenderer.domElement;
+
+      dom.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevMouse = { x: e.clientX, y: e.clientY };
+      });
+      window.addEventListener('mouseup', () => isDragging = false);
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging || !studioActiveMesh) return;
+        const dx = e.clientX - prevMouse.x;
+        const dy = e.clientY - prevMouse.y;
+        studioActiveMesh.rotation.y += dx * 0.01;
+        studioActiveMesh.rotation.x += dy * 0.01;
+        if (studioWireframeLines) {
+          studioWireframeLines.rotation.y += dx * 0.01;
+          studioWireframeLines.rotation.x += dy * 0.01;
+        }
+        prevMouse = { x: e.clientX, y: e.clientY };
+      });
+
+      // Switcher handlers
+      document.getElementById('model-polyhedron').addEventListener('click', () => {
+        loadStudioModel('polyhedron');
+        updateModelButtons('model-polyhedron');
+        playSynthChirp(480);
+      });
+      document.getElementById('model-torus').addEventListener('click', () => {
+        loadStudioModel('torus');
+        updateModelButtons('model-torus');
+        playSynthChirp(560);
+      });
+      document.getElementById('model-skeleton').addEventListener('click', () => {
+        loadStudioModel('skeleton');
+        updateModelButtons('model-skeleton');
+        playSynthChirp(640);
+      });
+
+      // Toggle Wireframe
+      document.getElementById('toggle-wireframe').addEventListener('click', () => {
+        if (studioWireframeLines) {
+          studioWireframeLines.visible = !studioWireframeLines.visible;
+          playSynthChirp(700);
+        }
+      });
+
+      // Toggle Play/Pause
+      const toggleAnimBtn = document.getElementById('toggle-anim');
+      const animIcon = document.getElementById('anim-icon');
+      const animText = document.getElementById('anim-state-text');
+      toggleAnimBtn.addEventListener('click', () => {
+        isStudioAnimActive = !isStudioAnimActive;
+        animIcon.className = isStudioAnimActive ? 'fa-solid fa-pause' : 'fa-solid fa-play';
+        animText.textContent = isStudioAnimActive ? 'Pause Anim' : 'Play Anim';
+        playSynthChirp(isStudioAnimActive ? 600 : 350);
+      });
+
+      // Speed control slider
+      const speedSlider = document.getElementById('speed-slider');
+      const speedVal = document.getElementById('speed-val');
+      speedSlider.addEventListener('input', (e) => {
+        studioAnimSpeed = parseFloat(e.target.value);
+        speedVal.textContent = studioAnimSpeed.toFixed(1) + 'x';
+      });
+
+      // Lighting Presets
+      document.getElementById('light-cyan').addEventListener('click', () => {
+        studioRigLight.color.setHex(0x2aa198);
+        playSynthChirp(520);
+      });
+      document.getElementById('light-arcane').addEventListener('click', () => {
+        studioRigLight.color.setHex(0x6c71c4);
+        playSynthChirp(680);
+      });
+      document.getElementById('light-solar').addEventListener('click', () => {
+        studioRigLight.color.setHex(0xcb4b16);
+        playSynthChirp(440);
+      });
+    }
+
+    function updateModelButtons(activeId) {
+      ['model-polyhedron', 'model-torus', 'model-skeleton'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (id === activeId) {
+          btn.className = 'studio-model-btn px-2.5 py-1 rounded bg-solar-cyan text-solar-base03 font-bold text-[11px]';
+        } else {
+          btn.className = 'studio-model-btn px-2.5 py-1 rounded bg-solar-base02 text-solar-base1 hover:text-solar-cyan text-[11px]';
+        }
+      });
+    }
+
+    /* ----------------------------------------------------
+       3. MERLIN AGENT HARNESS & SYNCHRONIZED NEURAL MESH
+    ---------------------------------------------------- */
+    const merlinFeed = document.getElementById('merlin-terminal-feed');
+    const merlinStatusBadge = document.getElementById('merlin-status-badge');
+    const tokenCounter = document.getElementById('token-counter');
+    const merlinTaskButtons = document.querySelectorAll('.merlin-task-btn');
+    const merlinInput = document.getElementById('merlin-input');
+    const merlinRunBtn = document.getElementById('merlin-run-btn');
+    const merlinWorkerTag = document.getElementById('merlin-worker-tag');
+    const meshStateLabel = document.getElementById('mesh-state-label');
+    const merlinQuickMorph = document.getElementById('merlin-quick-morph');
+
+    let isMerlinRunning = false;
+    let merlinTokens = 594220;
+
+    // DIRECTIVE SCENARIOS WITH EXPLICIT NEURAL PATHWAYS & SUB-AGENTS
+    const merlinScenarios = {
+      geometry: {
+        worker: '[MERLIN-GEOM-1]',
+        directiveName: 'Spatial Geometry Synthesis',
+        activeEdges: [[0, 1], [1, 2], [2, 5]], // Inception -> Spatial DAG -> Silicon Spec
+        activeNodes: [0, 1, 2, 5],
+        pulseColor: '#2aa198',
+        steps: [
+          { type: 'THOUGHT', text: 'Analyzing volumetric 3D camera frustums & Nanite polygonal distribution.' },
+          { type: 'ACTION', text: 'Merlin Tool [spatial_dag_compiler] -> Partitioning 48,000 sub-d facet vertices.' },
+          { type: 'OBSERVATION', text: 'Mesh topology validated: Zero non-manifold edges detected in viewport.' },
+          { type: 'SYNTHESIS', text: 'Geometric manifold synthesized. Broadcasting buffers to 3D Art Studio.' }
+        ]
+      },
+      kinematics: {
+        worker: '[MERLIN-RIG-ALPHA]',
+        directiveName: 'Kinematic Rig Deconstruction',
+        activeEdges: [[0, 2], [2, 3], [3, 4], [4, 5]], // Inception -> Spatial -> Kinematics -> Critic -> Output
+        activeNodes: [0, 2, 3, 4, 5],
+        pulseColor: '#6c71c4',
+        steps: [
+          { type: 'THOUGHT', text: 'Deconstructing skeletal joints into 6-DOF inverse kinematic chains.' },
+          { type: 'ACTION', text: 'Merlin Tool [kinematics_engine] -> Solving Euler rotational velocity & damping curves.' },
+          { type: 'OBSERVATION', text: 'Biphasic joint stabilization achieved at 120 FPS target render rate.' },
+          { type: 'SYNTHESIS', text: 'Kinematic hierarchy bound. Triggering bone deformation cycle.' }
+        ]
+      },
+      photometric: {
+        worker: '[MERLIN-PHOTON-4]',
+        directiveName: 'Photometric Raytrace Bake',
+        activeEdges: [[0, 1], [1, 4], [4, 5]], // Inception -> Spatial -> Critic -> Output
+        activeNodes: [0, 1, 4, 5],
+        pulseColor: '#d33682',
+        steps: [
+          { type: 'THOUGHT', text: 'Calculating Snell law refraction across synthetic quartz crystal (IOR 1.88).' },
+          { type: 'ACTION', text: 'Merlin Tool [caustic_tracer] -> Simulating dual chromatic dispersion angles.' },
+          { type: 'OBSERVATION', text: 'Energy convergence threshold 99.98% verified across 16 photon bounces.' },
+          { type: 'SYNTHESIS', text: 'Photometric map baked. Injecting iridescent prism shaders to materials.' }
+        ]
+      },
+      consensus: {
+        worker: '[MERLIN-SWARM-AUDIT]',
+        directiveName: 'Swarm Consensus Audit',
+        activeEdges: [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 5], [3, 4]], // All mesh connections firing!
+        activeNodes: [0, 1, 2, 3, 4, 5],
+        pulseColor: '#b58900',
+        steps: [
+          { type: 'THOUGHT', text: 'Spinning up 8 concurrent verification agents for cross-pipeline parity check.' },
+          { type: 'ACTION', text: 'Merlin Tool [byzantine_consensus] -> Comparing UV boundaries against OpenUSD specs.' },
+          { type: 'OBSERVATION', text: 'All sub-agents concur on mesh fidelity. Zero latency spikes reported.' },
+          { type: 'SYNTHESIS', text: 'Swarm audit concluded. Entire pipeline locked in gold master state.' }
+        ]
+      }
+    };
+
+    function appendMerlinLog(type, msg) {
+      const timeStr = new Date().toTimeString().split(' ')[0];
+      const row = document.createElement('div');
+      
+      let badgeStyle = 'text-solar-cyan';
+      if (type === 'THOUGHT') badgeStyle = 'text-solar-yellow';
+      else if (type === 'ACTION') badgeStyle = 'text-solar-blue';
+      else if (type === 'OBSERVATION') badgeStyle = 'text-solar-magenta';
+      else if (type === 'SYNTHESIS') badgeStyle = 'text-solar-green font-semibold';
+      else if (type === 'DIRECTIVE') badgeStyle = 'text-solar-base2 font-bold';
+
+      row.innerHTML = `<span class="text-solar-base01">[${timeStr}]</span> <span class="${badgeStyle}">[${type}]</span> ${msg}`;
+      merlinFeed.appendChild(row);
+      merlinFeed.scrollTop = merlinFeed.scrollHeight;
+
+      merlinTokens += Math.floor(Math.random() * 450 + 200);
+      tokenCounter.textContent = merlinTokens.toLocaleString();
+    }
+
+    async function executeMerlinDirective(directiveKey, customPrompt = null) {
+      if (isMerlinRunning) return;
+      isMerlinRunning = true;
+
+      const config = merlinScenarios[directiveKey] || {
+        worker: '[MERLIN-CUSTOM-COG]',
+        directiveName: customPrompt || 'Custom Creative Directive',
+        activeEdges: [[0, 1], [1, 3], [3, 5]],
+        activeNodes: [0, 1, 3, 5],
+        pulseColor: '#2aa198',
+        steps: [
+          { type: 'THOUGHT', text: `Deconstructing prompt: "${customPrompt}". Initializing cognitive sub-graphs.` },
+          { type: 'ACTION', text: 'Merlin Tool [epinoia_procedural_orchestrator] -> Allocating tensor worker threads.' },
+          { type: 'OBSERVATION', text: 'Real-time spatial output evaluated: Satisfies structural constraints.' },
+          { type: 'SYNTHESIS', text: 'Execution successful. Pipeline synchronization established.' }
+        ]
+      };
+
+      // Set Telemetry & Neural Mesh State
+      activeDirectiveConfig = config;
+      merlinWorkerTag.textContent = config.worker;
+      merlinWorkerTag.style.color = config.pulseColor;
+      meshStateLabel.textContent = directiveKey.toUpperCase() + '_ACTIVE';
+      meshStateLabel.style.color = config.pulseColor;
+
+      merlinStatusBadge.textContent = 'MERLIN_REASONING...';
+      merlinStatusBadge.className = 'text-solar-violet animate-pulse font-bold';
+      playSynthChirp(720);
+
+      // Trigger 3D Viewport micro-reaction (slight shockwave)
+      if (studioActiveMesh) {
+        studioActiveMesh.scale.set(1.1, 1.1, 1.1);
+        setTimeout(() => { if (studioActiveMesh) studioActiveMesh.scale.set(1, 1, 1); }, 350);
+      }
+
+      for (let i = 0; i < config.steps.length; i++) {
+        await new Promise(r => setTimeout(r, 680));
+        appendMerlinLog(config.steps[i].type, config.steps[i].text);
+        playSynthChirp(520 + i * 90);
+      }
+
+      await new Promise(r => setTimeout(r, 450));
+      merlinStatusBadge.textContent = 'MERLIN_IDLE';
+      merlinStatusBadge.className = 'text-solar-green';
+      meshStateLabel.textContent = 'HARMONIC_IDLE';
+      meshStateLabel.style.color = '#2aa198';
+      isMerlinRunning = false;
+      playSynthChirp(940);
+    }
+
+    merlinTaskButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const task = btn.getAttribute('data-task');
+        if (merlinScenarios[task]) {
+          appendMerlinLog('DIRECTIVE', `Triggering Directive: ${merlinScenarios[task].directiveName}`);
+          executeMerlinDirective(task);
+        }
+      });
+    });
+
+    merlinRunBtn.addEventListener('click', () => {
+      const txt = merlinInput.value.trim();
+      if (!txt) return;
+      appendMerlinLog('DIRECTIVE', `User Prompt: "${txt}"`);
+      merlinInput.value = '';
+      executeMerlinDirective('custom', txt);
+    });
+
+    merlinInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') merlinRunBtn.click();
+    });
+
+    merlinQuickMorph.addEventListener('click', () => {
+      appendMerlinLog('DIRECTIVE', 'Triggered Studio Topology Morph Directive');
+      executeMerlinDirective('geometry');
+      if (currentModelType === 'polyhedron') loadStudioModel('torus');
+      else loadStudioModel('polyhedron');
+    });
+
+    const merlinGraphCanvas = document.getElementById('merlin-graph-canvas');
+    const mCtx = merlinGraphCanvas.getContext('2d');
+
+    function resizeMerlinGraph() {
+      const rect = merlinGraphCanvas.getBoundingClientRect();
+      merlinGraphCanvas.width = rect.width * (window.devicePixelRatio || 1);
+      merlinGraphCanvas.height = rect.height * (window.devicePixelRatio || 1);
+    }
+    window.addEventListener('resize', resizeMerlinGraph);
+    setTimeout(resizeMerlinGraph, 100);
+
+    const mNodes = [
+      { id: 'core', label: 'Merlin Agy', x: 0.15, y: 0.5, color: '#6c71c4' },
+      { id: 'inception', label: 'Inception', x: 0.4, y: 0.25, color: '#b58900' },
+      { id: 'spatial', label: 'Spatial DAG', x: 0.4, y: 0.75, color: '#268bd2' },
+      { id: 'rig', label: '3D Kinematics', x: 0.68, y: 0.25, color: '#2aa198' },
+      { id: 'critic', label: 'Critic Pass', x: 0.68, y: 0.75, color: '#d33682' },
+      { id: 'render', label: 'Silicon Spec', x: 0.88, y: 0.5, color: '#859900' },
+    ];
+    const mAllEdges = [[0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 5], [3, 4]];
+    let activeDirectiveConfig = null;
+
+    function drawMerlinGraph() {
+      const w = merlinGraphCanvas.width;
+      const h = merlinGraphCanvas.height;
+      if (!w || !h) {
+        requestAnimationFrame(drawMerlinGraph);
+        return;
+      }
+      mCtx.clearRect(0, 0, w, h);
+
+      // Subtle Background Grid
+      mCtx.strokeStyle = 'rgba(7, 54, 66, 0.45)';
+      mCtx.lineWidth = 1;
+      for (let x = 0; x < w; x += 30) {
+        mCtx.beginPath(); mCtx.moveTo(x, 0); mCtx.lineTo(x, h); mCtx.stroke();
+      }
+      for (let y = 0; y < h; y += 30) {
+        mCtx.beginPath(); mCtx.moveTo(0, y); mCtx.lineTo(w, y); mCtx.stroke();
+      }
+
+      const t = Date.now() * 0.003;
+
+      // Draw Edges
+      mAllEdges.forEach(edge => {
+        const n1 = mNodes[edge[0]];
+        const n2 = mNodes[edge[1]];
+        const x1 = n1.x * w;
+        const y1 = n1.y * h;
+        const x2 = n2.x * w;
+        const y2 = n2.y * h;
+
+        // Check if edge is active in currently running directive
+        const isCurrentActive = isMerlinRunning && activeDirectiveConfig &&
+          activeDirectiveConfig.activeEdges.some(e => (e[0] === edge[0] && e[1] === edge[1]) || (e[0] === edge[1] && e[1] === edge[0]));
+
+        mCtx.beginPath();
+        if (isCurrentActive) {
+          mCtx.strokeStyle = activeDirectiveConfig.pulseColor;
+          mCtx.lineWidth = 3.0;
+        } else {
+          mCtx.strokeStyle = 'rgba(88, 110, 117, 0.35)';
+          mCtx.lineWidth = 1.5;
+        }
+        mCtx.moveTo(x1, y1);
+        mCtx.lineTo(x2, y2);
+        mCtx.stroke();
+
+        // High-velocity Photonic Pulses Along Active Connection
+        if (isCurrentActive) {
+          const speedFactor = 2.5;
+          const progress = (t * speedFactor + edge[0] * 0.25) % 1;
+          const px = x1 + (x2 - x1) * progress;
+          const py = y1 + (y2 - y1) * progress;
+
+          mCtx.fillStyle = '#fdf6e3';
+          mCtx.shadowColor = activeDirectiveConfig.pulseColor;
+          mCtx.shadowBlur = 10;
+          mCtx.beginPath();
+          mCtx.arc(px, py, 4, 0, Math.PI * 2);
+          mCtx.fill();
+          mCtx.shadowBlur = 0;
+        }
+      });
+
+      // Draw Nodes
+      mNodes.forEach((node, i) => {
+        const nx = node.x * w;
+        const ny = node.y * h;
+        const isNodeActive = isMerlinRunning && activeDirectiveConfig && activeDirectiveConfig.activeNodes.includes(i);
+
+        const pulse = isNodeActive ? Math.sin(t * 5 + i) * 4 : 0;
+        const r = 9 + pulse;
+
+        // Outer Glow Ring
+        if (isNodeActive) {
+          mCtx.strokeStyle = activeDirectiveConfig.pulseColor;
+          mCtx.lineWidth = 2;
+          mCtx.beginPath();
+          mCtx.arc(nx, ny, r + 4, 0, Math.PI * 2);
+          mCtx.stroke();
+        }
+
+        mCtx.beginPath();
+        mCtx.fillStyle = isNodeActive ? activeDirectiveConfig.pulseColor : node.color;
+        mCtx.arc(nx, ny, Math.max(4, r), 0, Math.PI * 2);
+        mCtx.fill();
+
+        // Node Title
+        mCtx.fillStyle = '#eee8d5';
+        mCtx.font = '10px "Space Grotesk", sans-serif';
+        mCtx.textAlign = 'center';
+        mCtx.fillText(node.label, nx, ny - 13);
+      });
+
+      requestAnimationFrame(drawMerlinGraph);
+    }
+    requestAnimationFrame(drawMerlinGraph);
+
+    /* ----------------------------------------------------
+       4. WAVEFORM OSCILLOSCOPE ANALYZER
+    ---------------------------------------------------- */
+    const waveCanvas = document.getElementById('waveform-canvas');
+    const wCtx = waveCanvas.getContext('2d');
+    const freqSlider = document.getElementById('freq-slider');
+    const harmSlider = document.getElementById('harm-slider');
+    const freqVal = document.getElementById('freq-val');
+    const harmVal = document.getElementById('harm-val');
+    const pulseBtn = document.getElementById('pulse-btn');
+    const resetWaveBtn = document.getElementById('reset-wave-btn');
+
+    let waveOffset = 0;
+    let wavePulseIntensity = 0;
+
+    function resizeWaveCanvas() {
+      const rect = waveCanvas.getBoundingClientRect();
+      waveCanvas.width = rect.width * (window.devicePixelRatio || 1);
+      waveCanvas.height = rect.height * (window.devicePixelRatio || 1);
+    }
+    window.addEventListener('resize', resizeWaveCanvas);
+    setTimeout(resizeWaveCanvas, 100);
+
+    freqSlider.addEventListener('input', (e) => {
+      freqVal.textContent = parseFloat(e.target.value).toFixed(2);
+      playSynthChirp(320 + parseFloat(e.target.value) * 50);
+    });
+    harmSlider.addEventListener('input', (e) => {
+      harmVal.textContent = parseFloat(e.target.value).toFixed(2);
+      playSynthChirp(400 + parseFloat(e.target.value) * 60);
+    });
+    pulseBtn.addEventListener('click', () => {
+      wavePulseIntensity = 1.0;
+      playSynthChirp(840);
+    });
+    resetWaveBtn.addEventListener('click', () => {
+      freqSlider.value = 5.20;
+      harmSlider.value = 3.6;
+      freqVal.textContent = '5.20';
+      harmVal.textContent = '3.60';
+      wavePulseIntensity = 0;
+      playSynthChirp(440);
+    });
+
+    function drawWaveform() {
+      const w = waveCanvas.width;
+      const h = waveCanvas.height;
+      if (!w || !h) {
+        requestAnimationFrame(drawWaveform);
+        return;
+      }
+      wCtx.clearRect(0, 0, w, h);
+
+      // Oscilloscope Grid Lines
+      wCtx.strokeStyle = 'rgba(7, 54, 66, 0.7)';
+      wCtx.lineWidth = 1;
+      const step = 28;
+      for (let x = 0; x < w; x += step) {
+        wCtx.beginPath(); wCtx.moveTo(x, 0); wCtx.lineTo(x, h); wCtx.stroke();
+      }
+      for (let y = 0; y < h; y += step) {
+        wCtx.beginPath(); wCtx.moveTo(0, y); wCtx.lineTo(w, y); wCtx.stroke();
+      }
+
+      // Wave 1: Cyan
+      const freq = parseFloat(freqSlider.value) * 0.015;
+      const harm = parseFloat(harmSlider.value);
+      const midY = h / 2;
+
+      wCtx.beginPath();
+      wCtx.strokeStyle = '#2aa198';
+      wCtx.lineWidth = 2.5;
+
+      for (let x = 0; x < w; x++) {
+        const angle = x * freq + waveOffset;
+        const pulseEffect = wavePulseIntensity * Math.sin(x * 0.08 - waveOffset * 3) * 35;
+        const y = midY + Math.sin(angle) * (36 + pulseEffect) + Math.cos(angle * harm) * 16;
+        if (x === 0) wCtx.moveTo(x, y);
+        else wCtx.lineTo(x, y);
+      }
+      wCtx.stroke();
+
+      // Wave 2: Violet
+      wCtx.beginPath();
+      wCtx.strokeStyle = 'rgba(108, 113, 196, 0.6)';
+      wCtx.lineWidth = 1.5;
+      for (let x = 0; x < w; x++) {
+        const angle = x * (freq * 0.8) - waveOffset * 0.7;
+        const y = midY + Math.sin(angle * 1.5) * 22;
+        if (x === 0) wCtx.moveTo(x, y);
+        else wCtx.lineTo(x, y);
+      }
+      wCtx.stroke();
+
+      if (wavePulseIntensity > 0) {
+        wavePulseIntensity *= 0.94;
+        if (wavePulseIntensity < 0.01) wavePulseIntensity = 0;
+      }
+
+      waveOffset += 0.045;
+      requestAnimationFrame(drawWaveform);
+    }
+    requestAnimationFrame(drawWaveform);
+
+    /* ----------------------------------------------------
+       5. AUDIO SYNTHESIZER ENGINE (Web Audio API)
+    ---------------------------------------------------- */
+    let audioCtx = null;
+    let audioEnabled = false;
+    const audioToggleBtn = document.getElementById('audio-toggle');
+    const audioIcon = document.getElementById('audio-icon');
+
+    function playSynthChirp(freq = 520) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.35, audioCtx.currentTime + 0.08);
+
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.08);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.09);
+      } catch (e) {}
+    }
+
+    audioToggleBtn.addEventListener('click', () => {
+      audioEnabled = !audioEnabled;
+      if (audioEnabled) {
+        audioIcon.className = 'fa-solid fa-volume-high text-solar-cyan';
+        playSynthChirp(660);
+      } else {
+        audioIcon.className = 'fa-solid fa-volume-xmark text-solar-base0';
+      }
+    });
+
+    /* ----------------------------------------------------
+       6. THEME TOGGLE & INTERACTIVE CURSOR TRAIL
+    ---------------------------------------------------- */
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    let isDark = true;
+
+    themeToggleBtn.addEventListener('click', () => {
+      isDark = !isDark;
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+        document.body.classList.remove('bg-solar-base3', 'text-solar-base00');
+        document.body.classList.add('bg-solar-base03', 'text-solar-base1');
+        themeIcon.className = 'fa-solid fa-sun text-solar-yellow';
+      } else {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('bg-solar-base03', 'text-solar-base1');
+        document.body.classList.add('bg-solar-base3', 'text-solar-base00');
+        themeIcon.className = 'fa-solid fa-moon text-solar-blue';
+      }
+      playSynthChirp(520);
+    });
+
+    // Particle Cursor Trail
+    const cursorCanvas = document.getElementById('cursor-canvas');
+    const cCtx = cursorCanvas.getContext('2d');
+    let cursorParticles = [];
+    const trailPalette = ['#2aa198', '#6c71c4', '#268bd2', '#d33682', '#eee8d5'];
+
+    function resizeCursorCanvas() {
+      cursorCanvas.width = window.innerWidth;
+      cursorCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCursorCanvas);
+    resizeCursorCanvas();
+
+    window.addEventListener('mousemove', (e) => {
+      for (let i = 0; i < 2; i++) {
+        cursorParticles.push({
+          x: e.clientX,
+          y: e.clientY,
+          vx: (Math.random() - 0.5) * 1.5,
+          vy: (Math.random() - 0.5) * 1.5 - 0.2,
+          radius: Math.random() * 2.5 + 1,
+          color: trailPalette[Math.floor(Math.random() * trailPalette.length)],
+          alpha: 0.9,
+          decay: 0.025
+        });
+      }
+    });
+
+    function renderCursorTrail() {
+      cCtx.clearRect(0, 0, cursorCanvas.width, cursorCanvas.height);
+      for (let i = cursorParticles.length - 1; i >= 0; i--) {
+        const p = cursorParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+
+        if (p.alpha <= 0) {
+          cursorParticles.splice(i, 1);
+          continue;
+        }
+
+        cCtx.save();
+        cCtx.globalAlpha = p.alpha;
+        cCtx.fillStyle = p.color;
+        cCtx.beginPath();
+        cCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        cCtx.fill();
+        cCtx.restore();
+      }
+      requestAnimationFrame(renderCursorTrail);
+    }
+    renderCursorTrail();
+
+    // Mobile Navigation & Forms
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+    const contactForm = document.getElementById('contact-form');
+    const formMsg = document.getElementById('form-msg');
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      formMsg.classList.remove('hidden');
+      playSynthChirp(880);
+      contactForm.reset();
+      setTimeout(() => formMsg.classList.add('hidden'), 6000);
+    });
+
+    function triggerInspect(name) {
+      playSynthChirp(680);
+      const toast = document.getElementById('toast-modal');
+      const text = document.getElementById('toast-text');
+      text.textContent = `Specimen loaded to Merlin Cache: [${name}]`;
+      toast.classList.remove('translate-y-32', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-32', 'opacity-0');
+      }, 3500);
+    }
+
+    /* ----------------------------------------------------
+       7. MAIN THREE.JS ANIMATION LOOP
+    ---------------------------------------------------- */
+    let clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      const elapsed = clock.getElapsedTime();
+
+      // Hero Pyramid Auto-rotation
+      if (!heroDragging && heroPyramidGroup) {
+        heroPyramidGroup.rotation.y += 0.005;
+      }
+      if (heroParticles) {
+        heroParticles.rotation.y -= 0.003;
+      }
+
+      // Studio 3D Mesh Animation
+      if (studioActiveMesh && isStudioAnimActive) {
+        const factor = studioAnimSpeed;
+        studioActiveMesh.rotation.y += 0.008 * factor;
+        studioActiveMesh.rotation.x = Math.sin(elapsed * 0.8 * factor) * 0.2;
+
+        if (studioWireframeLines) {
+          studioWireframeLines.rotation.y = studioActiveMesh.rotation.y;
+          studioWireframeLines.rotation.x = studioActiveMesh.rotation.x;
+        }
+
+        // Deform children if skeletal rig
+        if (currentModelType === 'skeleton' && studioActiveMesh.children) {
+          studioActiveMesh.children.forEach((child, idx) => {
+            child.rotation.z = Math.sin(elapsed * 2 * factor + idx * 0.6) * 0.25;
+          });
+        }
+      }
+
+      if (heroRenderer && heroScene && heroCamera) {
+        heroRenderer.render(heroScene, heroCamera);
+      }
+      if (studioRenderer && studioScene && studioCamera) {
+        studioRenderer.render(studioScene, studioCamera);
+      }
+    }
+
+    // Window Load Trigger
+    window.onload = function() {
+      initHeroPyramid();
+      initStudioScene();
+      animate();
+    };
+
+    window.addEventListener('resize', () => {
+      if (heroContainer && heroRenderer && heroCamera) {
+        const w = heroContainer.clientWidth;
+        const h = heroContainer.clientHeight;
+        heroCamera.aspect = w / h;
+        heroCamera.updateProjectionMatrix();
+        heroRenderer.setSize(w, h);
+      }
+      if (studioContainer && studioRenderer && studioCamera) {
+        const sw = studioContainer.clientWidth;
+        const sh = studioContainer.clientHeight;
+        studioCamera.aspect = sw / sh;
+        studioCamera.updateProjectionMatrix();
+        studioRenderer.setSize(sw, sh);
+      }
+    });
+  </script>
 </body>
 </html>
